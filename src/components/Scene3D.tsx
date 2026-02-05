@@ -47,7 +47,7 @@
  
  export const Scene3D = ({
    className = '',
-   modelUrl = '/models/baba_yagas_hut.glb',
+   modelUrl = '/models/cloud_station.glb',
    scale = 0.5,
    position = [0, -1, 0],
    rotation = [0, 0, 0],
