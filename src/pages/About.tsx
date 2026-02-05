@@ -13,7 +13,7 @@
          <div className="absolute right-0 top-0 w-1/2 h-full opacity-20 dark:opacity-30">
            <Scene3D 
              scale={0.6}
-             position={[2, -1, 0]}
+             position={[0, -1, 0]}
              interactive={false}
            />
          </div>
