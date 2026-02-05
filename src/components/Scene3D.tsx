@@ -113,6 +113,6 @@
  };
  
  // Preload the model
- useGLTF.preload('/models/baba_yagas_hut.glb');
+ useGLTF.preload('/models/cloud_station.glb');
  
  export default Scene3D;
