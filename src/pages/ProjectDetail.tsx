@@ -180,31 +180,23 @@ const ProjectDetail = () => {
  
        {/* Media Section - Device Mockup */}
        <section className="section-container mb-24">
-         <SlideIn direction="up">
-           <GlassCardLarge className="overflow-hidden">
-             <div className="aspect-video relative rounded-xl overflow-hidden">
-               {/* 3D Device Frame - can be enhanced with actual device mockup */}
-               <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="relative w-full max-w-2xl">
-                   {/* Phone/Device Frame */}
-                   <div className="glass rounded-3xl p-4 mx-auto max-w-xs">
-                     <div className="bg-muted rounded-2xl aspect-[9/16] flex items-center justify-center">
-                       <span className="text-muted-foreground font-display text-sm">
-                         Add Video/Demo Here
-                       </span>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-               
-               {/* 3D Background */}
-               <div className="absolute inset-0 -z-10 opacity-30">
-                 <Scene3D scale={0.4} position={[3, -1, 0]} interactive={false} />
-               </div>
-             </div>
-           </GlassCardLarge>
-         </SlideIn>
-       </section>
+          <SlideIn direction="up">
+            <GlassCardLarge className="overflow-hidden">
+              <div className="aspect-video relative rounded-xl overflow-hidden bg-black">
+                {/* Video / Demo */}
+                <video
+                  src="/videos/project-demo.mp4" // replace with actual source
+                  controls
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </GlassCardLarge>
+          </SlideIn>
+        </section>
  
         {/* Documentation Section */}
         <section className="section-container mb-24">
