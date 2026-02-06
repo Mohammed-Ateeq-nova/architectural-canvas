@@ -118,18 +118,18 @@ const ProjectDetail = () => {
  
    return (
      <PageTransition className="page-container pt-32">
-       {/* Back Navigation */}
-       <div className="section-container mb-8">
-         <FadeIn>
-           <Link
-             to="/projects"
-             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-display"
-           >
-             <ArrowLeft className="w-4 h-4" />
-             Back to Projects
-           </Link>
-         </FadeIn>
-       </div>
+      {/* Back Navigation */}
+      <div className="section-container mb-8">
+        <FadeIn>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-display"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </FadeIn>
+      </div>
  
        {/* Header */}
        <section className="section-container mb-16">
@@ -295,17 +295,17 @@ const ProjectDetail = () => {
  
         {/* More Projects */}
         <section className="section-container pb-24">
-          <FadeIn>
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-display-sm">More Projects</h2>
-              <Link
-                to="/projects"
-                className="text-muted-foreground hover:text-foreground transition-colors font-display"
-              >
-                View All →
-              </Link>
-            </div>
-          </FadeIn>
+        <FadeIn>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-display-sm">More Projects</h2>
+            <Link
+              to="/#projects"
+              className="text-muted-foreground hover:text-foreground transition-colors font-display"
+            >
+              View All →
+            </Link>
+          </div>
+        </FadeIn>
           
           <div className="grid md:grid-cols-3 gap-6">
             {Object.entries(projectData)
