@@ -106,6 +106,7 @@ const ProjectSection = ({ project, isInView }: { project: typeof projects[0]; is
             const angle = (360 / totalCards) * index;
             const x = Math.cos((angle * Math.PI) / 180) * project.radius;
             const z = Math.sin((angle * Math.PI) / 180) * project.radius;
+            const tangentRotation = angle + 90;
 
             return (
               <div
@@ -119,7 +120,7 @@ const ProjectSection = ({ project, isInView }: { project: typeof projects[0]; is
                   marginLeft: '-100px',
                   marginTop: '-100px',
                   transformStyle: 'preserve-3d',
-                  transform: `translateX(${x}px) translateZ(${z}px) rotateY(${-angle}deg)`,
+                  transform: `translateX(${x}px) translateZ(${z}px) rotateY(${tangentRotation}deg)`,
                   filter: `brightness(${brightness})`,
                   transition: 'filter 0.1s linear',
                 }}
