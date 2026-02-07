@@ -11,13 +11,13 @@ export const projects = [
   {
     id: 'project-2',
     title: 'Project Two',
-    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
+    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     radius: 220,
   },
   {
     id: 'project-3',
     title: 'Project Three',
-    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
+    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     radius: 240,
   },
 ];
