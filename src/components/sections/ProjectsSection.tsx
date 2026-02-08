@@ -73,7 +73,6 @@ const ProjectCard = ({
 
   // Use global rotation with per-project offset for visual variety
   const rotation = globalRotation + index * 30;
-  const brightness = 0.5 + visibility * 0.5;
 
   const handleNavigate = () => {
     navigate(`/projects/${project.id}`);
@@ -169,6 +168,13 @@ const ProjectCard = ({
               const z = Math.sin((angle * Math.PI) / 180) * project.radius;
               const tangentRotation = angle + 90;
 
+              // Per-card brightness based on angular position after rotation
+              // Cards facing forward (higher Z in world space) are brighter
+              const effectiveAngle = angle + rotation;
+              const normalizedZ = Math.sin((effectiveAngle * Math.PI) / 180);
+              // Range: 0.3 (back) to 1.0 (front)
+              const cardBrightness = 0.3 + 0.7 * (1 + normalizedZ) / 2;
+
               return (
                 <div
                   key={imgIndex}
@@ -182,8 +188,8 @@ const ProjectCard = ({
                     marginTop: '-80px',
                     transformStyle: 'preserve-3d',
                     transform: `translateX(${x}px) translateZ(${z}px) rotateY(${tangentRotation}deg)`,
-                    filter: `brightness(${brightness})`,
-                    transition: 'filter 0.1s linear',
+                    filter: `brightness(${cardBrightness})`,
+                    transition: 'filter 0.05s linear',
                   }}
                   className="rounded-xl overflow-hidden shadow-lg ring-1 ring-border/50"
                 >
@@ -230,8 +236,8 @@ export const ProjectsSection = () => {
       const delta = currentScrollY - lastScrollY.current;
       
       // Anti-clockwise on scroll down (positive delta), clockwise on scroll up (negative delta)
-      // Scaling factor controls rotation speed
-      setGlobalRotation((prev) => prev + delta * 0.1);
+      // Increased sensitivity for satisfying rotation feel
+      setGlobalRotation((prev) => prev + delta * 0.5);
       lastScrollY.current = currentScrollY;
     };
 
