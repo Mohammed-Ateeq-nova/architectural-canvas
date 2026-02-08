@@ -236,8 +236,8 @@ export const ProjectsSection = () => {
       const delta = currentScrollY - lastScrollY.current;
       
       // Anti-clockwise on scroll down (positive delta), clockwise on scroll up (negative delta)
-      // Increased sensitivity for satisfying rotation feel
-      setGlobalRotation((prev) => prev + delta * 0.5);
+      // Balanced sensitivity: smooth, weighted, controlled rotation
+      setGlobalRotation((prev) => prev + delta * 0.15);
       lastScrollY.current = currentScrollY;
     };
 
