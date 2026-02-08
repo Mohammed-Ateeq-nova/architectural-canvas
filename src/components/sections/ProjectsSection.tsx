@@ -41,16 +41,19 @@ const ProjectCard = ({
   index,
   isActive,
   onSelect,
+  globalRotation,
 }: {
   project: (typeof projects)[0];
   index: number;
   isActive: boolean;
   onSelect: () => void;
+  globalRotation: number;
 }) => {
   const navigate = useNavigate();
-  const [scrollProgress, setScrollProgress] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [visibility, setVisibility] = useState(0);
 
+  // Track visibility for brightness only (not rotation)
   useEffect(() => {
     const handleScroll = () => {
       if (!cardRef.current) return;
@@ -60,7 +63,7 @@ const ProjectCard = ({
       const distance = Math.abs(sectionCenter - viewportCenter);
       const maxDistance = window.innerHeight;
       const progress = Math.max(0, 1 - distance / maxDistance);
-      setScrollProgress(progress);
+      setVisibility(progress);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -68,8 +71,9 @@ const ProjectCard = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const rotation = scrollProgress * 180;
-  const brightness = 0.5 + scrollProgress * 0.5;
+  // Use global rotation with per-project offset for visual variety
+  const rotation = globalRotation + index * 30;
+  const brightness = 0.5 + visibility * 0.5;
 
   const handleNavigate = () => {
     navigate(`/projects/${project.id}`);
@@ -153,7 +157,7 @@ const ProjectCard = ({
           <div
             style={{
               transformStyle: 'preserve-3d',
-              transform: `rotateY(${rotation}deg) rotateX(${scrollProgress * 5}deg)`,
+              transform: `rotateY(${rotation}deg) rotateX(${visibility * 5}deg)`,
               transition: 'transform 0.1s linear',
             }}
             className="relative w-full h-full flex items-center justify-center"
@@ -216,6 +220,24 @@ const ProjectCard = ({
 
 export const ProjectsSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [globalRotation, setGlobalRotation] = useState(0);
+  const lastScrollY = useRef(0);
+
+  // Track global scroll to derive monotonic rotation
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY.current;
+      
+      // Anti-clockwise on scroll down (positive delta), clockwise on scroll up (negative delta)
+      // Scaling factor controls rotation speed
+      setGlobalRotation((prev) => prev + delta * 0.1);
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <section
@@ -281,6 +303,7 @@ export const ProjectsSection = () => {
             index={index}
             isActive={index === activeIndex}
             onSelect={() => setActiveIndex(index)}
+            globalRotation={globalRotation}
           />
         ))}
       </div>
