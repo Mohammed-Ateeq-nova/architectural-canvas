@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
 import { FadeIn } from '@/components/PageTransition';
 import { Scene3D } from '@/components/Scene3D';
 
@@ -20,23 +20,53 @@ export const HeroSection = () => {
         <div className="max-w-5xl mx-auto text-center">
           <FadeIn delay={0.2}>
             <span className="inline-block px-4 py-2 mb-8 text-sm font-display font-medium tracking-widest uppercase glass rounded-full">
-              Creative Engineer & Digital Architect
+              Full Stack Developer
             </span>
           </FadeIn>
           
           <FadeIn delay={0.4}>
             <h1 className="text-display-xl mb-6">
-              <span className="block">Building</span>
+              <span className="block">Mohammed</span>
               <span className="block dark:neon-text-cyan">
-                Digital Worlds
+                Ateeq
               </span>
             </h1>
           </FadeIn>
           
           <FadeIn delay={0.6}>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-12 font-body">
-              A platform showcasing the intersection of code, creativity, and experiential design.
+              Building scalable web applications, AI-driven systems, and hardware–software integrations.
             </p>
+          </FadeIn>
+
+          <FadeIn delay={0.8}>
+            <div className="flex items-center justify-center gap-4">
+              <a
+                href="mailto:mohd.ateeq.march@gmail.com"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="Email"
+              >
+                <Mail className="w-5 h-5" />
+              </a>
+              <a
+                href="https://github.com/Mohammed-Ateeq-nova"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/mohammed-ateeq/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
           </FadeIn>
         </div>
       </div>

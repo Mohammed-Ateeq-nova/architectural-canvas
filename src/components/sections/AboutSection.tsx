@@ -15,16 +15,18 @@ export const AboutSection = () => {
           
           <FadeIn delay={0.1}>
             <h2 className="text-display-lg mb-8">
-              The Architect Behind the
+              The Developer Behind the
               <span className="block dark:neon-text-cyan">Digital Experiences</span>
             </h2>
           </FadeIn>
           
           <FadeIn delay={0.2}>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl">
-              Add your bio and personal story here. This section is designed to 
-              showcase your journey, philosophy, and the passion that drives 
-              your creative engineering work.
+              I'm a Computer Science undergraduate at Anurag University, Hyderabad, 
+              passionate about building scalable, clean, and modern systems. From full-stack 
+              web applications to AI-integrated solutions and hardware-software integrations 
+              at DRDO, I focus on writing efficient, maintainable code that solves real problems 
+              and delivers measurable impact.
             </p>
           </FadeIn>
         </div>
@@ -35,13 +37,15 @@ export const AboutSection = () => {
             <GlassCardLarge className="h-full">
               <h3 className="text-display-sm mb-6">Philosophy</h3>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Your design philosophy and approach goes here. Describe how you 
-                think about problems, your creative process, and what makes 
-                your work unique.
+                I believe great software emerges from the intersection of clean architecture, 
+                user-centric design, and relentless iteration. Whether it's a real-time heart 
+                risk detection system or a marketing platform that drives leads, the approach 
+                stays the same — understand the problem deeply, build with precision, and let 
+                the results speak.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                This is placeholder text - populate with your actual content 
-                from your resume or personal narrative.
+                My experience spans defense-grade data acquisition systems, AI-powered diagnostics, 
+                and modern web platforms. I bring the same rigor to every project, regardless of scale.
               </p>
             </GlassCardLarge>
           </SlideIn>
@@ -50,7 +54,7 @@ export const AboutSection = () => {
             <GlassCard variant="neon" className="h-full">
               <h3 className="text-display-sm mb-6">Core Values</h3>
               <ul className="space-y-4">
-                {['Innovation', 'Craftsmanship', 'Collaboration', 'Impact'].map((value, index) => (
+                {['Clean Code', 'Performance', 'User Impact', 'Continuous Learning'].map((value, index) => (
                   <motion.li
                     key={value}
                     initial={{ opacity: 0, x: -20 }}
@@ -78,10 +82,10 @@ export const AboutSection = () => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: 'Frontend', skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS'] },
-              { title: 'Backend', skills: ['Node.js', 'Python', 'PostgreSQL', 'GraphQL'] },
-              { title: '3D & Motion', skills: ['Three.js', 'GSAP', 'Framer Motion', 'WebGL'] },
-              { title: 'Tools', skills: ['Git', 'Docker', 'Figma', 'AWS'] },
+              { title: 'Programming & CS', skills: ['C++', 'Python', 'Java', 'SQL', 'JavaScript', 'DSA'] },
+              { title: 'Frontend & Backend', skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Express.js', 'Tailwind CSS'] },
+              { title: 'AI & Data', skills: ['TensorFlow', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy', 'Matplotlib'] },
+              { title: 'Tools & Platforms', skills: ['Git/GitHub', 'Firebase', 'MongoDB', 'Figma', 'Jupyter', 'Docker'] },
             ].map((category, index) => (
               <FadeIn key={category.title} delay={0.1 * index}>
                 <GlassCard>
@@ -98,6 +102,61 @@ export const AboutSection = () => {
                 </GlassCard>
               </FadeIn>
             ))}
+          </div>
+        </div>
+
+        {/* Leadership & Achievements */}
+        <div className="mt-24">
+          <FadeIn>
+            <h3 className="text-display-md text-center mb-16">
+              Leadership & <span className="dark:neon-text-cyan">Achievements</span>
+            </h3>
+          </FadeIn>
+
+          <div className="grid lg:grid-cols-2 gap-6">
+            <SlideIn direction="up" delay={0.1}>
+              <GlassCardLarge className="h-full">
+                <h4 className="text-display-sm mb-4 dark:text-neon-cyan">Executive Chairperson</h4>
+                <p className="text-lg text-muted-foreground mb-2">GeeksforGeeks Student Chapter, Anurag University</p>
+                <ul className="space-y-3 mt-4">
+                  {[
+                    'Organized Hacktivate — a 24-hour hackathon with 400+ participants across 3 domains',
+                    'Led 5 coding contests, designing 150+ questions with 50% YOY engagement increase',
+                    'Conducted 3 workshops (200+ attendees) on debugging and code optimization',
+                    'Hosted webinars with GFG Resource Persons reaching 400+ registrations',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="w-2 h-2 rounded-full bg-foreground dark:bg-neon-cyan mt-2 shrink-0" />
+                      <span className="text-muted-foreground">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCardLarge>
+            </SlideIn>
+
+            <SlideIn direction="up" delay={0.2}>
+              <GlassCard variant="neon" className="h-full">
+                <h4 className="text-display-sm mb-6">Awards</h4>
+                <ul className="space-y-4">
+                  {[
+                    { title: '1st Place — Tech Hack III', desc: 'Data Analytics domain, inter-college hackathon at Anurag University' },
+                    { title: 'Winner — Code Wars', desc: '1st among 200 first-year participants in college-level coding contest' },
+                    { title: 'Runner-up — Code Maze', desc: 'University-level coding contest by GFG Student Chapter' },
+                  ].map((award, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + i * 0.1 }}
+                    >
+                      <p className="font-display font-semibold">{award.title}</p>
+                      <p className="text-sm text-muted-foreground">{award.desc}</p>
+                    </motion.li>
+                  ))}
+                </ul>
+              </GlassCard>
+            </SlideIn>
           </div>
         </div>
       </div>

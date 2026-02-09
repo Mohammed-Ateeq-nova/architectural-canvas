@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Mail, MapPin, Github, Linkedin, Twitter } from 'lucide-react';
+import { Send, Mail, MapPin, Phone, Github, Linkedin } from 'lucide-react';
 import { FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
 import { UnicornScene } from '@/components/UnicornScene';
@@ -14,7 +14,8 @@ export const ContactSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    const mailtoLink = `mailto:mohd.ateeq.march@gmail.com?subject=Portfolio Contact from ${formData.name}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${formData.name} (${formData.email})`;
+    window.open(mailtoLink);
   };
 
   return (
@@ -41,9 +42,7 @@ export const ContactSection = () => {
           </FadeIn>
         </div>
 
-        {/* Contact Grid */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Contact Form */}
           <SlideIn direction="left">
             <GlassCardLarge className="h-full">
               <h3 className="text-display-sm mb-8">Send a Message</h3>
@@ -104,7 +103,6 @@ export const ContactSection = () => {
             </GlassCardLarge>
           </SlideIn>
 
-          {/* Contact Info & Scene */}
           <div className="space-y-6">
             <SlideIn direction="right" delay={0.1}>
               <GlassCard className="aspect-video" hover={false}>
@@ -120,15 +118,22 @@ export const ContactSection = () => {
                 <h4 className="text-lg font-display font-semibold mb-4">Get in Touch</h4>
                 <div className="space-y-4">
                   <a
-                    href="mailto:your@email.com"
+                    href="mailto:mohd.ateeq.march@gmail.com"
                     className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Mail className="w-5 h-5" />
-                    <span>your@email.com</span>
+                    <span>mohd.ateeq.march@gmail.com</span>
+                  </a>
+                  <a
+                    href="tel:+918790304479"
+                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Phone className="w-5 h-5" />
+                    <span>+91 8790304479</span>
                   </a>
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <MapPin className="w-5 h-5" />
-                    <span>City, Country</span>
+                    <span>Hyderabad, India</span>
                   </div>
                 </div>
               </GlassCard>
@@ -139,25 +144,22 @@ export const ContactSection = () => {
                 <h4 className="text-lg font-display font-semibold mb-4">Connect</h4>
                 <div className="flex gap-4">
                   <a
-                    href="#"
+                    href="https://github.com/Mohammed-Ateeq-nova"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="p-3 glass rounded-full hover:scale-110 transition-transform"
                     aria-label="GitHub"
                   >
                     <Github className="w-5 h-5" />
                   </a>
                   <a
-                    href="#"
+                    href="https://www.linkedin.com/in/mohammed-ateeq/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="p-3 glass rounded-full hover:scale-110 transition-transform"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="#"
-                    className="p-3 glass rounded-full hover:scale-110 transition-transform"
-                    aria-label="Twitter"
-                  >
-                    <Twitter className="w-5 h-5" />
                   </a>
                 </div>
               </GlassCard>
