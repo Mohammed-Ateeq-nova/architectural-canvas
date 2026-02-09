@@ -5,32 +5,42 @@ import { ArrowRight, Layers } from 'lucide-react';
 
 export const projects = [
   {
-    id: 'project-1',
-    title: 'Project One',
-    tagline: 'Reimagining digital experiences',
-    category: 'Web Application',
-    year: '2024',
-    role: 'Lead Developer',
+    id: 'heart-risk-detection',
+    title: 'Contactless Heart Risk Detection',
+    tagline: 'Real-time camera-based physiological analysis with AI-driven risk prediction',
+    category: 'AI / Healthcare',
+    year: '2025',
+    role: 'Full Stack Developer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     radius: 180,
   },
   {
-    id: 'project-2',
-    title: 'Project Two',
-    tagline: 'AI-powered analytics platform',
+    id: 'face-liveness-detection',
+    title: 'Face Liveness Detection',
+    tagline: 'Browser-based real-time liveness classification with serverless inference',
     category: 'Machine Learning',
-    year: '2023',
-    role: 'Full Stack Engineer',
+    year: '2024',
+    role: 'ML Engineer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     radius: 180,
   },
   {
-    id: 'project-3',
-    title: 'Project Three',
-    tagline: 'Next-gen mobile experience',
-    category: 'Mobile App',
-    year: '2023',
-    role: 'Frontend Architect',
+    id: 'docchat-ai',
+    title: 'DocChat AI',
+    tagline: 'Document-aware conversational system with intelligent querying',
+    category: 'AI / Web App',
+    year: '2025',
+    role: 'Full Stack Developer',
+    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
+    radius: 180,
+  },
+  {
+    id: 'sri-datta-electronics',
+    title: 'Sri Datta Electronics',
+    tagline: 'Product marketing platform with lead generation and modern UI',
+    category: 'Freelance / Web',
+    year: '2025',
+    role: 'Freelance Developer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     radius: 180,
   },
@@ -53,7 +63,6 @@ const ProjectCard = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const [visibility, setVisibility] = useState(0);
 
-  // Track visibility for brightness only (not rotation)
   useEffect(() => {
     const handleScroll = () => {
       if (!cardRef.current) return;
@@ -71,7 +80,6 @@ const ProjectCard = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Use global rotation with per-project offset for visual variety
   const rotation = globalRotation + index * 30;
 
   const handleNavigate = () => {
@@ -87,9 +95,7 @@ const ProjectCard = ({
       transition={{ duration: 0.8, delay: index * 0.1 }}
       className="relative min-h-[80vh] flex items-center justify-center"
     >
-      {/* Content Grid */}
       <div className="section-container grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        {/* Left: Project Info */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -97,7 +103,6 @@ const ProjectCard = ({
           transition={{ duration: 0.6, delay: 0.2 }}
           className="space-y-6 order-2 lg:order-1"
         >
-          {/* Project Number & Category */}
           <div className="flex items-center gap-4">
             <span className="text-sm font-mono text-muted-foreground">
               {String(index + 1).padStart(2, '0')}
@@ -108,17 +113,14 @@ const ProjectCard = ({
             </span>
           </div>
 
-          {/* Title */}
           <h3 className="text-display-sm text-foreground">
             {project.title}
           </h3>
 
-          {/* Tagline */}
           <p className="text-lg text-muted-foreground max-w-md">
             {project.tagline}
           </p>
 
-          {/* Metadata */}
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="glass rounded-full px-4 py-2">
               <span className="text-muted-foreground">Year:</span>{' '}
@@ -130,7 +132,6 @@ const ProjectCard = ({
             </div>
           </div>
 
-          {/* CTA Button */}
           <motion.button
             onClick={handleNavigate}
             whileHover={{ scale: 1.02 }}
@@ -142,7 +143,6 @@ const ProjectCard = ({
           </motion.button>
         </motion.div>
 
-        {/* Right: 3D Carousel */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -152,7 +152,6 @@ const ProjectCard = ({
           onClick={handleNavigate}
           style={{ perspective: '1200px' }}
         >
-          {/* 3D Rotating Container */}
           <div
             style={{
               transformStyle: 'preserve-3d',
@@ -168,11 +167,8 @@ const ProjectCard = ({
               const z = Math.sin((angle * Math.PI) / 180) * project.radius;
               const tangentRotation = angle + 90;
 
-              // Per-card brightness based on angular position after rotation
-              // Cards facing forward (higher Z in world space) are brighter
               const effectiveAngle = angle + rotation;
               const normalizedZ = Math.sin((effectiveAngle * Math.PI) / 180);
-              // Range: 0.3 (back) to 1.0 (front)
               const cardBrightness = 0.3 + 0.7 * (1 + normalizedZ) / 2;
 
               return (
@@ -203,7 +199,6 @@ const ProjectCard = ({
             })}
           </div>
 
-          {/* Hover Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             whileHover={{ opacity: 1 }}
@@ -216,7 +211,6 @@ const ProjectCard = ({
         </motion.div>
       </div>
 
-      {/* Divider */}
       {index < projects.length - 1 && (
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-border to-transparent" />
       )}
@@ -229,14 +223,10 @@ export const ProjectsSection = () => {
   const [globalRotation, setGlobalRotation] = useState(0);
   const lastScrollY = useRef(0);
 
-  // Track global scroll to derive monotonic rotation
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const delta = currentScrollY - lastScrollY.current;
-      
-      // Anti-clockwise on scroll down (positive delta), clockwise on scroll up (negative delta)
-      // Balanced sensitivity: smooth, weighted, controlled rotation
       setGlobalRotation((prev) => prev + delta * 0.15);
       lastScrollY.current = currentScrollY;
     };
@@ -250,7 +240,6 @@ export const ProjectsSection = () => {
       id="projects"
       className="relative py-24 md:py-32 bg-secondary dark:bg-background transition-colors duration-500"
     >
-      {/* Section Header */}
       <div className="section-container mb-16 md:mb-24">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -259,7 +248,6 @@ export const ProjectsSection = () => {
           transition={{ duration: 0.6 }}
           className="space-y-6"
         >
-          {/* Section Label */}
           <div className="flex items-center gap-4">
             <Layers className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm uppercase tracking-[0.2em] text-muted-foreground font-medium">
@@ -267,19 +255,15 @@ export const ProjectsSection = () => {
             </span>
           </div>
 
-          {/* Section Title */}
           <h2 className="text-display-lg text-foreground">
             Projects
           </h2>
 
-          {/* Section Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-            A curated collection of work spanning web applications, machine learning, 
-            and interactive experiences. Each project represents a unique challenge 
-            and creative solution.
+            A curated collection of projects spanning AI-driven systems, full-stack web applications, 
+            and real-time processing — each built to solve a real problem.
           </p>
 
-          {/* Project Count */}
           <div className="flex items-center gap-3 pt-4">
             <div className="flex items-center gap-2">
               {projects.map((_, index) => (
@@ -300,7 +284,6 @@ export const ProjectsSection = () => {
         </motion.div>
       </div>
 
-      {/* Projects List */}
       <div className="space-y-8">
         {projects.map((project, index) => (
           <ProjectCard

@@ -4,7 +4,6 @@ import { PageTransition, FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
 import { experiences } from '@/components/sections/ExperienceSection';
 
-// Extended experience data for detail pages
 interface ExperienceDetailData {
   role: string;
   company: string;
@@ -17,58 +16,44 @@ interface ExperienceDetailData {
 }
 
 const experienceDetailData: Record<string, ExperienceDetailData> = {
-  'exp-1': {
-    role: 'Senior Software Engineer',
-    company: 'Company Name',
-    location: 'City, Country',
-    period: '2022 - Present',
-    overview: 'Add a comprehensive overview of your role and responsibilities. This is placeholder content - replace with your actual experience.',
+  'drdo-rci': {
+    role: 'Software Development Intern',
+    company: 'DRDO — Research Centre Imarat (RCI)',
+    location: 'Hyderabad, India',
+    period: 'Jul 2025 – Sep 2025',
+    overview: 'Worked at India\'s leading defense R&D organization, engineering C-based data acquisition systems for reliable hardware communication. Built diagnostic tools with real-time monitoring capabilities, directly contributing to defense software reliability and development efficiency.',
     responsibilities: [
-      'Led development of key features',
-      'Mentored junior developers',
-      'Collaborated with cross-functional teams',
-      'Implemented best practices and code standards',
+      'Engineered a C-based data acquisition system interfacing with RS-422 and MIL-STD-1553 hardware protocols',
+      'Developed a WinAPI-driven GUI enabling real-time hardware diagnostics with event-driven architecture',
+      'Refined data synchronization mechanisms and error-handling logic for protocol reliability',
+      'Supported ongoing defense software projects by debugging and improving code quality',
     ],
     achievements: [
-      'Achievement 1 - Add your specific accomplishment',
-      'Achievement 2 - Add your specific accomplishment',
-      'Achievement 3 - Add your specific accomplishment',
+      'Reduced communication errors by 35% through optimized hardware integration',
+      'Achieved sub-second diagnostic response times with efficient event-driven architecture',
+      'Enhanced system stability by refining data synchronization and error-handling logic',
+      'Accelerated development cycles and reduced defect rates across defense software projects',
     ],
-    technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'AWS'],
+    technologies: ['C', 'WinAPI', 'RS-422', 'MIL-STD-1553', 'Hardware Integration', 'Data Acquisition'],
   },
-  'exp-2': {
-    role: 'Software Engineer',
-    company: 'Previous Company',
-    location: 'City, Country',
-    period: '2020 - 2022',
-    overview: 'Add a comprehensive overview of your role and responsibilities. This is placeholder content.',
+  'sri-datta-freelance': {
+    role: 'Freelance Web Developer',
+    company: 'Sri Datta Electronics',
+    location: 'Hyderabad, India',
+    period: 'May 2025 – Jun 2025',
+    overview: 'Built a complete marketing and product catalog website for Sri Datta Electronics, a company providing innovative telemetry solutions for defense, aerospace, and industrial sectors. The platform significantly improved their digital presence and client acquisition.',
     responsibilities: [
-      'Developed and maintained web applications',
-      'Participated in code reviews',
-      'Worked on API development',
+      'Designed and developed a product-centric marketing website with interactive catalog',
+      'Integrated Firebase contact forms and Google Maps API for client communication',
+      'Implemented responsive, SEO-optimized design for cross-device performance',
+      'Created modern UI animations with TypeScript for polished user experience',
     ],
     achievements: [
-      'Achievement 1 - Add your specific accomplishment',
-      'Achievement 2 - Add your specific accomplishment',
+      'Increased client leads by 35% through the interactive product catalog',
+      'Achieved 95% form deliverability with Firebase integration, reducing support queries by 25%',
+      'Improved mobile conversion by 20% with responsive Next.js implementation',
     ],
-    technologies: ['React', 'JavaScript', 'Node.js', 'MongoDB'],
-  },
-  'exp-3': {
-    role: 'Junior Developer',
-    company: 'First Company',
-    location: 'City, Country',
-    period: '2018 - 2020',
-    overview: 'Add a comprehensive overview of your role and responsibilities. This is placeholder content.',
-    responsibilities: [
-      'Assisted in frontend development',
-      'Fixed bugs and improved code quality',
-      'Learned from senior developers',
-    ],
-    achievements: [
-      'Achievement 1 - Add your specific accomplishment',
-      'Achievement 2 - Add your specific accomplishment',
-    ],
-    technologies: ['HTML', 'CSS', 'JavaScript', 'React'],
+    technologies: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Firebase', 'Google Maps API', 'SEO'],
   },
 };
 
@@ -85,25 +70,22 @@ const ExperienceDetail = () => {
     technologies: [],
   };
 
-  // Get other experiences for "More Experience" section
   const otherExperiences = experiences.filter(exp => exp.id !== id);
 
   return (
     <PageTransition className="page-container pt-32">
-      {/* Back Navigation */}
       <div className="section-container mb-8">
         <FadeIn>
           <Link
-            to="/"
+            to="/#experience"
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-display"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Home
+            Back to Experience
           </Link>
         </FadeIn>
       </div>
 
-      {/* Header */}
       <section className="section-container mb-16">
         <FadeIn delay={0.1}>
           <span className="inline-block px-4 py-2 mb-6 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
@@ -133,7 +115,6 @@ const ExperienceDetail = () => {
         </FadeIn>
       </section>
 
-      {/* Overview */}
       <section className="section-container mb-16">
         <SlideIn direction="up">
           <GlassCardLarge>
@@ -145,7 +126,6 @@ const ExperienceDetail = () => {
         </SlideIn>
       </section>
 
-      {/* Responsibilities & Achievements */}
       <section className="section-container mb-16">
         <div className="grid lg:grid-cols-2 gap-8">
           <SlideIn direction="left">
@@ -181,7 +161,6 @@ const ExperienceDetail = () => {
         </div>
       </section>
 
-      {/* Technologies */}
       <section className="section-container mb-24">
         <FadeIn>
           <h2 className="text-display-sm mb-8">Technologies Used</h2>
@@ -198,7 +177,6 @@ const ExperienceDetail = () => {
         </div>
       </section>
 
-      {/* More Experience */}
       {otherExperiences.length > 0 && (
         <section className="section-container pb-24">
           <FadeIn>

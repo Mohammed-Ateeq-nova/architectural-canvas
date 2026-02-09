@@ -5,34 +5,31 @@ import { Link } from 'react-router-dom';
 import { FadeIn } from '@/components/PageTransition';
 import { GlassCard } from '@/components/GlassCard';
 
-// Shared experience data
 export const experiences = [
   {
-    id: 'exp-1',
-    role: 'Senior Software Engineer',
-    company: 'Company Name',
-    location: 'City, Country',
-    period: '2022 - Present',
-    description: 'Add your role description and key achievements here.',
-    highlights: ['Achievement 1', 'Achievement 2', 'Achievement 3'],
+    id: 'drdo-rci',
+    role: 'Software Development Intern',
+    company: 'DRDO — Research Centre Imarat (RCI)',
+    location: 'Hyderabad, India',
+    period: 'Jul 2025 – Sep 2025',
+    description: 'Engineered C-based data acquisition systems with hardware protocol integrations and diagnostic GUIs for defense applications.',
+    highlights: [
+      'Reduced communication errors by 35% through RS-422 & MIL-STD-1553 optimization',
+      'Built WinAPI diagnostic GUI with sub-second response times',
+      'Enhanced protocol reliability and system stability',
+    ],
   },
   {
-    id: 'exp-2',
-    role: 'Software Engineer',
-    company: 'Previous Company',
-    location: 'City, Country',
-    period: '2020 - 2022',
-    description: 'Add your role description and key achievements here.',
-    highlights: ['Achievement 1', 'Achievement 2'],
-  },
-  {
-    id: 'exp-3',
-    role: 'Junior Developer',
-    company: 'First Company',
-    location: 'City, Country',
-    period: '2018 - 2020',
-    description: 'Add your role description and key achievements here.',
-    highlights: ['Achievement 1', 'Achievement 2'],
+    id: 'sri-datta-freelance',
+    role: 'Freelance Web Developer',
+    company: 'Sri Datta Electronics',
+    location: 'Hyderabad, India',
+    period: 'May 2025 – Jun 2025',
+    description: 'Built a marketing website that increased client leads by 35% with interactive product catalog and modern UI animations.',
+    highlights: [
+      'Increased client leads by 35% with interactive product catalog',
+      'Firebase contact forms with 95% deliverability',
+    ],
   },
 ];
 
@@ -87,7 +84,6 @@ export const ExperienceSection = () => {
         </div>
       </div>
 
-      {/* Horizontal Carousel - Different visual treatment than Projects */}
       <div className="relative">
         <FadeIn delay={0.3}>
           <div
@@ -109,7 +105,6 @@ export const ExperienceSection = () => {
                     className="group h-full min-h-[280px] relative overflow-hidden"
                     variant={index === 0 ? 'neon' : 'default'}
                   >
-                    {/* Timeline indicator */}
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-foreground/20 via-foreground dark:from-neon-cyan/20 dark:via-neon-cyan to-transparent" />
                     
                     <div className="pl-6">
