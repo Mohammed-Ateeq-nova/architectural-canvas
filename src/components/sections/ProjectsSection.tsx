@@ -105,25 +105,15 @@ const ProjectCard = ({
   };
 
   return (
-    <motion.div
+    <div
       ref={(el) => {
         scrollRef.current = el;
         cardRef(el);
       }}
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.8, delay: index * 0.1 }}
       className="relative min-h-[80vh] flex items-center justify-center"
     >
       <div className="section-container grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="space-y-6 order-2 lg:order-1"
-        >
+        <div className="space-y-6 order-2 lg:order-1">
           <div className="flex items-center gap-4">
             <span className="text-sm font-mono text-muted-foreground">
               {String(index + 1).padStart(2, '0')}
@@ -162,13 +152,9 @@ const ProjectCard = ({
             <span className="font-medium">View Project</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </motion.button>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+        <div
           className="relative aspect-square max-w-md mx-auto order-1 lg:order-2 cursor-pointer"
           onClick={handleNavigate}
           style={{ perspective: '1200px' }}
@@ -216,22 +202,18 @@ const ProjectCard = ({
             })}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-            className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-sm rounded-full"
-          >
+          <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-sm rounded-full opacity-0 hover:opacity-100 transition-opacity">
             <div className="glass rounded-full p-4">
               <ArrowRight className="w-6 h-6" />
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
 
       {index < projects.length - 1 && (
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-border to-transparent" />
       )}
-    </motion.div>
+    </div>
   );
 };
 
