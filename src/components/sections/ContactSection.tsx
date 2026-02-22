@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Send, Mail, MapPin, Phone, Github, Linkedin } from 'lucide-react';
 import { FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
-import { UnicornScene } from '@/components/UnicornScene';
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -105,15 +104,6 @@ export const ContactSection = () => {
 
           <div className="space-y-6">
             <SlideIn direction="right" delay={0.1}>
-              <GlassCard className="aspect-video" hover={false}>
-                <UnicornScene 
-                  projectId="7zy6yQ45eJ7kBZoyipZ1"
-                  className="w-full h-full rounded-xl overflow-hidden"
-                />
-              </GlassCard>
-            </SlideIn>
-            
-            <SlideIn direction="right" delay={0.2}>
               <GlassCard>
                 <h4 className="text-lg font-display font-semibold mb-4">Get in Touch</h4>
                 <div className="space-y-4">
@@ -138,8 +128,8 @@ export const ContactSection = () => {
                 </div>
               </GlassCard>
             </SlideIn>
-            
-            <SlideIn direction="right" delay={0.3}>
+
+            <SlideIn direction="right" delay={0.2}>
               <GlassCard>
                 <h4 className="text-lg font-display font-semibold mb-4">Connect</h4>
                 <div className="flex gap-4">
