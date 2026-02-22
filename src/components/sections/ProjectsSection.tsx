@@ -12,7 +12,6 @@ export const projects = [
     year: '2025',
     role: 'Full Stack Developer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
-    radius: 180,
   },
   {
     id: 'face-liveness-detection',
@@ -22,7 +21,6 @@ export const projects = [
     year: '2024',
     role: 'ML Engineer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
-    radius: 180,
   },
   {
     id: 'docchat-ai',
@@ -32,7 +30,6 @@ export const projects = [
     year: '2025',
     role: 'Full Stack Developer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
-    radius: 180,
   },
   {
     id: 'sri-datta-electronics',
@@ -42,7 +39,6 @@ export const projects = [
     year: '2025',
     role: 'Freelance Developer',
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
-    radius: 180,
   },
 ];
 
@@ -51,22 +47,46 @@ const ProjectCard = ({
   index,
   isActive,
   onSelect,
-  globalRotation,
+  rotation,
+  cardRef,
 }: {
   project: (typeof projects)[0];
   index: number;
   isActive: boolean;
   onSelect: () => void;
-  globalRotation: number;
+  rotation: number;
+  cardRef: (el: HTMLDivElement | null) => void;
 }) => {
   const navigate = useNavigate();
-  const cardRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [visibility, setVisibility] = useState(0);
+  const [dimensions, setDimensions] = useState({ cardSize: 160, radius: 180 });
+
+  // Responsive sizing based on viewport
+  useEffect(() => {
+    const updateDimensions = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        // Mobile - smaller cards and tighter radius
+        setDimensions({ cardSize: 140, radius: 150 });
+      } else if (width < 1024) {
+        // Tablet
+        setDimensions({ cardSize: 160, radius: 180 });
+      } else {
+        // Desktop
+        setDimensions({ cardSize: 200, radius: 230 });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
+      if (!scrollRef.current) return;
+      const rect = scrollRef.current.getBoundingClientRect();
       const sectionCenter = rect.top + rect.height / 2;
       const viewportCenter = window.innerHeight / 2;
       const distance = Math.abs(sectionCenter - viewportCenter);
@@ -80,15 +100,16 @@ const ProjectCard = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const rotation = globalRotation + index * 30;
-
   const handleNavigate = () => {
     navigate(`/projects/${project.id}`);
   };
 
   return (
     <motion.div
-      ref={cardRef}
+      ref={(el) => {
+        scrollRef.current = el;
+        cardRef(el);
+      }}
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
@@ -162,30 +183,26 @@ const ProjectCard = ({
           >
             {project.images.map((image, imgIndex) => {
               const totalCards = project.images.length;
-              const angle = (360 / totalCards) * imgIndex;
-              const x = Math.cos((angle * Math.PI) / 180) * project.radius;
-              const z = Math.sin((angle * Math.PI) / 180) * project.radius;
-              const tangentRotation = angle + 90;
+              const cardAngle = (360 / totalCards) * imgIndex;
+              const x = Math.cos((cardAngle * Math.PI) / 180) * dimensions.radius;
+              const z = Math.sin((cardAngle * Math.PI) / 180) * dimensions.radius;
+              const tangentRotation = cardAngle + 90;
 
-              const effectiveAngle = angle + rotation;
-              const normalizedZ = Math.sin((effectiveAngle * Math.PI) / 180);
-              const cardBrightness = 0.3 + 0.7 * (1 + normalizedZ) / 2;
+              const halfCard = dimensions.cardSize / 2;
 
               return (
                 <div
                   key={imgIndex}
                   style={{
                     position: 'absolute',
-                    width: '160px',
-                    height: '160px',
+                    width: `${dimensions.cardSize}px`,
+                    height: `${dimensions.cardSize}px`,
                     left: '50%',
                     top: '50%',
-                    marginLeft: '-80px',
-                    marginTop: '-80px',
+                    marginLeft: `-${halfCard}px`,
+                    marginTop: `-${halfCard}px`,
                     transformStyle: 'preserve-3d',
                     transform: `translateX(${x}px) translateZ(${z}px) rotateY(${tangentRotation}deg)`,
-                    filter: `brightness(${cardBrightness})`,
-                    transition: 'filter 0.05s linear',
                   }}
                   className="rounded-xl overflow-hidden shadow-lg ring-1 ring-border/50"
                 >
@@ -220,14 +237,35 @@ const ProjectCard = ({
 
 export const ProjectsSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [globalRotation, setGlobalRotation] = useState(0);
+  const [projectRotations, setProjectRotations] = useState<number[]>(
+    projects.map(() => 0)
+  );
   const lastScrollY = useRef(0);
+  const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const delta = currentScrollY - lastScrollY.current;
-      setGlobalRotation((prev) => prev + delta * 0.15);
+
+      // Update rotation for each project based on its visibility
+      setProjectRotations((prevRotations) =>
+        prevRotations.map((rotation, index) => {
+          const projectElement = projectRefs.current[index];
+          if (!projectElement) return rotation;
+
+          // Check if this project is in viewport
+          const rect = projectElement.getBoundingClientRect();
+          const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+          // Only rotate if in viewport
+          if (isInViewport) {
+            return rotation + delta * 0.15;
+          }
+          return rotation;
+        })
+      );
+
       lastScrollY.current = currentScrollY;
     };
 
@@ -292,7 +330,10 @@ export const ProjectsSection = () => {
             index={index}
             isActive={index === activeIndex}
             onSelect={() => setActiveIndex(index)}
-            globalRotation={globalRotation}
+            rotation={projectRotations[index] || 0}
+            cardRef={(el) => {
+              projectRefs.current[index] = el;
+            }}
           />
         ))}
       </div>
