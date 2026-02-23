@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Calendar, MapPin, ArrowUpRight, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { FadeIn } from '@/components/PageTransition';
@@ -194,78 +194,68 @@ const ProgressBar = ({
 /* ─── Section ─── */
 
 export const ExperienceSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  });
-
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    setScrollProgress(v);
-    const idx = Math.round(v * (TOTAL - 1));
-    setActiveIndex(Math.min(idx, TOTAL - 1));
-  });
-
-  // Continuous position for each card: 0 = scroll start, 1 = scroll end
-  const getOffset = (index: number) => {
-    const cardProgress = index / (TOTAL - 1 || 1);
-    return (cardProgress - scrollProgress) * (TOTAL - 1 || 1);
-  };
+  const handleNext = () => setActiveIndex((prev) => Math.min(prev + 1, TOTAL - 1));
+  const handlePrev = () => setActiveIndex((prev) => Math.max(prev - 1, 0));
 
   return (
     <section
-      ref={sectionRef}
-      className="relative bg-secondary/20"
+      className="relative bg-secondary/20 py-24 md:py-32"
       id="experience"
-      style={{ height: `${Math.max(200, TOTAL * 120)}vh` }}
     >
-      <div className="sticky top-0 h-screen flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="section-container pt-20 md:pt-28 pb-4">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <FadeIn>
-                <span className="inline-flex items-center gap-2 px-4 py-2 mb-5 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
-                  <Briefcase className="w-3.5 h-3.5" />
-                  Experience
-                </span>
-              </FadeIn>
-              <FadeIn delay={0.1}>
-                <h2 className="text-display-lg">
-                  Professional <span className="dark:neon-text-magenta">Journey</span>
-                </h2>
-              </FadeIn>
-            </div>
-            <FadeIn delay={0.2}>
-              <ProgressBar progress={scrollProgress} activeIndex={activeIndex} />
+      {/* Header */}
+      <div className="section-container mb-12 md:mb-16">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <FadeIn>
+              <span className="inline-flex items-center gap-2 px-4 py-2 mb-5 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
+                <Briefcase className="w-3.5 h-3.5" />
+                Experience
+              </span>
+            </FadeIn>
+            <FadeIn delay={0.1}>
+              <h2 className="text-display-lg">
+                Professional <span className="dark:neon-text-magenta">Journey</span>
+              </h2>
             </FadeIn>
           </div>
+          <FadeIn delay={0.2}>
+            <div className="flex items-center gap-4">
+              <ProgressBar progress={0} activeIndex={activeIndex} />
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePrev}
+                  disabled={activeIndex === 0}
+                  className="w-10 h-10 rounded-full glass flex items-center justify-center disabled:opacity-30 transition-opacity"
+                  aria-label="Previous"
+                >
+                  <ArrowUpRight className="w-4 h-4 rotate-[-135deg]" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={activeIndex === TOTAL - 1}
+                  className="w-10 h-10 rounded-full glass flex items-center justify-center disabled:opacity-30 transition-opacity"
+                  aria-label="Next"
+                >
+                  <ArrowUpRight className="w-4 h-4 rotate-45" />
+                </button>
+              </div>
+            </div>
+          </FadeIn>
         </div>
+      </div>
 
-        {/* Carousel area */}
-        <div className="relative flex-1 flex items-center justify-center">
-          {experiences.map((exp, i) => (
-            <ExperienceCard
-              key={exp.id}
-              exp={exp}
-              offset={getOffset(i)}
-              isActive={i === activeIndex}
-            />
-          ))}
-        </div>
-
-        {/* Scroll hint */}
-        <div className="pb-8 flex justify-center">
-          <motion.p
-            animate={{ opacity: scrollProgress < 0.1 ? 0.4 : 0, y: scrollProgress < 0.1 ? 0 : 10 }}
-            className="text-xs font-mono tracking-widest text-muted-foreground"
-          >
-            SCROLL TO EXPLORE
-          </motion.p>
-        </div>
+      {/* Carousel area */}
+      <div className="relative h-[500px] md:h-[560px] flex items-center justify-center overflow-hidden">
+        {experiences.map((exp, i) => (
+          <ExperienceCard
+            key={exp.id}
+            exp={exp}
+            offset={i - activeIndex}
+            isActive={i === activeIndex}
+          />
+        ))}
       </div>
     </section>
   );
