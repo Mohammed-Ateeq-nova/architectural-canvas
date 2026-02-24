@@ -261,7 +261,7 @@ export const ExperienceSection = () => {
             </FadeIn>
             <FadeIn delay={0.1}>
               <h2 className="text-display-lg">
-                Professional <span className="dark:neon-text-magenta">Journey</span>
+                Professional <span className="dark:neon-text-cyan">Journey</span>
               </h2>
             </FadeIn>
           </div>
