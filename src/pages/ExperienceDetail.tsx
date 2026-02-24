@@ -166,10 +166,10 @@ const ExperienceDetail = () => {
           <h2 className="text-display-sm mb-8">Technologies Used</h2>
         </FadeIn>
         
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 sm:gap-6">
           {experience.technologies.map((tech, index) => (
             <FadeIn key={tech} delay={0.05 * index}>
-              <span className="glass rounded-full px-6 py-3 font-display font-medium">
+              <span className="glass rounded-full px-5 py-2.5 font-display font-medium text-sm whitespace-nowrap">
                 {tech}
               </span>
             </FadeIn>

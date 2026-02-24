@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, ArrowUpRight, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -72,7 +72,7 @@ const ExperienceCard = ({ exp, offset, isActive }: CardProps) => {
           opacity,
           z,
         }}
-        transition={{ type: 'spring', stiffness: 300, damping: 40, mass: 0.8 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 35, mass: 1 }}
         style={{ transformStyle: 'preserve-3d' }}
       >
         <Link to={`/experience/${exp.id}`} className="block">
@@ -195,9 +195,54 @@ const ProgressBar = ({
 
 export const ExperienceSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   const handleNext = () => setActiveIndex((prev) => Math.min(prev + 1, TOTAL - 1));
   const handlePrev = () => setActiveIndex((prev) => Math.max(prev - 1, 0));
+
+  // Handle horizontal scroll (mouse wheel or trackpad)
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Check if it's a horizontal scroll or shift+vertical scroll
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey;
+      
+      if (isHorizontal) {
+        e.preventDefault();
+        
+        // Clear any pending scroll timeout
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+
+        // Determine scroll direction
+        const delta = e.deltaX || e.deltaY;
+        
+        // Debounce the scroll to prevent too rapid switching
+        scrollTimeoutRef.current = setTimeout(() => {
+          if (delta > 0 && activeIndex < TOTAL - 1) {
+            // Scroll right - next
+            handleNext();
+          } else if (delta < 0 && activeIndex > 0) {
+            // Scroll left - previous
+            handlePrev();
+          }
+        }, 50);
+      }
+    };
+
+    carousel.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      carousel.removeEventListener('wheel', handleWheel);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [activeIndex]);
 
   return (
     <section
@@ -247,7 +292,10 @@ export const ExperienceSection = () => {
       </div>
 
       {/* Carousel area */}
-      <div className="relative h-[500px] md:h-[560px] flex items-center justify-center overflow-hidden">
+      <div 
+        ref={carouselRef}
+        className="relative h-[500px] md:h-[560px] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing"
+      >
         {experiences.map((exp, i) => (
           <ExperienceCard
             key={exp.id}
@@ -256,6 +304,97 @@ export const ExperienceSection = () => {
             isActive={i === activeIndex}
           />
         ))}
+      </div>
+
+      {/* Scroll hint */}
+      <div className="section-container mt-6 flex justify-center">
+        <div className="relative w-12 h-8 opacity-60">
+          {/* Finger icon */}
+          <motion.div
+            animate={{
+              x: [-8, 8, -8],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-muted-foreground"
+            >
+              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
+              <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
+              <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
+              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+            </svg>
+          </motion.div>
+          
+          {/* Left arrow hint */}
+          <motion.div
+            animate={{
+              opacity: [0.3, 0.7, 0.3],
+              x: [-12, -8, -12],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute left-0 top-1/2 -translate-y-1/2"
+          >
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-muted-foreground"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </motion.div>
+          
+          {/* Right arrow hint */}
+          <motion.div
+            animate={{
+              opacity: [0.3, 0.7, 0.3],
+              x: [12, 8, 12],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute right-0 top-1/2 -translate-y-1/2"
+          >
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-muted-foreground"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
