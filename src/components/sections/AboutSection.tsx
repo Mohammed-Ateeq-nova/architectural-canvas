@@ -1,155 +1,226 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
 
 /* ── Expertise Data ─────────────────────────── */
 const expertiseCategories = [
-  { name: 'Frontend', skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Three.js'] },
-  { name: 'Backend', skills: ['Node.js', 'Express.js', 'REST APIs', 'GraphQL', 'WebSockets', 'Serverless'] },
-  { name: 'Programming & CS', skills: ['C++', 'Python', 'Java', 'SQL', 'JavaScript', 'DSA'] },
-  { name: 'AI / ML', skills: ['TensorFlow', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy', 'Matplotlib'] },
-  { name: 'Databases', skills: ['MongoDB', 'Firebase', 'PostgreSQL', 'MySQL', 'Redis', 'Supabase'] },
-  { name: 'Tools & Platforms', skills: ['Git/GitHub', 'Docker', 'Figma', 'Jupyter', 'VS Code', 'Linux'] },
+  {
+    label: 'PART 01',
+    name: 'Frontend',
+    description: 'Building responsive, performant interfaces with modern frameworks. From component architectures to animation systems, crafting pixel-perfect experiences that feel alive.',
+    skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Three.js'],
+  },
+  {
+    label: 'PART 02',
+    name: 'Backend',
+    description: 'Designing scalable server architectures and APIs that handle real-world load. RESTful services, real-time communication, and serverless deployments.',
+    skills: ['Node.js', 'Express.js', 'REST APIs', 'GraphQL', 'WebSockets', 'Serverless'],
+  },
+  {
+    label: 'PART 03',
+    name: 'Programming & CS',
+    description: 'Strong foundations in algorithms, data structures, and computational thinking. Writing efficient, clean code across multiple paradigms and languages.',
+    skills: ['C++', 'Python', 'Java', 'SQL', 'JavaScript', 'DSA'],
+  },
+  {
+    label: 'PART 04',
+    name: 'AI / Machine Learning',
+    description: 'Building intelligent systems with deep learning, computer vision, and data pipelines. From model training to production deployment of AI-driven solutions.',
+    skills: ['TensorFlow', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy', 'Matplotlib'],
+  },
+  {
+    label: 'PART 05',
+    name: 'Databases',
+    description: 'Designing efficient data models and managing both SQL and NoSQL databases. Optimizing queries, ensuring data integrity, and scaling storage solutions.',
+    skills: ['MongoDB', 'Firebase', 'PostgreSQL', 'MySQL', 'Redis', 'Supabase'],
+  },
+  {
+    label: 'PART 06',
+    name: 'Tools & Platforms',
+    description: 'Leveraging modern development toolchains for efficient workflows. Version control, containerization, design systems, and cloud deployment.',
+    skills: ['Git/GitHub', 'Docker', 'Figma', 'Jupyter', 'VS Code', 'Linux'],
+  },
 ];
 
-/* ── Circular Expertise Module ──────────────── */
-const ExpertiseCircle = () => {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+const SECTION_COUNT = expertiseCategories.length;
 
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % expertiseCategories.length);
-    }, 5000);
-  }, []);
+/* ── Scroll-Driven Expertise Module ─────────── */
+const ExpertiseDrum = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    resetTimer();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [resetTimer]);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
 
-  const go = (dir: -1 | 1) => {
-    setActiveIdx((prev) => (prev + dir + expertiseCategories.length) % expertiseCategories.length);
-    resetTimer();
-  };
+  // Map scroll to continuous progress across all sections
+  const totalProgress = useTransform(scrollYProgress, [0, 1], [0, SECTION_COUNT - 1]);
 
-  const active = expertiseCategories[activeIdx];
+  // Circle rotations — outer clockwise, inner counter-clockwise
+  const outerRotation = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const innerRotation = useTransform(scrollYProgress, [0, 1], [0, -120]);
+
+  // Parallax layers: circle fastest, content medium
+  const circleY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%']);
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-8%']);
 
   return (
-    <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-      {/* Circle */}
-      <div className="relative flex-shrink-0">
-        {/* Outer glow ring */}
+    <div
+      ref={containerRef}
+      style={{ height: `${(SECTION_COUNT + 1) * 100}vh` }}
+      className="relative"
+    >
+      <div className="sticky top-0 h-screen overflow-hidden flex items-center">
+        {/* ── LEFT: Rotating Circle Mechanism ── */}
         <motion.div
-          className="absolute inset-0 rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          style={{
-            background: 'conic-gradient(from 0deg, hsl(var(--neon-cyan)), transparent 30%, hsl(var(--neon-magenta)), transparent 70%, hsl(var(--neon-cyan)))',
-            opacity: 0.3,
-            filter: 'blur(8px)',
-          }}
-        />
-
-        {/* Main circle */}
-        <div className="relative w-52 h-52 md:w-64 md:h-64 rounded-full glass flex items-center justify-center border border-border/50 dark:border-neon-cyan/20">
-          {/* Pulsing inner glow */}
+          style={{ y: circleY }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[35%] md:-translate-x-[25%] pointer-events-none"
+        >
+          {/* Outer circle */}
           <motion.div
-            className="absolute inset-4 rounded-full dark:bg-neon-cyan/5"
-            animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ rotate: outerRotation }}
+            className="w-[70vh] h-[70vh] md:w-[80vh] md:h-[80vh] rounded-full border border-foreground/[0.08] dark:border-foreground/[0.12] relative"
+          >
+            {/* Category labels printed on the outer ring */}
+            {expertiseCategories.map((cat, i) => {
+              const angle = (i / SECTION_COUNT) * 360;
+              return (
+                <div
+                  key={cat.label}
+                  className="absolute left-1/2 top-1/2 origin-center"
+                  style={{
+                    transform: `rotate(${angle}deg) translateY(-50%) translateX(-50%)`,
+                  }}
+                >
+                  <span
+                    className="absolute text-[10px] md:text-xs font-display font-bold uppercase tracking-[0.3em] text-foreground/20 dark:text-foreground/25 whitespace-nowrap"
+                    style={{
+                      transform: `translateY(-${70 * 0.45}vh) rotate(90deg)`,
+                      transformOrigin: 'center center',
+                    }}
+                  >
+                    {cat.label}
+                  </span>
+                </div>
+              );
+            })}
+          </motion.div>
+
+          {/* Inner circle */}
+          <motion.div
+            style={{ rotate: innerRotation }}
+            className="absolute inset-[15%] rounded-full border border-foreground/[0.06] dark:border-foreground/[0.10]"
           />
 
-          {/* Category dots around the circle */}
-          {expertiseCategories.map((_, i) => {
-            const angle = (i / expertiseCategories.length) * 360 - 90;
-            const rad = (angle * Math.PI) / 180;
-            const r = 50;
-            return (
-              <motion.button
-                key={i}
-                onClick={() => { setActiveIdx(i); resetTimer(); }}
-                className="absolute w-3 h-3 rounded-full transition-colors duration-300 cursor-pointer"
-                style={{
-                  left: `calc(50% + ${Math.cos(rad) * r}% - 6px)`,
-                  top: `calc(50% + ${Math.sin(rad) * r}% - 6px)`,
-                }}
-                animate={{
-                  backgroundColor: i === activeIdx ? 'hsl(var(--neon-cyan))' : 'hsl(var(--muted-foreground))',
-                  scale: i === activeIdx ? 1.4 : 1,
-                }}
-                transition={{ duration: 0.3 }}
-              />
-            );
-          })}
+          {/* Center glow */}
+          <div className="absolute inset-[35%] rounded-full bg-neon-cyan/3 dark:bg-neon-cyan/8 blur-[40px]" />
+        </motion.div>
 
-          {/* Active category name */}
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={active.name}
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -10 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative z-10 text-lg md:text-xl font-display font-bold text-center px-4 dark:neon-text-cyan"
+        {/* ── Vertical drum labels (inside circle area) ── */}
+        <div className="absolute left-[8%] md:left-[12%] top-0 h-full flex items-center pointer-events-none">
+          <div className="relative h-[60vh] overflow-hidden">
+            <motion.div
+              style={{
+                y: useTransform(totalProgress, (v) => `${-v * 25}vh`),
+              }}
             >
-              {active.name}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-
-        {/* Navigation arrows */}
-        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-4">
-          <button
-            onClick={() => go(-1)}
-            className="glass rounded-full p-2 hover:scale-110 transition-transform"
-            aria-label="Previous category"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-xs font-display text-muted-foreground tabular-nums">
-            {activeIdx + 1} / {expertiseCategories.length}
-          </span>
-          <button
-            onClick={() => go(1)}
-            className="glass rounded-full p-2 hover:scale-110 transition-transform"
-            aria-label="Next category"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Skills display */}
-      <div className="flex-1 min-w-0">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active.name}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h4 className="text-display-sm mb-6 dark:neon-text-cyan">{active.name}</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {active.skills.map((skill, i) => (
-                <motion.div
-                  key={skill}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="glass rounded-xl px-4 py-3 text-sm font-body text-foreground/80 dark:text-foreground/90"
-                >
-                  {skill}
-                </motion.div>
+              {expertiseCategories.map((cat, i) => (
+                <div key={cat.label} className="h-[25vh] flex items-center">
+                  <div className="transform rotate-90 origin-center whitespace-nowrap">
+                    <span className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-foreground/[0.06] dark:text-foreground/[0.08] uppercase tracking-wider select-none">
+                      {cat.label}
+                    </span>
+                  </div>
+                </div>
               ))}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ── RIGHT: Content ── */}
+        <motion.div
+          style={{ y: contentY }}
+          className="relative z-10 ml-auto w-full md:w-[55%] lg:w-[50%] pr-4 md:pr-8 lg:pr-12 pl-4 md:pl-0"
+        >
+          <div className="relative h-[70vh] overflow-hidden">
+            <motion.div
+              style={{
+                y: useTransform(totalProgress, (v) => `${-v * (70 / SECTION_COUNT)}vh`),
+              }}
+            >
+              {expertiseCategories.map((cat, i) => (
+                <div
+                  key={cat.name}
+                  className="flex flex-col justify-center"
+                  style={{ height: `${70 / SECTION_COUNT}vh` }}
+                >
+                  {/* Category headline */}
+                  <h3 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-4 md:mb-6 leading-tight">
+                    {cat.name}
+                  </h3>
+
+                  {/* Divider line */}
+                  <div className="w-16 md:w-20 h-px bg-foreground/60 dark:bg-neon-cyan/60 mb-4 md:mb-6" />
+
+                  {/* Description */}
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mb-4 md:mb-6">
+                    {cat.description}
+                  </p>
+
+                  {/* Skills as minimal tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {cat.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-xs md:text-sm font-display text-foreground/60 dark:text-foreground/70 border border-border/40 dark:border-foreground/10 rounded-full px-3 py-1"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Scroll progress indicator */}
+          <div className="absolute bottom-4 right-4 md:right-8 lg:right-12 flex flex-col items-end gap-2">
+            <motion.span
+              className="text-xs font-display text-muted-foreground tabular-nums"
+              style={{
+                content: useTransform(totalProgress, (v) => `${Math.round(v) + 1}`),
+              }}
+            >
+              <ProgressCounter progress={totalProgress} />
+            </motion.span>
+            <div className="w-px h-16 bg-border relative overflow-hidden">
+              <motion.div
+                className="absolute top-0 left-0 w-full bg-foreground dark:bg-neon-cyan"
+                style={{
+                  height: useTransform(scrollYProgress, [0, 1], ['0%', '100%']),
+                }}
+              />
             </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </motion.div>
       </div>
     </div>
+  );
+};
+
+/* ── Progress counter helper ── */
+import { useMotionValueEvent } from 'framer-motion';
+import { useState } from 'react';
+
+const ProgressCounter = ({ progress }: { progress: ReturnType<typeof useTransform> }) => {
+  const [current, setCurrent] = useState(0);
+  useMotionValueEvent(progress, 'change', (v: number) => {
+    setCurrent(Math.round(v));
+  });
+  return (
+    <span>
+      {String(current + 1).padStart(2, '0')} / {String(SECTION_COUNT).padStart(2, '0')}
+    </span>
   );
 };
 
@@ -165,14 +236,14 @@ export const AboutSection = () => {
   const parallaxY2 = useTransform(scrollYProgress, [0, 1], ['50px', '-50px']);
 
   return (
-    <section ref={sectionRef} className="relative py-32 overflow-hidden" id="about">
+    <section ref={sectionRef} className="relative overflow-hidden" id="about">
       {/* Parallax background element */}
       <motion.div
         style={{ y: parallaxY2 }}
         className="absolute top-20 right-0 w-[400px] h-[400px] rounded-full bg-neon-cyan/3 dark:bg-neon-cyan/5 blur-[100px] pointer-events-none"
       />
 
-      <div className="section-container relative z-10">
+      <div className="section-container relative z-10 py-32">
         {/* Section header */}
         <motion.div
           style={{ y: parallaxY1 }}
@@ -282,34 +353,35 @@ export const AboutSection = () => {
             </div>
           </motion.div>
         </div>
+      </div>
 
-        {/* Technical Expertise Module */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-32"
-        >
-          <div className="text-center mb-16">
+      {/* Technical Expertise — Scroll-driven drum */}
+      <div className="relative">
+        <div className="section-container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-8 pt-16"
+          >
             <span className="text-xs font-display uppercase tracking-[0.3em] text-muted-foreground">04 — Expertise</span>
             <h3 className="text-display-md mt-4">
               Technical <span className="dark:neon-text-magenta">Mastery</span>
             </h3>
-          </div>
+          </motion.div>
+        </div>
 
-          <div className="glass rounded-3xl p-8 md:p-12 lg:p-16">
-            <ExpertiseCircle />
-          </div>
-        </motion.div>
+        <ExpertiseDrum />
+      </div>
 
-        {/* Leadership & Achievements */}
+      {/* Leadership & Achievements */}
+      <div className="section-container relative z-10 py-32">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-32"
         >
           <div className="text-center mb-16">
             <span className="text-xs font-display uppercase tracking-[0.3em] text-muted-foreground">05 — Impact</span>
