@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
+import { Scene3D } from '@/components/Scene3D';
 
 const roles = ['AI Developer', 'Frontend Developer', 'Fullstack Developer'];
 
@@ -45,6 +46,8 @@ export const HeroSection = () => {
   const fgY = useTransform(scrollYProgress, [0, 1], ['0%', '-10%']);
   const fgScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.8], [0, 0.6]);
+  const modelY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+  const modelOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
     <section
@@ -56,17 +59,15 @@ export const HeroSection = () => {
         style={{ y: bgY }}
         className="absolute inset-0 -z-30"
       >
-        {/* Ambient orbs */}
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-neon-cyan/5 dark:bg-neon-cyan/10 blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-neon-magenta/5 dark:bg-neon-magenta/8 blur-[100px]" />
       </motion.div>
 
-      {/* Parallax Midground Layer — grid + particles */}
+      {/* Parallax Midground — grid + shapes */}
       <motion.div
         style={{ y: midY }}
         className="absolute inset-0 -z-20"
       >
-        {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.06]"
           style={{
@@ -75,7 +76,6 @@ export const HeroSection = () => {
             backgroundSize: '80px 80px',
           }}
         />
-        {/* Floating geometric shapes */}
         <motion.div
           animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
@@ -86,10 +86,20 @@ export const HeroSection = () => {
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           className="absolute bottom-[30%] left-[10%] w-12 h-12 border border-border/20 dark:border-neon-magenta/15 rounded-full"
         />
-        <motion.div
-          animate={{ y: [0, -12, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute top-[60%] right-[25%] w-8 h-8 bg-foreground/5 dark:bg-neon-cyan/10 rounded-sm rotate-12"
+      </motion.div>
+
+      {/* 3D Model — cloud_station.glb */}
+      <motion.div
+        style={{ y: modelY, opacity: modelOpacity }}
+        className="absolute right-[-5%] md:right-[2%] top-[10%] w-[60%] md:w-[45%] h-[80%] -z-10 pointer-events-auto"
+      >
+        <Scene3D
+          modelUrl="/models/cloud_station.glb"
+          scale={0.5}
+          position={[0, -1, 0]}
+          rotation={[0, 0, 0]}
+          interactive={true}
+          ambientIntensity={0.6}
         />
       </motion.div>
 
@@ -112,26 +122,26 @@ export const HeroSection = () => {
             </span>
           </motion.div>
 
-          {/* Main headline */}
+          {/* Main headline — Bruno Ace font */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="text-display-xl mb-4 leading-[0.95]">
+            <h1 className="font-hero text-7xl md:text-8xl lg:text-9xl mb-4 leading-[0.95] tracking-tight">
               <span className="block text-foreground">Mohammed</span>
               <span className="block dark:neon-text-cyan">Ateeq</span>
             </h1>
           </motion.div>
 
-          {/* Animated role */}
+          {/* Animated role — also Bruno Ace */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="mb-8"
           >
-            <p className="text-display-sm text-muted-foreground font-display">
+            <p className="font-hero text-xl md:text-2xl lg:text-3xl text-muted-foreground">
               <RoleAnimator />
             </p>
           </motion.div>
@@ -173,7 +183,7 @@ export const HeroSection = () => {
 
             <a
               href="#contact"
-              className="ml-4 glass rounded-full px-6 py-3 font-display font-medium text-sm hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
+              className="ml-4 glass rounded-full px-6 py-3 font-hero text-sm hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
             >
               Let's Talk
               <span className="text-xs">→</span>
@@ -200,7 +210,7 @@ export const HeroSection = () => {
           transition={{ repeat: Infinity, duration: 2 }}
           className="flex flex-col items-center gap-2 text-muted-foreground"
         >
-          <span className="text-[10px] font-display uppercase tracking-[0.3em]">Scroll</span>
+          <span className="text-[10px] font-hero uppercase tracking-[0.3em]">Scroll</span>
           <ArrowDown className="w-3.5 h-3.5" />
         </motion.div>
       </motion.div>
