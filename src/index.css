@@ -160,9 +160,9 @@
      @apply border-border;
    }
    
-   html {
-     scroll-behavior: smooth;
-   }
+    html {
+      /* scroll-behavior handled by Lenis */
+    }
  
    body {
      @apply bg-background text-foreground antialiased;
