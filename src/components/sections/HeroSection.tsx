@@ -1,162 +1,92 @@
-import { useEffect, useRef } from 'react';
-import { Github, Linkedin, Mail } from 'lucide-react';
-import { BreathingGeometry } from '@/components/BreathingGeometry';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { motion } from 'framer-motion';
+import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
+import { FadeIn } from '@/components/PageTransition';
+import { Scene3D } from '@/components/Scene3D';
 
 export const HeroSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLDivElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const badgeRef = useRef<HTMLSpanElement>(null);
-  const linksRef = useRef<HTMLDivElement>(null);
-  const scrollHintRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const ctx = gsap.context(() => {
-      // Entrance animations (one-time, not scroll-driven)
-      const tl = gsap.timeline({ delay: 0.3 });
-      tl.fromTo(badgeRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
-        .fromTo(headlineRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.4')
-        .fromTo(subtitleRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-        .fromTo(linksRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
-        .fromTo(scrollHintRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 }, '-=0.1');
-
-      // Scroll-driven exit: scrubbed from 0% to 30% of hero scroll
-      const exitTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 0.8,
-        },
-      });
-
-      // Headline lifts up and blurs
-      exitTl.to(headlineRef.current, {
-        y: -120,
-        opacity: 0,
-        filter: 'blur(8px)',
-        duration: 1,
-        ease: 'none',
-      }, 0);
-
-      // Badge fades
-      exitTl.to(badgeRef.current, {
-        y: -80,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'none',
-      }, 0);
-
-      // Subtitle dissolves
-      exitTl.to(subtitleRef.current, {
-        y: -60,
-        opacity: 0,
-        filter: 'blur(4px)',
-        duration: 0.8,
-        ease: 'none',
-      }, 0.1);
-
-      // Social links fade
-      exitTl.to(linksRef.current, {
-        y: -40,
-        opacity: 0,
-        duration: 0.6,
-        ease: 'none',
-      }, 0.15);
-
-      // Scroll hint fades out quickly
-      exitTl.to(scrollHintRef.current, {
-        opacity: 0,
-        y: 20,
-        duration: 0.3,
-        ease: 'none',
-      }, 0);
-
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
-      ref={sectionRef}
-      id="hero-section"
-      className="relative min-h-[120vh] flex items-center justify-center overflow-hidden"
-    >
-      {/* Breathing 3D Geometry */}
-      <div className="absolute inset-0 z-[1]">
-        <BreathingGeometry />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* 3D Background */}
+      <div className="absolute inset-0 opacity-30 dark:opacity-40">
+        <Scene3D 
+          scale={0.8}
+          position={[0, -2, -5]}
+          interactive={false}
+        />
       </div>
-
+      
       {/* Content */}
       <div className="relative z-10 section-container">
         <div className="max-w-5xl mx-auto text-center">
-          <span
-            ref={badgeRef}
-            className="inline-block px-4 py-2 mb-8 text-sm font-display font-medium tracking-widest uppercase glass rounded-full opacity-0"
-          >
-            Full Stack & AI Developer
-          </span>
-
-          <div ref={headlineRef} className="opacity-0">
+          <FadeIn delay={0.2}>
+            <span className="inline-block px-4 py-2 mb-8 text-sm font-display font-medium tracking-widest uppercase glass rounded-full">
+              Full Stack & AI Developer
+            </span>
+          </FadeIn>
+          
+          <FadeIn delay={0.4}>
             <h1 className="text-display-xl mb-6">
               <span className="block">Mohammed</span>
-              <span className="block dark:neon-text-cyan">Ateeq</span>
+              <span className="block dark:neon-text-cyan">
+                Ateeq
+              </span>
             </h1>
-          </div>
+          </FadeIn>
+          
+          <FadeIn delay={0.6}>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-12 font-body">
+              Building scalable web applications, AI-driven systems, and hardware–software integrations.
+            </p>
+          </FadeIn>
 
-          <p
-            ref={subtitleRef}
-            className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-12 font-body opacity-0"
-          >
-            Building scalable web applications, AI-driven systems, and hardware–software integrations.
-          </p>
-
-          <div ref={linksRef} className="flex items-center justify-center gap-4 opacity-0">
-            <a
-              href="mailto:mohd.ateeq.march@gmail.com"
-              className="glass rounded-full p-3 hover:scale-110 transition-transform"
-              aria-label="Email"
-            >
-              <Mail className="w-5 h-5" />
-            </a>
-            <a
-              href="https://github.com/Mohammed-Ateeq-nova"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass rounded-full p-3 hover:scale-110 transition-transform"
-              aria-label="GitHub"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/mohammed-ateeq/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass rounded-full p-3 hover:scale-110 transition-transform"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-          </div>
+          <FadeIn delay={0.8}>
+            <div className="flex items-center justify-center gap-4">
+              <a
+                href="mailto:mohd.ateeq.march@gmail.com"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="Email"
+              >
+                <Mail className="w-5 h-5" />
+              </a>
+              <a
+                href="https://github.com/Mohammed-Ateeq-nova"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/mohammed-ateeq/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
+          </FadeIn>
         </div>
       </div>
-
+      
       {/* Scroll Indicator */}
-      <div
-        ref={scrollHintRef}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground opacity-0"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-5 left-1/2 -translate-x-1/2"
       >
-        <span className="text-xs font-display uppercase tracking-[0.3em]">Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-muted-foreground to-transparent animate-pulse" />
-      </div>
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="flex flex-col items-center gap-2 text-muted-foreground"
+        >
+          <span className="text-xs font-display uppercase tracking-widest">Scroll</span>
+          <ArrowDown className="w-4 h-4" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
