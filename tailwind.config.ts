@@ -18,10 +18,11 @@
        },
      },
      extend: {
-       fontFamily: {
-         display: ["Space Grotesk", "sans-serif"],
-         body: ["Inter", "sans-serif"],
-       },
+      fontFamily: {
+          display: ["Space Grotesk", "sans-serif"],
+          body: ["Inter", "sans-serif"],
+          hero: ["Bruno Ace", "sans-serif"],
+        },
        colors: {
          border: "hsl(var(--border))",
          input: "hsl(var(--input))",
