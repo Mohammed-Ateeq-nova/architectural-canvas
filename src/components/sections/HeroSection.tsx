@@ -1,217 +1,90 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
+import { FadeIn } from '@/components/PageTransition';
 import { Scene3D } from '@/components/Scene3D';
 
-const roles = ['AI Developer', 'Frontend Developer', 'Fullstack Developer'];
-
-const RoleAnimator = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % roles.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <span className="relative inline-block h-[1.15em] overflow-hidden align-bottom">
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={activeIndex}
-          initial={{ y: '100%', opacity: 0, rotateX: -40 }}
-          animate={{ y: '0%', opacity: 1, rotateX: 0 }}
-          exit={{ y: '-100%', opacity: 0, rotateX: 40 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block dark:neon-text-cyan"
-          style={{ transformOrigin: 'center bottom' }}
-        >
-          {roles[activeIndex]}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  );
-};
-
 export const HeroSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
-  const midY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-  const fgY = useTransform(scrollYProgress, [0, 1], ['0%', '-10%']);
-  const fgScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.8], [0, 0.6]);
-  const modelY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const modelOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-    >
-      {/* Parallax Background Layer */}
-      <motion.div
-        style={{ y: bgY }}
-        className="absolute inset-0 -z-30"
-      >
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-neon-cyan/5 dark:bg-neon-cyan/10 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-neon-magenta/5 dark:bg-neon-magenta/8 blur-[100px]" />
-      </motion.div>
-
-      {/* Parallax Midground — grid + shapes */}
-      <motion.div
-        style={{ y: midY }}
-        className="absolute inset-0 -z-20"
-      >
-        <div
-          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.06]"
-          style={{
-            backgroundImage:
-              'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
-          }}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* 3D Background */}
+      <div className="absolute inset-0 opacity-30 dark:opacity-40">
+        <Scene3D 
+          scale={0.8}
+          position={[0, -2, -5]}
+          interactive={false}
         />
-        <motion.div
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[20%] right-[15%] w-16 h-16 border border-border/30 dark:border-neon-cyan/20 rounded-lg rotate-45"
-        />
-        <motion.div
-          animate={{ y: [0, 15, 0], rotate: [0, -8, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-[30%] left-[10%] w-12 h-12 border border-border/20 dark:border-neon-magenta/15 rounded-full"
-        />
-      </motion.div>
-
-      {/* 3D Model — cloud_station.glb */}
-      <motion.div
-        style={{ y: modelY, opacity: modelOpacity }}
-        className="absolute right-[-5%] md:right-[2%] top-[10%] w-[60%] md:w-[45%] h-[80%] -z-10 pointer-events-auto"
-      >
-        <Scene3D
-          modelUrl="/models/cloud_station.glb"
-          scale={0.5}
-          position={[0, -1, 0]}
-          rotation={[0, 0, 0]}
-          interactive={true}
-          ambientIntensity={0.6}
-        />
-      </motion.div>
-
-      {/* Foreground content */}
-      <motion.div
-        style={{ y: fgY, scale: fgScale }}
-        className="relative z-10 section-container"
-      >
-        <div className="max-w-5xl mx-auto">
-          {/* Status badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8"
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Available for opportunities
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 section-container">
+        <div className="max-w-5xl mx-auto text-center">
+          <FadeIn delay={0.2}>
+            <span className="inline-block px-4 py-2 mb-8 text-sm font-display font-medium tracking-widest uppercase glass rounded-full">
+              Full Stack & AI Developer
             </span>
-          </motion.div>
-
-          {/* Main headline — Bruno Ace font */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h1 className="font-hero text-7xl md:text-8xl lg:text-9xl mb-4 leading-[0.95] tracking-tight">
-              <span className="block text-foreground">Mohammed</span>
-              <span className="block dark:neon-text-cyan">Ateeq</span>
+          </FadeIn>
+          
+          <FadeIn delay={0.4}>
+            <h1 className="text-display-xl mb-6">
+              <span className="block">Mohammed</span>
+              <span className="block dark:neon-text-cyan">
+                Ateeq
+              </span>
             </h1>
-          </motion.div>
-
-          {/* Animated role — also Bruno Ace */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8"
-          >
-            <p className="font-hero text-xl md:text-2xl lg:text-3xl text-muted-foreground">
-              <RoleAnimator />
+          </FadeIn>
+          
+          <FadeIn delay={0.6}>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-12 font-body">
+              Building scalable web applications, AI-driven systems, and hardware–software integrations.
             </p>
-          </motion.div>
+          </FadeIn>
 
-          {/* Tagline */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-lg md:text-xl text-muted-foreground max-w-xl mb-12 font-body leading-relaxed"
-          >
-            Building scalable web applications, AI-driven systems, and
-            hardware–software integrations that push boundaries.
-          </motion.p>
-
-          {/* Social links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-4"
-          >
-            {[
-              { href: 'mailto:mohd.ateeq.march@gmail.com', icon: Mail, label: 'Email' },
-              { href: 'https://github.com/Mohammed-Ateeq-nova', icon: Github, label: 'GitHub' },
-              { href: 'https://www.linkedin.com/in/mohammed-ateeq/', icon: Linkedin, label: 'LinkedIn' },
-            ].map(({ href, icon: Icon, label }) => (
+          <FadeIn delay={0.8}>
+            <div className="flex items-center justify-center gap-4">
               <a
-                key={label}
-                href={href}
-                target={label !== 'Email' ? '_blank' : undefined}
-                rel={label !== 'Email' ? 'noopener noreferrer' : undefined}
-                className="glass rounded-full p-3 hover:scale-110 transition-all duration-300 dark:hover:shadow-glow-cyan"
-                aria-label={label}
+                href="mailto:mohd.ateeq.march@gmail.com"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="Email"
               >
-                <Icon className="w-5 h-5" />
+                <Mail className="w-5 h-5" />
               </a>
-            ))}
-
-            <a
-              href="#contact"
-              className="ml-4 glass rounded-full px-6 py-3 font-hero text-sm hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
-            >
-              Let's Talk
-              <span className="text-xs">→</span>
-            </a>
-          </motion.div>
+              <a
+                href="https://github.com/Mohammed-Ateeq-nova"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/mohammed-ateeq/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full p-3 hover:scale-110 transition-transform"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
+          </FadeIn>
         </div>
-      </motion.div>
-
-      {/* Scroll-based overlay */}
-      <motion.div
-        style={{ opacity: overlayOpacity }}
-        className="absolute inset-0 bg-background pointer-events-none z-20"
-      />
-
-      {/* Scroll indicator */}
+      </div>
+      
+      {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+        className="absolute bottom-5 left-1/2 -translate-x-1/2"
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
           className="flex flex-col items-center gap-2 text-muted-foreground"
         >
-          <span className="text-[10px] font-hero uppercase tracking-[0.3em]">Scroll</span>
-          <ArrowDown className="w-3.5 h-3.5" />
+          <span className="text-xs font-display uppercase tracking-widest">Scroll</span>
+          <ArrowDown className="w-4 h-4" />
         </motion.div>
       </motion.div>
     </section>
