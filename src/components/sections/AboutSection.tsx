@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
+import { NeumorphicDial } from '@/components/NeumorphicDial';
 
 export const AboutSection = () => {
   return (
