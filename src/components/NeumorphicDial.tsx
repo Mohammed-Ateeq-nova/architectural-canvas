@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useThemeContext } from '@/components/ThemeProvider';
 
 const categories = [
   {
@@ -23,23 +24,64 @@ const categories = [
 
 const QUADRANT_ANGLES = [0, 90, 180, 270];
 const SEPARATOR_ANGLES = [45, 135, 225, 315];
-const AUTO_INTERVAL = 5000;
+const AUTO_INTERVAL = 7000;
 
-// Neumorphic shadow values for dark gray surface
-const NEU_EXTRUDED = '-6px -6px 14px rgba(255,255,255,0.07), 6px 6px 14px rgba(0,0,0,0.6)';
-const NEU_INSET = 'inset -4px -4px 10px rgba(255,255,255,0.05), inset 4px 4px 10px rgba(0,0,0,0.5)';
-const NEU_RING = '-10px -10px 24px rgba(255,255,255,0.06), 10px 10px 24px rgba(0,0,0,0.7)';
-const NEU_GROOVE = 'inset -6px -6px 14px rgba(255,255,255,0.04), inset 6px 6px 14px rgba(0,0,0,0.6)';
-const NEU_PILL = '-3px -3px 8px rgba(255,255,255,0.06), 3px 3px 8px rgba(0,0,0,0.5)';
-
-const DIAL_BG = 'hsl(0 0% 14%)';
+const getThemeStyles = (isDark: boolean) => {
+  if (isDark) {
+    return {
+      dialBg: 'hsl(0 0% 14%)',
+      containerBg: 'hsl(0 0% 7%)',
+      neuRing: '-10px -10px 24px rgba(255,255,255,0.06), 10px 10px 24px rgba(0,0,0,0.7)',
+      neuGroove: 'inset -6px -6px 14px rgba(255,255,255,0.04), inset 6px 6px 14px rgba(0,0,0,0.6)',
+      neuExtruded: '-6px -6px 14px rgba(255,255,255,0.07), 6px 6px 14px rgba(0,0,0,0.6)',
+      neuInset: 'inset -4px -4px 10px rgba(255,255,255,0.05), inset 4px 4px 10px rgba(0,0,0,0.5)',
+      neuPill: '-3px -3px 8px rgba(255,255,255,0.06), 3px 3px 8px rgba(0,0,0,0.5)',
+      borderColor: 'rgba(255,255,255,0.06)',
+      borderColorSoft: 'rgba(255,255,255,0.04)',
+      separatorGradient: 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.08) 90%, transparent 100%)',
+      activeText: 'text-white',
+      inactiveText: 'text-white/30',
+      counterText: 'text-white/30',
+      titleText: 'text-white',
+      skillText: 'text-white/80',
+      barBg: 'rgba(255,255,255,0.08)',
+    };
+  }
+  return {
+    dialBg: 'hsl(0 0% 88%)',
+    containerBg: 'hsl(0 0% 93%)',
+    neuRing: '-10px -10px 20px rgba(255,255,255,0.8), 10px 10px 20px rgba(0,0,0,0.15)',
+    neuGroove: 'inset -6px -6px 12px rgba(255,255,255,0.7), inset 6px 6px 12px rgba(0,0,0,0.12)',
+    neuExtruded: '-6px -6px 14px rgba(255,255,255,0.8), 6px 6px 14px rgba(0,0,0,0.15)',
+    neuInset: 'inset -4px -4px 10px rgba(255,255,255,0.7), inset 4px 4px 10px rgba(0,0,0,0.12)',
+    neuPill: '-3px -3px 8px rgba(255,255,255,0.8), 3px 3px 8px rgba(0,0,0,0.12)',
+    borderColor: 'rgba(0,0,0,0.06)',
+    borderColorSoft: 'rgba(0,0,0,0.04)',
+    separatorGradient: 'linear-gradient(90deg, transparent 15%, rgba(0,0,0,0.08) 40%, rgba(0,0,0,0.08) 90%, transparent 100%)',
+    activeText: 'text-foreground',
+    inactiveText: 'text-foreground/30',
+    counterText: 'text-foreground/30',
+    titleText: 'text-foreground',
+    skillText: 'text-foreground/80',
+    barBg: 'rgba(0,0,0,0.08)',
+  };
+};
 
 export const NeumorphicDial = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const cumulativeRotation = useRef(0);
   const isMobile = useIsMobile();
+  const { theme } = useThemeContext();
+  const isDark = theme === 'dark';
+  const s = getThemeStyles(isDark);
 
   const next = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % 4);
+    setActiveIndex((prev) => {
+      const nextIdx = (prev + 1) % 4;
+      return nextIdx;
+    });
+    // Always rotate forward (accumulate, never reverse)
+    cumulativeRotation.current -= 90;
   }, []);
 
   useEffect(() => {
@@ -47,24 +89,24 @@ export const NeumorphicDial = () => {
     return () => clearInterval(id);
   }, [next]);
 
-  const wheelRotation = -90 * activeIndex;
+  const wheelRotation = cumulativeRotation.current;
 
-  // Dial sizing: mobile=400, tablet/desktop=520
-  const dialSize = isMobile ? 400 : 520;
+  // Dial sizing
+  const dialSize = isMobile ? 360 : 480;
   const halfDial = dialSize / 2;
-  const labelRadius = dialSize * 0.4;
+  const labelRadius = dialSize * 0.38;
   const hubInset = dialSize * 0.375;
-  const hubButtonInset = 30;
+  const hubButtonInset = 24;
   const grooveInset = dialSize * 0.075;
 
   return (
     <div
       className="relative w-full rounded-2xl overflow-hidden"
-      style={{ background: DIAL_BG }}
+      style={{ background: s.containerBg }}
     >
-      {/* Mobile: vertical stack. Desktop: side-by-side */}
-      <div className={`relative ${isMobile ? 'flex flex-col items-center' : ''}`}
-        style={{ minHeight: isMobile ? 'auto' : Math.max(420, dialSize * 0.77) }}
+      <div
+        className={`relative ${isMobile ? 'flex flex-col items-center' : ''}`}
+        style={{ minHeight: isMobile ? 'auto' : Math.max(420, dialSize * 0.85) }}
       >
         {/* === DIAL === */}
         <div
@@ -77,7 +119,7 @@ export const NeumorphicDial = () => {
         >
           <motion.div
             animate={{ rotate: wheelRotation }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
             style={
               isMobile
@@ -85,7 +127,7 @@ export const NeumorphicDial = () => {
                     width: dialSize,
                     height: dialSize,
                     left: '50%',
-                    transform: 'translateX(-50%)',
+                    marginLeft: -halfDial,
                     position: 'absolute',
                     top: 0,
                   }
@@ -96,9 +138,9 @@ export const NeumorphicDial = () => {
             <div
               className="absolute inset-0 rounded-full"
               style={{
-                background: DIAL_BG,
-                boxShadow: NEU_RING,
-                border: '1px solid rgba(255,255,255,0.06)',
+                background: s.dialBg,
+                boxShadow: s.neuRing,
+                border: `1px solid ${s.borderColor}`,
               }}
             />
 
@@ -107,9 +149,9 @@ export const NeumorphicDial = () => {
               className="absolute rounded-full"
               style={{
                 inset: grooveInset,
-                boxShadow: NEU_GROOVE,
-                border: '1px solid rgba(255,255,255,0.04)',
-                background: DIAL_BG,
+                boxShadow: s.neuGroove,
+                border: `1px solid ${s.borderColorSoft}`,
+                background: s.dialBg,
               }}
             />
 
@@ -122,24 +164,28 @@ export const NeumorphicDial = () => {
                   width: halfDial,
                   height: 1,
                   transform: `rotate(${angle}deg)`,
-                  background:
-                    'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.08) 90%, transparent 100%)',
+                  background: s.separatorGradient,
                 }}
               />
             ))}
 
-            {/* Category labels on perimeter */}
+            {/* Category labels on perimeter — tangent to circumference */}
             {categories.map((cat, i) => {
               const angle = QUADRANT_ANGLES[i];
-              const textRotation = -angle - wheelRotation;
               const rad = (angle * Math.PI) / 180;
               const x = halfDial + labelRadius * Math.cos(rad);
               const y = halfDial + labelRadius * Math.sin(rad);
+              // Tangent = angle + 90 so text follows the curve, then counter-rotate the wheel
+              const tangentRotation = angle + 90 - (-wheelRotation);
 
               return (
                 <motion.button
                   key={cat.title}
-                  onClick={() => setActiveIndex(i)}
+                  onClick={() => {
+                    const diff = ((i - activeIndex) % 4 + 4) % 4;
+                    cumulativeRotation.current -= diff * 90;
+                    setActiveIndex(i);
+                  }}
                   className="absolute z-20 cursor-pointer"
                   style={{
                     left: x,
@@ -148,12 +194,10 @@ export const NeumorphicDial = () => {
                   }}
                 >
                   <motion.span
-                    animate={{ rotate: textRotation }}
-                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                    animate={{ rotate: tangentRotation }}
+                    transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
                     className={`block text-[10px] font-display font-semibold tracking-[0.25em] uppercase transition-colors duration-500 select-none whitespace-nowrap ${
-                      i === activeIndex
-                        ? 'text-white'
-                        : 'text-white/30'
+                      i === activeIndex ? s.activeText : s.inactiveText
                     }`}
                     style={{ display: 'inline-block' }}
                   >
@@ -168,18 +212,18 @@ export const NeumorphicDial = () => {
               className="absolute rounded-full"
               style={{
                 inset: hubInset,
-                boxShadow: NEU_EXTRUDED,
-                border: '1px solid rgba(255,255,255,0.06)',
-                background: DIAL_BG,
+                boxShadow: s.neuExtruded,
+                border: `1px solid ${s.borderColor}`,
+                background: s.dialBg,
               }}
             >
               <div
                 className="absolute rounded-full"
                 style={{
                   inset: hubButtonInset,
-                  boxShadow: NEU_INSET,
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  background: DIAL_BG,
+                  boxShadow: s.neuInset,
+                  border: `1px solid ${s.borderColorSoft}`,
+                  background: s.dialBg,
                 }}
               />
             </div>
@@ -206,7 +250,7 @@ export const NeumorphicDial = () => {
               ? 'relative w-full px-6 py-8'
               : 'absolute inset-0 flex flex-col justify-center pr-8 md:pr-12'
           }
-          style={isMobile ? {} : { paddingLeft: `${halfDial + 40}px` }}
+          style={isMobile ? {} : { paddingLeft: `${halfDial + 48}px` }}
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -216,22 +260,19 @@ export const NeumorphicDial = () => {
               exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              {/* Counter */}
-              <p className="text-white/30 text-xs font-display tracking-[0.3em] uppercase mb-3">
+              <p className={`${s.counterText} text-xs font-display tracking-[0.3em] uppercase mb-3`}>
                 {String(activeIndex + 1).padStart(2, '0')} / 04
               </p>
 
-              {/* Title */}
               <h3
-                className="text-2xl md:text-3xl font-display font-bold mb-6 text-white"
+                className={`text-2xl md:text-3xl font-display font-bold mb-6 ${s.titleText}`}
                 style={{
-                  textShadow: '0 0 30px hsl(var(--neon-cyan) / 0.15)',
+                  textShadow: isDark ? '0 0 30px hsl(var(--neon-cyan) / 0.15)' : 'none',
                 }}
               >
                 {categories[activeIndex].title}
               </h3>
 
-              {/* Skill bubbles */}
               <div className="flex flex-wrap gap-2.5">
                 {categories[activeIndex].skills.map((skill, i) => (
                   <motion.span
@@ -243,11 +284,11 @@ export const NeumorphicDial = () => {
                       duration: 0.4,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="px-4 py-2 rounded-full text-sm font-display font-medium text-white/80"
+                    className={`px-4 py-2 rounded-full text-sm font-display font-medium ${s.skillText}`}
                     style={{
-                      background: DIAL_BG,
-                      boxShadow: NEU_PILL,
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      background: s.dialBg,
+                      boxShadow: s.neuPill,
+                      border: `1px solid ${s.borderColor}`,
                     }}
                   >
                     {skill}
@@ -262,9 +303,13 @@ export const NeumorphicDial = () => {
             {categories.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setActiveIndex(i)}
+                onClick={() => {
+                  const diff = ((i - activeIndex) % 4 + 4) % 4;
+                  cumulativeRotation.current -= diff * 90;
+                  setActiveIndex(i);
+                }}
                 className="relative w-8 h-1 rounded-full overflow-hidden transition-colors duration-300"
-                style={{ background: 'rgba(255,255,255,0.08)' }}
+                style={{ background: s.barBg }}
               >
                 {i === activeIndex && (
                   <motion.div
