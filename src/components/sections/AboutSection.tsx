@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
+import { NeumorphicDial } from '@/components/NeumorphicDial';
 
 export const AboutSection = () => {
   return (
@@ -72,37 +73,15 @@ export const AboutSection = () => {
           </SlideIn>
         </div>
 
-        {/* Skills Section */}
+        {/* Skills Section — Neumorphic Dial */}
         <div className="mt-24">
           <FadeIn>
-            <h3 className="text-display-md text-center mb-16">
+            <h3 className="text-display-md text-center mb-12">
               Technical <span className="dark:neon-text-magenta">Expertise</span>
             </h3>
           </FadeIn>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: 'Programming & CS', skills: ['C++', 'Python', 'Java', 'SQL', 'JavaScript', 'DSA'] },
-              { title: 'Frontend & Backend', skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Express.js', 'Tailwind CSS'] },
-              { title: 'AI & Data', skills: ['TensorFlow', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy', 'Matplotlib'] },
-              { title: 'Tools & Platforms', skills: ['Git/GitHub', 'Firebase', 'MongoDB', 'Figma', 'Jupyter', 'Docker'] },
-            ].map((category, index) => (
-              <FadeIn key={category.title} delay={0.1 * index}>
-                <GlassCard>
-                  <h4 className="text-lg font-display font-semibold mb-4 dark:text-neon-cyan">
-                    {category.title}
-                  </h4>
-                  <ul className="space-y-2">
-                    {category.skills.map((skill) => (
-                      <li key={skill} className="text-muted-foreground">
-                        {skill}
-                      </li>
-                    ))}
-                  </ul>
-                </GlassCard>
-              </FadeIn>
-            ))}
-          </div>
+
+          <NeumorphicDial />
         </div>
 
         {/* Leadership & Achievements */}
