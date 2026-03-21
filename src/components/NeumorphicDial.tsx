@@ -77,7 +77,7 @@ export const NeumorphicDial = () => {
 
   const next = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % 4);
-    cumulativeRotation.current -= 90;
+    cumulativeRotation.current += 90;
   }, []);
 
   useEffect(() => {
