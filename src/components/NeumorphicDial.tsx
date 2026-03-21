@@ -106,7 +106,7 @@ export const NeumorphicDial = () => {
   const dialWheel = (
     <motion.div
       animate={{ rotate: wheelRotation }}
-      transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 3.5, ease: [0.16, 1, 0.3, 1] }}
       style={{ width: dialSize, height: dialSize, position: 'relative', flexShrink: 0 }}
     >
       {/* Base ring */}
