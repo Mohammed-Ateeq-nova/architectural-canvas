@@ -201,17 +201,18 @@ export const NeumorphicDial = () => {
   );
 
   if (isMobile) {
+    const mobileDialVisible = dialSize * 0.58;
     return (
       <div
         className="relative w-full rounded-2xl overflow-hidden"
         style={{ background: s.containerBg }}
       >
-        {/* Dial — top half visible, curved downward */}
+        {/* Dial — top portion visible, centered horizontally */}
         <div
           className="relative w-full flex justify-center"
-          style={{ height: halfDial + 20, overflow: 'hidden' }}
+          style={{ height: mobileDialVisible, overflow: 'hidden' }}
         >
-          <div style={{ position: 'absolute', top: 0 }}>
+          <div style={{ position: 'absolute', top: -(dialSize - mobileDialVisible) }}>
             {dialWheel}
           </div>
         </div>
