@@ -150,8 +150,8 @@ export const NeumorphicDial = () => {
         const rad = (angle * Math.PI) / 180;
         const x = halfDial + labelRadius * Math.cos(rad);
         const y = halfDial + labelRadius * Math.sin(rad);
-        // Rotate text clockwise (same direction as dial)
-        const textRotation = wheelRotation + angle + 90;
+        // Keep text upright — no rotation
+        const textRotation = -wheelRotation - angle;
 
         return (
           <motion.button
