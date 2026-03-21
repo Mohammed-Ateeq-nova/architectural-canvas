@@ -106,7 +106,7 @@ export const NeumorphicDial = () => {
     >
       <div
         className={`relative ${isMobile ? 'flex flex-col items-center' : ''}`}
-        style={{ minHeight: isMobile ? 'auto' : Math.max(420, dialSize * 0.85) }}
+        style={{ minHeight: isMobile ? 'auto' : dialSize }}
       >
         {/* === DIAL === */}
         <div
