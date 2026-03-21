@@ -77,7 +77,7 @@ export const NeumorphicDial = () => {
 
   const next = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % 4);
-    cumulativeRotation.current -= 90;
+    cumulativeRotation.current += 90;
   }, []);
 
   useEffect(() => {
@@ -99,14 +99,14 @@ export const NeumorphicDial = () => {
 
   const handleSelect = (i: number) => {
     const diff = ((i - activeIndex) % 4 + 4) % 4;
-    cumulativeRotation.current -= diff * 90;
+    cumulativeRotation.current += diff * 90;
     setActiveIndex(i);
   };
 
   const dialWheel = (
     <motion.div
       animate={{ rotate: wheelRotation }}
-      transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 3.5, ease: [0.16, 1, 0.3, 1] }}
       style={{ width: dialSize, height: dialSize, position: 'relative', flexShrink: 0 }}
     >
       {/* Base ring */}
@@ -151,7 +151,7 @@ export const NeumorphicDial = () => {
         const x = halfDial + labelRadius * Math.cos(rad);
         const y = halfDial + labelRadius * Math.sin(rad);
         // Counter-rotate so text stays upright, then add 90° for tangent alignment
-        const textRotation = -wheelRotation + angle + 90;
+        const textRotation = -wheelRotation - angle + 90;
 
         return (
           <motion.button
@@ -166,7 +166,7 @@ export const NeumorphicDial = () => {
           >
             <motion.span
               animate={{ rotate: textRotation }}
-              transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 3.5, ease: [0.16, 1, 0.3, 1] }}
               className={`block text-[11px] font-display font-semibold tracking-[0.25em] uppercase transition-colors duration-500 select-none whitespace-nowrap ${
                 i === activeIndex ? s.activeText : s.inactiveText
               }`}
@@ -201,17 +201,18 @@ export const NeumorphicDial = () => {
   );
 
   if (isMobile) {
+    const mobileDialVisible = dialSize * 0.58;
     return (
       <div
         className="relative w-full rounded-2xl overflow-hidden"
         style={{ background: s.containerBg }}
       >
-        {/* Dial — top half visible, curved downward */}
+        {/* Dial — top portion visible, centered horizontally */}
         <div
           className="relative w-full flex justify-center"
-          style={{ height: halfDial + 20, overflow: 'hidden' }}
+          style={{ height: mobileDialVisible, overflow: 'hidden' }}
         >
-          <div style={{ position: 'absolute', top: 0 }}>
+          <div style={{ position: 'absolute', top: -(dialSize - mobileDialVisible) }}>
             {dialWheel}
           </div>
         </div>
