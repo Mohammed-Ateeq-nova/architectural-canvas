@@ -99,7 +99,7 @@ export const NeumorphicDial = () => {
 
   const handleSelect = (i: number) => {
     const diff = ((i - activeIndex) % 4 + 4) % 4;
-    cumulativeRotation.current -= diff * 90;
+    cumulativeRotation.current += diff * 90;
     setActiveIndex(i);
   };
 
