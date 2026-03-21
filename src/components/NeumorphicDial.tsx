@@ -166,7 +166,7 @@ export const NeumorphicDial = () => {
           >
             <motion.span
               animate={{ rotate: textRotation }}
-              transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 3.5, ease: [0.16, 1, 0.3, 1] }}
               className={`block text-[11px] font-display font-semibold tracking-[0.25em] uppercase transition-colors duration-500 select-none whitespace-nowrap ${
                 i === activeIndex ? s.activeText : s.inactiveText
               }`}
