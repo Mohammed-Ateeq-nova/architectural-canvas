@@ -76,11 +76,7 @@ export const NeumorphicDial = () => {
   const s = getThemeStyles(isDark);
 
   const next = useCallback(() => {
-    setActiveIndex((prev) => {
-      const nextIdx = (prev + 1) % 4;
-      return nextIdx;
-    });
-    // Always rotate forward (accumulate, never reverse)
+    setActiveIndex((prev) => (prev + 1) % 4);
     cumulativeRotation.current -= 90;
   }, []);
 
@@ -91,167 +87,137 @@ export const NeumorphicDial = () => {
 
   const wheelRotation = cumulativeRotation.current;
 
-  // Dial sizing
-  const dialSize = isMobile ? 360 : 480;
+  const dialSize = isMobile ? 360 : 520;
   const halfDial = dialSize / 2;
   const labelRadius = dialSize * 0.38;
   const hubInset = dialSize * 0.375;
   const hubButtonInset = 24;
   const grooveInset = dialSize * 0.075;
 
-  return (
-    <div
-      className="relative w-full rounded-2xl overflow-hidden"
-      style={{ background: s.containerBg }}
+  // How much of the dial peeks into the container (visible portion from left edge)
+  const dialVisible = isMobile ? halfDial : halfDial * 0.7;
+
+  const handleSelect = (i: number) => {
+    const diff = ((i - activeIndex) % 4 + 4) % 4;
+    cumulativeRotation.current -= diff * 90;
+    setActiveIndex(i);
+  };
+
+  const dialWheel = (
+    <motion.div
+      animate={{ rotate: wheelRotation }}
+      transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
+      style={{ width: dialSize, height: dialSize, position: 'relative', flexShrink: 0 }}
     >
+      {/* Base ring */}
       <div
-        className={`relative ${isMobile ? 'flex flex-col items-center' : ''}`}
-        style={{ minHeight: isMobile ? 'auto' : dialSize }}
-      >
-        {/* === DIAL === */}
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: s.dialBg,
+          boxShadow: s.neuRing,
+          border: `1px solid ${s.borderColor}`,
+        }}
+      />
+
+      {/* Inner groove */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          inset: grooveInset,
+          boxShadow: s.neuGroove,
+          border: `1px solid ${s.borderColorSoft}`,
+          background: s.dialBg,
+        }}
+      />
+
+      {/* Separators */}
+      {SEPARATOR_ANGLES.map((angle) => (
         <div
-          className={`relative z-10 ${isMobile ? '' : 'absolute top-1/2 left-0'}`}
-          style={
-            isMobile
-              ? { width: '100%', height: halfDial + 20, overflow: 'hidden' }
-              : { transform: `translateY(-50%) translateX(-${halfDial}px)` }
-          }
-        >
-          <motion.div
-            animate={{ rotate: wheelRotation }}
-            transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
-            style={
-              isMobile
-                ? {
-                    width: dialSize,
-                    height: dialSize,
-                    left: '50%',
-                    marginLeft: -halfDial,
-                    position: 'absolute',
-                    top: 0,
-                  }
-                : { width: dialSize, height: dialSize }
-            }
+          key={angle}
+          className="absolute top-1/2 left-1/2 origin-left"
+          style={{
+            width: halfDial,
+            height: 1,
+            transform: `rotate(${angle}deg)`,
+            background: s.separatorGradient,
+          }}
+        />
+      ))}
+
+      {/* Category labels — tangent to circumference */}
+      {categories.map((cat, i) => {
+        const angle = QUADRANT_ANGLES[i];
+        const rad = (angle * Math.PI) / 180;
+        const x = halfDial + labelRadius * Math.cos(rad);
+        const y = halfDial + labelRadius * Math.sin(rad);
+        // Counter-rotate so text stays upright, then add 90° for tangent alignment
+        const textRotation = -wheelRotation + angle + 90;
+
+        return (
+          <motion.button
+            key={cat.title}
+            onClick={() => handleSelect(i)}
+            className="absolute z-20 cursor-pointer"
+            style={{
+              left: x,
+              top: y,
+              transform: 'translate(-50%, -50%)',
+            }}
           >
-            {/* Base ring */}
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: s.dialBg,
-                boxShadow: s.neuRing,
-                border: `1px solid ${s.borderColor}`,
-              }}
-            />
-
-            {/* Inner groove */}
-            <div
-              className="absolute rounded-full"
-              style={{
-                inset: grooveInset,
-                boxShadow: s.neuGroove,
-                border: `1px solid ${s.borderColorSoft}`,
-                background: s.dialBg,
-              }}
-            />
-
-            {/* Separators */}
-            {SEPARATOR_ANGLES.map((angle) => (
-              <div
-                key={angle}
-                className="absolute top-1/2 left-1/2 origin-left"
-                style={{
-                  width: halfDial,
-                  height: 1,
-                  transform: `rotate(${angle}deg)`,
-                  background: s.separatorGradient,
-                }}
-              />
-            ))}
-
-            {/* Category labels on perimeter — tangent to circumference */}
-            {categories.map((cat, i) => {
-              const angle = QUADRANT_ANGLES[i];
-              const rad = (angle * Math.PI) / 180;
-              const x = halfDial + labelRadius * Math.cos(rad);
-              const y = halfDial + labelRadius * Math.sin(rad);
-              // Tangent = angle + 90 so text follows the curve, then counter-rotate the wheel
-              const tangentRotation = angle + 90 - (-wheelRotation);
-
-              return (
-                <motion.button
-                  key={cat.title}
-                  onClick={() => {
-                    const diff = ((i - activeIndex) % 4 + 4) % 4;
-                    cumulativeRotation.current -= diff * 90;
-                    setActiveIndex(i);
-                  }}
-                  className="absolute z-20 cursor-pointer"
-                  style={{
-                    left: x,
-                    top: y,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                >
-                  <motion.span
-                    animate={{ rotate: tangentRotation }}
-                    transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
-                    className={`block text-[10px] font-display font-semibold tracking-[0.25em] uppercase transition-colors duration-500 select-none whitespace-nowrap ${
-                      i === activeIndex ? s.activeText : s.inactiveText
-                    }`}
-                    style={{ display: 'inline-block' }}
-                  >
-                    {cat.title}
-                  </motion.span>
-                </motion.button>
-              );
-            })}
-
-            {/* Central hub */}
-            <div
-              className="absolute rounded-full"
-              style={{
-                inset: hubInset,
-                boxShadow: s.neuExtruded,
-                border: `1px solid ${s.borderColor}`,
-                background: s.dialBg,
-              }}
+            <motion.span
+              animate={{ rotate: textRotation }}
+              transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
+              className={`block text-[11px] font-display font-semibold tracking-[0.25em] uppercase transition-colors duration-500 select-none whitespace-nowrap ${
+                i === activeIndex ? s.activeText : s.inactiveText
+              }`}
             >
-              <div
-                className="absolute rounded-full"
-                style={{
-                  inset: hubButtonInset,
-                  boxShadow: s.neuInset,
-                  border: `1px solid ${s.borderColorSoft}`,
-                  background: s.dialBg,
-                }}
-              />
-            </div>
-          </motion.div>
+              {cat.title}
+            </motion.span>
+          </motion.button>
+        );
+      })}
+
+      {/* Central hub */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          inset: hubInset,
+          boxShadow: s.neuExtruded,
+          border: `1px solid ${s.borderColor}`,
+          background: s.dialBg,
+        }}
+      >
+        <div
+          className="absolute rounded-full"
+          style={{
+            inset: hubButtonInset,
+            boxShadow: s.neuInset,
+            border: `1px solid ${s.borderColorSoft}`,
+            background: s.dialBg,
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+
+  if (isMobile) {
+    return (
+      <div
+        className="relative w-full rounded-2xl overflow-hidden"
+        style={{ background: s.containerBg }}
+      >
+        {/* Dial — top half visible, curved downward */}
+        <div
+          className="relative w-full flex justify-center"
+          style={{ height: halfDial + 20, overflow: 'hidden' }}
+        >
+          <div style={{ position: 'absolute', top: 0 }}>
+            {dialWheel}
+          </div>
         </div>
 
-        {/* Active indicator dot */}
-        {!isMobile && (
-          <div className="absolute top-1/2 left-[18px] -translate-y-1/2 z-20">
-            <div
-              className="w-2 h-2 rounded-full"
-              style={{
-                background: 'hsl(var(--neon-cyan))',
-                boxShadow: '0 0 12px hsl(var(--neon-cyan)), 0 0 24px hsl(var(--neon-cyan) / 0.3)',
-              }}
-            />
-          </div>
-        )}
-
-        {/* === CONTENT === */}
-        <div
-          className={
-            isMobile
-              ? 'relative w-full px-6 py-8'
-              : 'absolute inset-0 flex flex-col justify-center pr-8 md:pr-12'
-          }
-          style={isMobile ? {} : { paddingLeft: `${halfDial + 48}px` }}
-        >
+        {/* Content below */}
+        <div className="relative px-6 py-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
@@ -263,33 +229,21 @@ export const NeumorphicDial = () => {
               <p className={`${s.counterText} text-xs font-display tracking-[0.3em] uppercase mb-3`}>
                 {String(activeIndex + 1).padStart(2, '0')} / 04
               </p>
-
               <h3
-                className={`text-2xl md:text-3xl font-display font-bold mb-6 ${s.titleText}`}
-                style={{
-                  textShadow: isDark ? '0 0 30px hsl(var(--neon-cyan) / 0.15)' : 'none',
-                }}
+                className={`text-2xl font-display font-bold mb-6 ${s.titleText}`}
+                style={{ textShadow: isDark ? '0 0 30px hsl(var(--neon-cyan) / 0.15)' : 'none' }}
               >
                 {categories[activeIndex].title}
               </h3>
-
               <div className="flex flex-wrap gap-2.5">
                 {categories[activeIndex].skills.map((skill, i) => (
                   <motion.span
                     key={skill}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.06 * i,
-                      duration: 0.4,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
+                    transition={{ delay: 0.06 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className={`px-4 py-2 rounded-full text-sm font-display font-medium ${s.skillText}`}
-                    style={{
-                      background: s.dialBg,
-                      boxShadow: s.neuPill,
-                      border: `1px solid ${s.borderColor}`,
-                    }}
+                    style={{ background: s.dialBg, boxShadow: s.neuPill, border: `1px solid ${s.borderColor}` }}
                   >
                     {skill}
                   </motion.span>
@@ -298,17 +252,12 @@ export const NeumorphicDial = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Bottom nav bars */}
-          <div className={`flex gap-2 ${isMobile ? 'mt-6 justify-center' : 'absolute bottom-6 right-8'}`}>
+          <div className="flex gap-2 mt-6 justify-center">
             {categories.map((_, i) => (
               <button
                 key={i}
-                onClick={() => {
-                  const diff = ((i - activeIndex) % 4 + 4) % 4;
-                  cumulativeRotation.current -= diff * 90;
-                  setActiveIndex(i);
-                }}
-                className="relative w-8 h-1 rounded-full overflow-hidden transition-colors duration-300"
+                onClick={() => handleSelect(i)}
+                className="relative w-8 h-1 rounded-full overflow-hidden"
                 style={{ background: s.barBg }}
               >
                 {i === activeIndex && (
@@ -322,6 +271,105 @@ export const NeumorphicDial = () => {
               </button>
             ))}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop / Tablet: dial on middle-left, half hidden
+  return (
+    <div
+      className="relative w-full rounded-2xl overflow-hidden"
+      style={{ background: s.containerBg, minHeight: dialSize }}
+    >
+      {/* Dial — anchored to left edge, vertically centered */}
+      <div
+        className="absolute top-0 bottom-0 left-0 z-10 flex items-center"
+        style={{ width: dialVisible }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            left: -(dialSize - dialVisible),
+            width: dialSize,
+            height: dialSize,
+          }}
+        >
+          {dialWheel}
+        </div>
+      </div>
+
+      {/* Active indicator dot */}
+      <div
+        className="absolute top-1/2 -translate-y-1/2 z-20"
+        style={{ left: dialVisible + 16 }}
+      >
+        <div
+          className="w-2 h-2 rounded-full"
+          style={{
+            background: 'hsl(var(--neon-cyan))',
+            boxShadow: '0 0 12px hsl(var(--neon-cyan)), 0 0 24px hsl(var(--neon-cyan) / 0.3)',
+          }}
+        />
+      </div>
+
+      {/* Content — right side */}
+      <div
+        className="relative flex flex-col justify-center pr-8 md:pr-12"
+        style={{ paddingLeft: dialVisible + 48, minHeight: dialSize }}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeIndex}
+            initial={{ opacity: 0, x: 30, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className={`${s.counterText} text-xs font-display tracking-[0.3em] uppercase mb-3`}>
+              {String(activeIndex + 1).padStart(2, '0')} / 04
+            </p>
+            <h3
+              className={`text-2xl md:text-3xl font-display font-bold mb-6 ${s.titleText}`}
+              style={{ textShadow: isDark ? '0 0 30px hsl(var(--neon-cyan) / 0.15)' : 'none' }}
+            >
+              {categories[activeIndex].title}
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              {categories[activeIndex].skills.map((skill, i) => (
+                <motion.span
+                  key={skill}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.06 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className={`px-4 py-2 rounded-full text-sm font-display font-medium ${s.skillText}`}
+                  style={{ background: s.dialBg, boxShadow: s.neuPill, border: `1px solid ${s.borderColor}` }}
+                >
+                  {skill}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="absolute bottom-6 right-8 flex gap-2">
+          {categories.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => handleSelect(i)}
+              className="relative w-8 h-1 rounded-full overflow-hidden"
+              style={{ background: s.barBg }}
+            >
+              {i === activeIndex && (
+                <motion.div
+                  layoutId="dial-indicator"
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: 'hsl(var(--neon-cyan))' }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                />
+              )}
+            </button>
+          ))}
         </div>
       </div>
     </div>
