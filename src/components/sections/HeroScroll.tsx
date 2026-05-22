@@ -155,7 +155,7 @@ export const HeroScroll = () => {
           <div 
             className="flex flex-col items-center justify-center w-full cursor-pointer"
             style={{ 
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "'Audiowide', cursive",
               pointerEvents: 'auto',
               transform: isNameHovered ? 'scale(1.04)' : 'scale(1)',
               transition: 'all 0.4s ease'
@@ -164,9 +164,9 @@ export const HeroScroll = () => {
             onMouseLeave={() => setIsNameHovered(false)}
           >
             <h1 
-              className="text-white leading-[0.85] tracking-[0.05em]"
+              className="text-white leading-[0.95] tracking-[0.05em]"
               style={{ 
-                fontSize: 'clamp(40px, 11vw, 160px)', 
+                fontSize: 'clamp(36px, 9vw, 130px)', 
                 color: isNameHovered ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)',
                 textShadow: isNameHovered ? '0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3)' : 'none',
                 WebkitTextStroke: isNameHovered ? '1px rgba(255,255,255,0.7)' : 'none',
@@ -176,9 +176,9 @@ export const HeroScroll = () => {
               MOHAMMED
             </h1>
             <h1 
-              className="text-white leading-[0.85] tracking-[0.05em]"
+              className="text-white leading-[0.95] tracking-[0.05em]"
               style={{ 
-                fontSize: 'clamp(40px, 11vw, 160px)', 
+                fontSize: 'clamp(36px, 9vw, 130px)', 
                 color: isNameHovered ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)',
                 textShadow: isNameHovered ? '0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3)' : 'none',
                 WebkitTextStroke: isNameHovered ? '1px rgba(255,255,255,0.7)' : 'none',
@@ -205,11 +205,11 @@ export const HeroScroll = () => {
             <h2 
               className="text-white font-bold mb-6" 
               style={{ 
-                fontFamily: "'Syne', sans-serif", 
-                fontSize: 'clamp(28px, 4vw, 48px)', 
-                fontWeight: 800, 
-                lineHeight: 1.2,
-                minHeight: '1.2em'
+                fontFamily: "'Audiowide', cursive", 
+                fontSize: 'clamp(24px, 3.5vw, 40px)', 
+                fontWeight: 700, 
+                lineHeight: 1.3,
+                minHeight: '1.3em'
               }}
             >
               <span>{currentText}</span>
@@ -254,7 +254,7 @@ export const HeroScroll = () => {
                   transition={{ delay: i * 0.08, duration: 0.5 }}
                   className="border-r-2 border-[#00e5ff] pr-4 py-1"
                 >
-                  <h3 className="text-white text-[28px] font-bold" style={{ fontFamily: "'Syne', sans-serif" }}>
+                  <h3 className="text-white text-[24px] font-bold" style={{ fontFamily: "'Audiowide', cursive" }}>
                     {item}
                   </h3>
                 </motion.div>
@@ -282,7 +282,7 @@ export const HeroScroll = () => {
         >
           <h2 
             className="text-white uppercase mb-4"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(52px, 8vw, 96px)', lineHeight: 1 }}
+            style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(36px, 6vw, 72px)', lineHeight: 1.2 }}
           >
             LET'S BUILD SOMETHING REAL.
           </h2>
