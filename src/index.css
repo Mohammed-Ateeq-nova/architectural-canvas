@@ -1,10 +1,10 @@
- @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&family=Syne:wght@700;800&display=swap');
- 
- @tailwind base;
- @tailwind components;
- @tailwind utilities;
- 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
  /* 
   * PORTFOLIO PLATFORM DESIGN SYSTEM
   * Theme: Glassmorphism + Brutalism + Neon
@@ -73,7 +73,7 @@
      --shadow-elevated: 0 25px 50px -12px hsla(0, 0%, 0%, 0.15);
      
      /* Typography Scale (Brutalist) */
-     --font-display: 'Space Grotesk', sans-serif;
+     --font-display: 'Audiowide', cursive;
      --font-body: 'Inter', sans-serif;
      
      /* Sidebar */
