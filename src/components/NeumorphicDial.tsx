@@ -22,7 +22,8 @@ const categories = [
   },
 ];
 
-const QUADRANT_ANGLES = [0, 90, 180, 270];
+const DESKTOP_QUADRANT_ANGLES = [0, 90, 180, 270];
+const MOBILE_QUADRANT_ANGLES = [90, 180, 270, 0];
 const SEPARATOR_ANGLES = [45, 135, 225, 315];
 const AUTO_INTERVAL = 7000;
 
@@ -92,12 +93,13 @@ export const NeumorphicDial = () => {
   const wheelRotation = cumulativeRotation.current;
 
   // Dial sizing
-  const dialSize = isMobile ? 360 : 480;
+  const dialSize = isMobile ? 520 : 560;
   const halfDial = dialSize / 2;
   const labelRadius = dialSize * 0.38;
   const hubInset = dialSize * 0.375;
   const hubButtonInset = 24;
   const grooveInset = dialSize * 0.075;
+  const QUADRANT_ANGLES = isMobile ? MOBILE_QUADRANT_ANGLES : DESKTOP_QUADRANT_ANGLES;
 
   return (
     <div
@@ -106,15 +108,15 @@ export const NeumorphicDial = () => {
     >
       <div
         className={`relative ${isMobile ? 'flex flex-col items-center' : ''}`}
-        style={{ minHeight: isMobile ? 'auto' : Math.max(420, dialSize * 0.85) }}
+        style={{ minHeight: isMobile ? 'auto' : dialSize }}
       >
         {/* === DIAL === */}
         <div
-          className={`relative z-10 ${isMobile ? '' : 'absolute top-1/2 left-0'}`}
+          className={`relative z-10 ${isMobile ? '' : 'absolute inset-y-0 left-0 flex items-center'}`}
           style={
             isMobile
-              ? { width: '100%', height: halfDial + 20, overflow: 'hidden' }
-              : { transform: `translateY(-50%) translateX(-${halfDial}px)` }
+              ? { width: '100%', height: halfDial + 100, overflow: 'hidden' }
+              : { transform: `translateX(-${halfDial}px)` }
           }
         >
           <motion.div
@@ -129,7 +131,7 @@ export const NeumorphicDial = () => {
                     left: '50%',
                     marginLeft: -halfDial,
                     position: 'absolute',
-                    top: 0,
+                    top: -190,
                   }
                 : { width: dialSize, height: dialSize }
             }
@@ -175,8 +177,8 @@ export const NeumorphicDial = () => {
               const rad = (angle * Math.PI) / 180;
               const x = halfDial + labelRadius * Math.cos(rad);
               const y = halfDial + labelRadius * Math.sin(rad);
-              // Tangent = angle + 90 so text follows the curve, then counter-rotate the wheel
-              const tangentRotation = angle + 90 - (-wheelRotation);
+              // Counter-rotate the wheel so labels always stay upright (horizontal)
+              const tangentRotation = -wheelRotation;
 
               return (
                 <motion.button
@@ -232,7 +234,10 @@ export const NeumorphicDial = () => {
 
         {/* Active indicator dot */}
         {!isMobile && (
-          <div className="absolute top-1/2 left-[18px] -translate-y-1/2 z-20">
+          <div
+            className="absolute top-1/2 -translate-y-1/2 z-20"
+            style={{ left: halfDial }}
+          >
             <div
               className="w-2 h-2 rounded-full"
               style={{

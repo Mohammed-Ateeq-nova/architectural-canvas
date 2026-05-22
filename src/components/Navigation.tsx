@@ -27,6 +27,14 @@ export const Navigation = () => {
     setIsOpen(false);
   };
 
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (isHomePage) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setIsOpen(false);
+  };
+
   return (
     <>
       {/* Desktop Navigation */}
@@ -34,12 +42,13 @@ export const Navigation = () => {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:block"
+        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden lg:block"
       >
         <div className="glass rounded-full px-2 py-2 flex items-center gap-1">
           {/* Home Link */}
           <Link
             to="/"
+            onClick={handleHomeClick}
             className={`relative px-4 py-2 text-sm font-display font-medium transition-colors duration-300 rounded-full
               ${location.pathname === '/' && !location.hash
                 ? 'text-primary-foreground' 
@@ -92,7 +101,7 @@ export const Navigation = () => {
       </motion.nav>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden fixed top-6 right-6 z-50">
+      <div className="lg:hidden fixed top-6 right-6 z-50">
         <motion.button
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -111,7 +120,7 @@ export const Navigation = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 md:hidden"
+            className="fixed inset-0 z-40 lg:hidden"
           >
             <motion.div
               initial={{ opacity: 0 }}
@@ -137,7 +146,7 @@ export const Navigation = () => {
                 >
                   <Link
                     to="/"
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleHomeClick}
                     className={`block text-2xl font-display font-bold py-2 transition-colors
                       ${location.pathname === '/'
                         ? 'dark:text-neon-cyan text-primary' 

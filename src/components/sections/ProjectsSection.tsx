@@ -190,12 +190,12 @@ const ProjectCard = ({
                     transformStyle: 'preserve-3d',
                     transform: `translateX(${x}px) translateZ(${z}px) rotateY(${tangentRotation}deg)`,
                   }}
-                  className="rounded-xl overflow-hidden shadow-lg ring-1 ring-border/50"
+                  className="group rounded-xl overflow-hidden shadow-lg ring-1 ring-border/50 transition-all duration-300 hover:shadow-[0_0_35px_rgba(234,179,8,0.9)] hover:ring-[#eab308] cursor-pointer"
                 >
                   <img
                     src={image}
                     alt={`${project.title} preview ${imgIndex + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
               );

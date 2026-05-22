@@ -1,4 +1,5 @@
  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&family=Syne:wght@700;800&display=swap');
  
  @tailwind base;
  @tailwind components;
@@ -359,4 +360,107 @@
    .animation-delay-500 { animation-delay: 500ms; }
    .animation-delay-700 { animation-delay: 700ms; }
    .animation-delay-1000 { animation-delay: 1000ms; }
+ }
+
+ /* ─── Hero Scroll Canvas ─── */
+ .hero-scroll-container {
+   position: relative;
+   width: 100%;
+   background-color: #000000 !important;
+ }
+
+ .hero-scroll-sticky {
+   position: sticky;
+   top: 0;
+   width: 100%;
+   height: 100vh;
+   overflow: hidden;
+   background-color: #000000 !important;
+ }
+
+ .hero-scroll-canvas {
+   width: 100%;
+   height: 100%;
+   display: block;
+   background-color: #000000 !important;
+ }
+
+ /* Dark gradient overlay for text legibility */
+ .hero-scroll-overlay {
+   position: absolute;
+   inset: 0;
+   background: radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);
+   pointer-events: none;
+   z-index: 5;
+ }
+
+ /* Text overlay containers */
+ .hero-scroll-text-container {
+   position: absolute;
+   inset: 0;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   padding: 2rem;
+   z-index: 10;
+   pointer-events: none;
+ }
+
+ .hero-scroll-text-container a,
+ .hero-scroll-text-container button {
+   pointer-events: auto;
+ }
+
+ .hero-scroll-text-center {
+   align-items: center;
+   text-align: center;
+ }
+
+ .hero-scroll-text-left {
+   align-items: flex-start;
+   text-align: left;
+   padding-left: clamp(2rem, 8vw, 10rem);
+   max-width: 75%;
+ }
+
+ .hero-scroll-text-right {
+   align-items: flex-end;
+   text-align: right;
+   padding-right: clamp(2rem, 8vw, 10rem);
+ }
+
+ .hero-scroll-text-right > * {
+   margin-left: auto;
+   max-width: 75%;
+ }
+
+ /* Mobile: all text centered */
+ @media (max-width: 768px) {
+   .hero-scroll-text-left,
+   .hero-scroll-text-right {
+     align-items: center;
+     text-align: center;
+     padding-left: 1.5rem;
+     padding-right: 1.5rem;
+     max-width: 100%;
+   }
+   .hero-scroll-text-right > * {
+     margin-left: auto;
+     margin-right: auto;
+     max-width: 100%;
+   }
+ }
+
+ /* Loading spinner */
+ .hero-scroll-spinner {
+   width: 48px;
+   height: 48px;
+   border-radius: 50%;
+   border: 3px solid hsl(0 0% 20%);
+   border-top-color: hsl(185 100% 50%);
+   animation: hero-spin 0.8s linear infinite;
+ }
+
+ @keyframes hero-spin {
+   to { transform: rotate(360deg); }
  }

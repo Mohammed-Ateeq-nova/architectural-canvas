@@ -1,6 +1,6 @@
 import { PageTransition } from '@/components/PageTransition';
 import {
-  HeroSection,
+  HeroScroll,
   AboutSection,
   ProjectsSection,
   ExperienceSection,
@@ -12,7 +12,7 @@ import {
 const Home = () => {
   return (
     <PageTransition className="page-container">
-      <HeroSection />
+      <HeroScroll />
       <AboutSection />
       <ProjectsSection />
       <ExperienceSection />
