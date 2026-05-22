@@ -9,6 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SiteLoader } from "@/components/SiteLoader";
 import { Navigation } from "@/components/Navigation";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 import Home from "./pages/Home";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -51,6 +52,9 @@ const App = () => {
           )}
           
           <BrowserRouter>
+            {/* Scroll reset and hash navigation behavior */}
+            <ScrollToTop />
+            
             {/* Navigation */}
             {isLoaded && <Navigation />}
             
