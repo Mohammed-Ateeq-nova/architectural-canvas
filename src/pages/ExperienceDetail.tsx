@@ -1,8 +1,29 @@
 import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, MapPin, Briefcase } from 'lucide-react';
 import { PageTransition, FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
-import { experiences } from '@/components/sections/ExperienceSection';
+import { ScrambleText } from '@/components/ScrambleText';
+import { ScrambleParagraph } from '@/components/ScrambleParagraph';
+
+const experiencesList = [
+  {
+    id: 'drdo-rci',
+    role: 'Software Development Intern',
+    company: 'DRDO — Research Centre Imarat (RCI)',
+    location: 'Hyderabad, India',
+    period: 'Jul 2025 – Sep 2025',
+    num: '01',
+  },
+  {
+    id: 'sri-datta-freelance',
+    role: 'Freelance Web Developer',
+    company: 'Sri Datta Electronics',
+    location: 'Hyderabad, India',
+    period: 'May 2025 – Jun 2025',
+    num: '02',
+  },
+];
 
 interface ExperienceDetailData {
   role: string;
@@ -59,6 +80,12 @@ const experienceDetailData: Record<string, ExperienceDetailData> = {
 
 const ExperienceDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [mounted, setMounted] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+  }, [id]);
+
   const experience = experienceDetailData[id || ''] || {
     role: 'Experience Not Found',
     company: '',
@@ -70,10 +97,18 @@ const ExperienceDetail = () => {
     technologies: [],
   };
 
-  const otherExperiences = experiences.filter(exp => exp.id !== id);
+  const otherExperiences = experiencesList.filter(exp => exp.id !== id);
 
   return (
-    <PageTransition className="page-container pt-32">
+    <PageTransition className="page-container pt-32 overflow-x-hidden max-w-[100vw]">
+      <style dangerouslySetInnerHTML={{ __html: `
+        h1, h2, h3, h4, h5, h6 {
+          max-width: 100% !important;
+          overflow-wrap: break-word !important;
+          word-break: break-word !important;
+          white-space: normal !important;
+        }
+      `}} />
       <div className="section-container mb-8">
         <FadeIn>
           <Link
@@ -89,27 +124,47 @@ const ExperienceDetail = () => {
       <section className="section-container mb-16">
         <FadeIn delay={0.1}>
           <span className="inline-block px-4 py-2 mb-6 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
-            Experience
+            <ScrambleText text="Experience" trigger={mounted} />
           </span>
         </FadeIn>
         
         <FadeIn delay={0.2}>
-          <h1 className="text-display-lg mb-4 dark:neon-text-cyan">{experience.role}</h1>
+          <h1 
+            className="mb-4 dark:neon-text-cyan uppercase font-bold tracking-tight leading-tight select-none whitespace-normal break-words"
+            style={{
+              fontFamily: "'Audiowide', cursive",
+              fontSize: 'clamp(28px, 5vw, 72px)',
+              maxWidth: '100%',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word'
+            }}
+          >
+            <ScrambleText text={experience.role} trigger={mounted} delay={200} />
+          </h1>
         </FadeIn>
         
         <FadeIn delay={0.3}>
-          <p className="text-2xl text-muted-foreground mb-6">{experience.company}</p>
+          <p 
+            className="text-2xl text-muted-foreground mb-6 select-none whitespace-normal break-words"
+            style={{
+              maxWidth: '100%',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word'
+            }}
+          >
+            <ScrambleText text={experience.company} trigger={mounted} delay={500} />
+          </p>
         </FadeIn>
         
         <FadeIn delay={0.4}>
           <div className="flex flex-wrap items-center gap-6 text-muted-foreground">
             <span className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
-              {experience.period}
+              <ScrambleText text={experience.period} trigger={mounted} delay={800} />
             </span>
             <span className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
-              {experience.location}
+              <ScrambleText text={experience.location} trigger={mounted} delay={1000} />
             </span>
           </div>
         </FadeIn>
@@ -118,10 +173,13 @@ const ExperienceDetail = () => {
       <section className="section-container mb-16">
         <SlideIn direction="up">
           <GlassCardLarge>
-            <h2 className="text-display-sm mb-6">Overview</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {experience.overview}
-            </p>
+            <ScrambleText text="Overview" as="h2" className="text-display-sm mb-6 block" />
+            <ScrambleParagraph
+              text={experience.overview}
+              className="text-lg text-muted-foreground leading-relaxed"
+              trigger={mounted}
+              wordStaggerMs={40}
+            />
           </GlassCardLarge>
         </SlideIn>
       </section>
@@ -132,7 +190,7 @@ const ExperienceDetail = () => {
             <GlassCard className="h-full">
               <div className="flex items-center gap-3 mb-6">
                 <Briefcase className="w-5 h-5 dark:text-neon-cyan" />
-                <h3 className="text-display-sm">Responsibilities</h3>
+                <ScrambleText text="Responsibilities" as="h3" className="text-display-sm block" />
               </div>
               <ul className="space-y-4">
                 {experience.responsibilities.map((item, index) => (
@@ -147,7 +205,7 @@ const ExperienceDetail = () => {
           
           <SlideIn direction="right">
             <GlassCard variant="neon" className="h-full">
-              <h3 className="text-display-sm mb-6">Key Achievements</h3>
+              <ScrambleText text="Key Achievements" as="h3" className="text-display-sm mb-6 block" />
               <ul className="space-y-4">
                 {experience.achievements.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
@@ -163,7 +221,7 @@ const ExperienceDetail = () => {
 
       <section className="section-container mb-24">
         <FadeIn>
-          <h2 className="text-display-sm mb-8">Technologies Used</h2>
+          <ScrambleText text="Technologies Used" as="h2" className="text-display-sm mb-8 block" />
         </FadeIn>
         
         <div className="flex flex-wrap gap-4 sm:gap-6">
@@ -181,7 +239,7 @@ const ExperienceDetail = () => {
         <section className="section-container pb-24">
           <FadeIn>
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-display-sm">More Experience</h2>
+              <ScrambleText text="More Experience" as="h2" className="text-display-sm block" />
               <Link
                 to="/#experience"
                 className="text-muted-foreground hover:text-foreground transition-colors font-display"

@@ -2,21 +2,28 @@ import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, ArrowUpRight, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ScrambleText } from '../ScrambleText';
 import { FadeIn } from '@/components/PageTransition';
 
 export const experiences = [
   {
     id: 'drdo-rci',
     role: 'Software Development Intern',
-    company: 'DRDO — Research Centre Imarat (RCI)',
+    company: 'DRDO — Research Centre Imarat',
     location: 'Hyderabad, India',
     period: 'Jul 2025 – Sep 2025',
     description:
       'Engineered C-based data acquisition systems with hardware protocol integrations and diagnostic GUIs for defense applications.',
     highlights: [
+      'Engineered C-based data acquisition systems with hardware protocol integrations and diagnostic GUIs for...',
       'Reduced communication errors by 35% through RS-422 & MIL-STD-1553 optimization',
-      'Built WinAPI diagnostic GUI with sub-second response times',
-      'Enhanced protocol reliability and system stability',
+      'Firebase contact forms with 95% with+practivt catalog',
+      'Built WinAPI diagnostic GUI with sub-second response times'
+    ],
+    metrics: [
+      { value: '35%', label: 'communication error reduction' },
+      { value: '200+', label: 'attendees for workshops' },
+      { value: '2,00+', label: 'attendees for workshops' }
     ],
     num: '01',
   },
@@ -29,372 +36,255 @@ export const experiences = [
     description:
       'Built a marketing website that increased client leads by 35% with interactive product catalog and modern UI animations.',
     highlights: [
-      'Increased client leads by 35% with interactive product catalog',
+      'Built a marketing website that increased client leads by 35% with interactive product catalog',
       'Firebase contact forms with 95% deliverability',
+      'Implemented modern UI animations using Framer Motion',
+      'Optimized load speeds by 40% with clean asset delivery'
+    ],
+    metrics: [
+      { value: '35%', label: 'increase in client leads' },
+      { value: '95%', label: 'contact form deliverability' },
+      { value: '40%', label: 'page load speedup' }
     ],
     num: '02',
   },
 ];
 
-const TOTAL = experiences.length;
+const ExperienceBlock = ({ exp, isFirst }: { exp: typeof experiences[0]; isFirst: boolean }) => {
+  const blockRef = useRef<HTMLDivElement>(null);
+  const [isTriggered, setIsTriggered] = useState(false);
 
-/* ─── Card ─── */
+  useEffect(() => {
+    const el = blockRef.current;
+    if (!el) return;
 
-interface CardProps {
-  exp: (typeof experiences)[0];
-  offset: number; // -1 = left, 0 = center, 1 = right (continuous)
-  isActive: boolean;
-}
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsTriggered(entry.isIntersecting);
+        });
+      },
+      { 
+        threshold: 0.1,
+        rootMargin: '0px'
+      }
+    );
 
-const ExperienceCard = ({ exp, offset, isActive }: CardProps) => {
-  // Clamp extreme offsets
-  const clamped = Math.max(-1.5, Math.min(1.5, offset));
+    observer.observe(el);
 
-  const x = clamped * 110; // % offset from center
-  const rotateY = clamped * -35; // 3D tilt
-  const scale = 1 - Math.abs(clamped) * 0.2;
-  const opacity = 1 - Math.abs(clamped) * 0.6;
-  const z = -Math.abs(clamped) * 200;
+    // Fallback if already in view
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setIsTriggered(true);
+    }
+
+    return () => {
+      observer.unobserve(el);
+    };
+  }, []);
 
   return (
-    <motion.div
-      className="absolute inset-0 flex items-center justify-center"
-      style={{
-        perspective: '1200px',
-        pointerEvents: isActive ? 'auto' : 'none',
-      }}
+    <div
+      ref={blockRef}
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start relative min-h-[60vh] py-16 border-b border-border/20 last:border-b-0"
     >
-      <motion.div
-        animate={{
-          x: `${x}%`,
-          rotateY,
-          scale,
-          opacity,
-          z,
-        }}
-        transition={{ type: 'spring', stiffness: 200, damping: 35, mass: 1 }}
-        style={{ transformStyle: 'preserve-3d' }}
-      >
-        <Link to={`/experience/${exp.id}`} className="block">
-          <div
-            className={`
-              group relative w-[340px] md:w-[460px] rounded-3xl p-8 md:p-10
-              glass overflow-hidden
-              transition-shadow duration-700
-              ${isActive ? 'dark:shadow-[0_0_80px_-10px_hsla(185,100%,50%,0.25)] shadow-[0_30px_80px_-20px_hsla(0,0%,0%,0.2)]' : ''}
-            `}
+      {/* Left Column (Sticky info on desktop, relative block on mobile) */}
+      <div className="lg:col-span-5 lg:sticky lg:top-28 flex flex-col justify-start items-start gap-4">
+        {/* Ghost Numeral */}
+        <div className="relative w-full mb-2">
+          <motion.div 
+            initial={{ opacity: 0, y: -40 }}
+            animate={isTriggered ? { opacity: 1, y: 0 } : { opacity: 0, y: -40 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute -top-20 -left-10 experience-ghost-num pointer-events-none select-none z-0"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(160px, 22vw, 320px)', lineHeight: 0.8 }}
           >
-            {/* Top accent line */}
-            <div
-              className={`
-                absolute top-0 left-0 h-[2px] transition-all duration-700
-                ${isActive
-                  ? 'w-full bg-gradient-to-r from-transparent via-foreground dark:via-[hsl(var(--neon-cyan))] to-transparent'
-                  : 'w-0 bg-transparent'}
-              `}
-            />
+            <ScrambleText text={exp.num} trigger={isTriggered} />
+          </motion.div>
 
-            {/* Number */}
-            <div className="flex items-center justify-between mb-8">
-              <span
-                className={`
-                  text-6xl md:text-7xl font-display font-black leading-none
-                  transition-colors duration-500
-                  ${isActive ? 'text-foreground/15 dark:text-[hsl(var(--neon-cyan))]/15' : 'text-foreground/5'}
-                `}
-              >
-                {exp.num}
-              </span>
-              <ArrowUpRight
-                className={`
-                  w-5 h-5 transition-all duration-500
-                  ${isActive ? 'opacity-100 translate-x-0 -translate-y-0' : 'opacity-0 -translate-x-2 translate-y-2'}
-                `}
-              />
-            </div>
+          {/* Role Title */}
+          <h3 
+            className="text-foreground uppercase font-normal tracking-tight relative z-10"
+            style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(28px, 3.5vw, 44px)', lineHeight: 1.15 }}
+          >
+            <ScrambleText text={exp.role} trigger={isTriggered} delay={500} />
+          </h3>
+        </div>
 
-            {/* Meta pills */}
-            <div className="flex flex-wrap items-center gap-2 mb-5">
-              <span className="flex items-center gap-1.5 text-xs glass rounded-full px-3 py-1.5 text-muted-foreground">
-                <Calendar className="w-3 h-3" />
-                {exp.period}
-              </span>
-              <span className="flex items-center gap-1.5 text-xs glass rounded-full px-3 py-1.5 text-muted-foreground">
-                <MapPin className="w-3 h-3" />
-                {exp.location}
-              </span>
-            </div>
+        {/* Company Name */}
+        <p 
+          className="text-muted-foreground uppercase tracking-wider font-semibold relative z-10"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(14px, 1.2vw, 17px)' }}
+        >
+          <ScrambleText text={exp.company} trigger={isTriggered} delay={650} />
+        </p>
 
-            {/* Title & company */}
-            <h3
-              className={`
-                text-xl md:text-2xl font-display font-bold mb-1.5 transition-colors duration-500
-                ${isActive ? 'dark:text-[hsl(var(--neon-cyan))]' : ''}
-              `}
+        {/* Period and Location Badges */}
+        <div className="flex flex-wrap items-center gap-3 relative z-10 mt-2">
+          <span className="flex items-center gap-2 text-xs border border-border/30 dark:border-border/10 glass rounded-full px-4 py-2 text-muted-foreground">
+            <Calendar className="w-3.5 h-3.5" />
+            <ScrambleText text={exp.period} trigger={isTriggered} delay={750} />
+          </span>
+          <span className="flex items-center gap-2 text-xs border border-border/30 dark:border-border/10 glass rounded-full px-4 py-2 text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5" />
+            <ScrambleText text={exp.location} trigger={isTriggered} delay={850} />
+          </span>
+        </div>
+
+        {/* Scroll Hint (Only on first entry, hidden on mobile) */}
+        {isFirst && (
+          <div className="hidden lg:flex flex-col items-start gap-2 text-muted-foreground/60 select-none mt-20">
+            <span className="text-[10px] tracking-[0.3em] font-semibold" style={{ fontFamily: "'Courier New', monospace" }}>
+              SCROLL TO EXPLORE
+            </span>
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
             >
-              {exp.role}
-            </h3>
-            <p className="text-base text-muted-foreground mb-5 font-medium">{exp.company}</p>
+              <span className="text-lg">↓</span>
+            </motion.div>
+          </div>
+        )}
+      </div>
 
-            {/* Description */}
-            <p className="text-sm text-muted-foreground/80 leading-relaxed mb-6 line-clamp-2">
-              {exp.description}
-            </p>
+      {/* Right Column (Details Card) */}
+      <div className="lg:col-span-7 flex justify-end w-full">
+        <motion.div
+          initial={{ opacity: 0, x: 60 }}
+          animate={isTriggered ? { opacity: 1, x: 0 } : { opacity: 0, x: 60 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full"
+        >
+          <Link 
+            to={`/experience/${exp.id}`}
+            className="block w-full text-left"
+          >
+            <div
+              className="group relative w-full rounded-[32px] p-6 md:p-10 border border-border/30 dark:border-border/10 shadow-[0_20px_50px_rgba(0,0,0,0.02)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-card overflow-hidden hover:shadow-[0_25px_60px_-10px_rgba(0,229,255,0.12)] transition-all duration-500 hover:border-[#00e5ff]/30 dark:hover:border-[#00e5ff]/20"
+            >
+              {/* Hover top highlight */}
+              <div className="absolute top-0 left-0 w-0 h-[2px] bg-[#00e5ff] group-hover:w-full transition-all duration-500" />
 
-            {/* Highlights */}
-            <ul className="space-y-2.5">
-              {exp.highlights.slice(0, 2).map((h, i) => (
-                <li key={i} className="flex items-start gap-2.5">
-                  <span
-                    className={`
-                      w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 transition-colors duration-500
-                      ${isActive ? 'bg-foreground dark:bg-[hsl(var(--neon-cyan))]' : 'bg-muted-foreground/30'}
-                    `}
-                  />
-                  <span className="text-sm text-muted-foreground">{h}</span>
+              {/* Header / Company */}
+              <h4 
+                className="text-xl md:text-2xl font-bold mb-4 text-foreground uppercase tracking-wide"
+                style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(16px, 1.8vw, 22px)' }}
+              >
+                <ScrambleText text={exp.company} trigger={isTriggered} delay={600} />
+              </h4>
+
+              {/* Summary */}
+              <p className="text-sm md:text-base text-muted-foreground/80 leading-relaxed mb-6 font-medium">
+                {exp.description}
+              </p>
+
+              {/* Metrics Row */}
+              <div className="flex flex-row gap-3 md:gap-4 mb-8">
+                {exp.metrics?.map((m, mIdx) => (
+                  <div 
+                    key={mIdx}
+                    className="flex-1 bg-background/50 border border-border/20 dark:border-border/10 rounded-2xl p-4 pt-3 flex flex-col justify-start relative overflow-hidden border-t-4 border-t-[#00e5ff]/90 shadow-sm"
+                  >
+                    <span 
+                      className="text-foreground font-normal mb-0.5"
+                      style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(26px, 3.2vw, 42px)', lineHeight: 1 }}
+                    >
+                      <ScrambleText text={m.value} trigger={isTriggered} delay={1100 + mIdx * 120} />
+                    </span>
+                    <span 
+                      className="text-[9px] md:text-[10px] text-muted-foreground/70 font-semibold leading-tight uppercase tracking-wider"
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                    >
+                      {m.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+            {/* Highlights with Left Accent Bars */}
+            <ul className="space-y-4 mb-8">
+              {exp.highlights.map((h, hIdx) => (
+                <li key={hIdx} className="flex items-stretch gap-4">
+                  <div className="w-[3px] bg-[#00e5ff] rounded-full shrink-0" />
+                  <span className="text-sm md:text-base text-muted-foreground py-0.5 leading-relaxed font-medium">
+                    {h}
+                  </span>
                 </li>
               ))}
             </ul>
+
+            {/* View Details Link */}
+            <div className="flex justify-end mt-4">
+              <div 
+                className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-[#00e5ff] uppercase tracking-wider transition-colors duration-300"
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
+              >
+                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                <span>view details</span>
+              </div>
+            </div>
           </div>
         </Link>
       </motion.div>
-    </motion.div>
+    </div>
+    </div>
   );
 };
 
-/* ─── Progress Bar ─── */
-
-const ProgressBar = ({
-  progress,
-  activeIndex,
-}: {
-  progress: number;
-  activeIndex: number;
-}) => (
-  <div className="flex items-center gap-4">
-    <div className="flex gap-2">
-      {Array.from({ length: TOTAL }).map((_, i) => (
-        <div
-          key={i}
-          className={`
-            h-1.5 rounded-full transition-all duration-500
-            ${i === activeIndex
-              ? 'w-10 bg-foreground dark:bg-[hsl(var(--neon-cyan))]'
-              : 'w-4 bg-muted-foreground/20'}
-          `}
-        />
-      ))}
-    </div>
-    <span className="text-xs font-mono text-muted-foreground tabular-nums">
-      {String(activeIndex + 1).padStart(2, '0')}/{String(TOTAL).padStart(2, '0')}
-    </span>
-  </div>
-);
-
-/* ─── Section ─── */
-
 export const ExperienceSection = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerTrigger, setHeaderTrigger] = useState(false);
 
-  const handleNext = () => setActiveIndex((prev) => Math.min(prev + 1, TOTAL - 1));
-  const handlePrev = () => setActiveIndex((prev) => Math.max(prev - 1, 0));
-
-  // Handle horizontal scroll (mouse wheel or trackpad)
   useEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
+    const el = headerRef.current;
+    if (!el) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      // Check if it's a horizontal scroll or shift+vertical scroll
-      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey;
-      
-      if (isHorizontal) {
-        e.preventDefault();
-        
-        // Clear any pending scroll timeout
-        if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-        }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setHeaderTrigger(entry.isIntersecting);
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-        // Determine scroll direction
-        const delta = e.deltaX || e.deltaY;
-        
-        // Debounce the scroll to prevent too rapid switching
-        scrollTimeoutRef.current = setTimeout(() => {
-          if (delta > 0 && activeIndex < TOTAL - 1) {
-            // Scroll right - next
-            handleNext();
-          } else if (delta < 0 && activeIndex > 0) {
-            // Scroll left - previous
-            handlePrev();
-          }
-        }, 50);
-      }
-    };
-
-    carousel.addEventListener('wheel', handleWheel, { passive: false });
+    observer.observe(el);
 
     return () => {
-      carousel.removeEventListener('wheel', handleWheel);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
+      observer.unobserve(el);
     };
-  }, [activeIndex]);
+  }, []);
 
   return (
-    <section
-      className="relative bg-secondary/20 py-24 md:py-32"
-      id="experience"
-    >
-      {/* Header */}
-      <div className="section-container mb-12 md:mb-16">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <div>
-            <FadeIn>
-              <span className="inline-flex items-center gap-2 px-4 py-2 mb-5 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
-                <Briefcase className="w-3.5 h-3.5" />
-                Experience
-              </span>
-            </FadeIn>
-            <FadeIn delay={0.1}>
-              <h2 className="text-display-lg">
-                Professional <span className="dark:neon-text-cyan">Journey</span>
-              </h2>
-            </FadeIn>
-          </div>
-          <FadeIn delay={0.2}>
-            <div className="flex items-center gap-4">
-              <ProgressBar progress={0} activeIndex={activeIndex} />
-              <div className="flex gap-2">
-                <button
-                  onClick={handlePrev}
-                  disabled={activeIndex === 0}
-                  className="w-10 h-10 rounded-full glass flex items-center justify-center disabled:opacity-30 transition-opacity"
-                  aria-label="Previous"
-                >
-                  <ArrowUpRight className="w-4 h-4 rotate-[-135deg]" />
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={activeIndex === TOTAL - 1}
-                  className="w-10 h-10 rounded-full glass flex items-center justify-center disabled:opacity-30 transition-opacity"
-                  aria-label="Next"
-                >
-                  <ArrowUpRight className="w-4 h-4 rotate-45" />
-                </button>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
+    <section className="relative bg-secondary/5 py-24 md:py-32" id="experience">
+      {/* Scoped Styles for Experience Ghost Numerals */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .experience-ghost-num {
+          color: rgba(60, 60, 60, 0.18) !important;
+          transition: color 0.4s ease;
+        }
+        .dark .experience-ghost-num {
+          color: rgba(0, 229, 255, 0.16) !important;
+        }
+      `}} />
+
+      {/* Section Heading (Separate, not on individual blocks) */}
+      <div className="section-container mb-12 md:mb-16" ref={headerRef}>
+        <FadeIn>
+          <span 
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium tracking-widest uppercase border border-border/30 dark:border-border/10 glass rounded-full"
+            style={{ fontFamily: "'Audiowide', cursive" }}
+          >
+            <Briefcase className="w-3.5 h-3.5 text-foreground" />
+            <ScrambleText text="EXPERIENCE" trigger={headerTrigger} />
+          </span>
+        </FadeIn>
       </div>
 
-      {/* Carousel area */}
-      <div 
-        ref={carouselRef}
-        className="relative h-[500px] md:h-[560px] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing"
-      >
-        {experiences.map((exp, i) => (
-          <ExperienceCard
-            key={exp.id}
-            exp={exp}
-            offset={i - activeIndex}
-            isActive={i === activeIndex}
-          />
+      <div className="section-container space-y-24 md:space-y-36">
+        {experiences.map((exp, idx) => (
+          <ExperienceBlock key={exp.id} exp={exp} isFirst={idx === 0} />
         ))}
-      </div>
-
-      {/* Scroll hint */}
-      <div className="section-container mt-6 flex justify-center">
-        <div className="relative w-12 h-8 opacity-60">
-          {/* Finger icon */}
-          <motion.div
-            animate={{
-              x: [-8, 8, -8],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-muted-foreground"
-            >
-              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
-              <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
-              <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
-              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-            </svg>
-          </motion.div>
-          
-          {/* Left arrow hint */}
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.7, 0.3],
-              x: [-12, -8, -12],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute left-0 top-1/2 -translate-y-1/2"
-          >
-            <svg
-              width="8"
-              height="8"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-muted-foreground"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </motion.div>
-          
-          {/* Right arrow hint */}
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.7, 0.3],
-              x: [12, 8, 12],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute right-0 top-1/2 -translate-y-1/2"
-          >
-            <svg
-              width="8"
-              height="8"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-muted-foreground"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </motion.div>
-        </div>
       </div>
     </section>
   );

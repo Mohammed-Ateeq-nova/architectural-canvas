@@ -32,7 +32,7 @@
          // Check if SDK already loaded
          if (!window.UnicornStudio) {
            const script = document.createElement('script');
-           script.src = 'https://cdn.jsdelivr.net/gh/AidenMaxwell/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js';
+           script.src = 'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.12/dist/unicornStudio.umd.js';
            script.async = true;
            
            await new Promise<void>((resolve, reject) => {

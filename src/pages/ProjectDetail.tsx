@@ -1,12 +1,10 @@
 import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
 import { PageTransition, FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
+import { ScrambleText } from '@/components/ScrambleText';
+import { ScrambleParagraph } from '@/components/ScrambleParagraph';
 
 interface TechItem {
   name: string;
@@ -26,6 +24,8 @@ interface ProjectData {
   tech: TechItem[];
   liveUrl?: string;
   githubUrl?: string;
+  image?: string;
+  youtubeId?: string;
 }
 
 const projectData: Record<string, ProjectData> = {
@@ -48,23 +48,54 @@ const projectData: Record<string, ProjectData> = {
       { name: 'Firebase', usage: 'Stored health metrics and provided real-time database sync' },
     ],
     githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
+    image: '/projects/heart-risk/analysis.png',
+    youtubeId: 'OCVLf9s7SJk',
   },
-  'face-liveness-detection': {
-    title: 'Face Liveness Detection System',
-    category: 'Machine Learning',
-    overview: 'A browser-based face liveness detection system that runs entirely client-side, enabling real-time liveness classification without any server dependencies for maximum privacy and minimal latency.',
+  'factguard-ai': {
+    title: 'FactGuard AI — Misinformation Tackling AI',
+    category: 'AI / Conversational',
+    overview: 'A real-time fact-checking conversational AI that searches the web, evaluates source credibility, and leverages local Llama 3.1 8B inference to generate structured evidence-backed reports.',
     documentation: {
-      context: 'Face recognition systems are vulnerable to spoofing attacks using photos, videos, or masks. Liveness detection adds a critical security layer, and running it in-browser removes server dependency, reducing latency and improving privacy.',
-      approach: 'Fine-tuned a MobileNetV3 model for binary liveness classification (real vs. spoofed). Optimized the model for browser deployment using ONNX format, enabling real-time inference directly in the user\'s browser.',
-      implementation: 'Trained and fine-tuned the MobileNetV3 architecture using TensorFlow for real-time liveness classification. Converted the model to ONNX format and deployed it in-browser using ONNX.js, achieving low-latency interactive inference without any server-side processing.',
+      context: 'With the rapid spread of digital misinformation, journalists, researchers, and general users require transparent, source-backed claim evaluation. FactGuard AI solves this by executing automated web searches and generating transparent, audit-ready reports.',
+      approach: 'Designed an automated search-retrieval pipeline that ranks source relevance and credibility. Claim decomposition, credibility evaluation, and evidence extraction are offloaded to Llama 3.1 8B running locally on consumer hardware via Ollama.',
+      implementation: 'Built a high-performance frontend with React, Vite, and TanStack Query. Integrated a Supabase Edge Function to choreograph Deno-based search calls, nomic-embed-text deduplication, and Llama 3.1 reasoning APIs. Fully secured using Postgres Row-Level Security (RLS).',
+      architecture: 'User Submit → Dashboard Page → Supabase Edge Function → Web Search API → Source Evaluation (Ollama embeddings) → Evidence Analysis (Llama 3.1 8B) → RLS Database Write → React Dashboard Report.',
     },
     tech: [
-      { name: 'TensorFlow', usage: 'Trained and fine-tuned MobileNetV3 for liveness classification' },
-      { name: 'MobileNetV3', usage: 'Lightweight architecture enabling real-time browser inference' },
-      { name: 'ONNX.js', usage: 'Deployed the model client-side for serverless, low-latency inference' },
-      { name: 'TensorFlow.js', usage: 'Model conversion and browser-compatible tensor operations' },
+      { name: 'React', usage: 'Modern frontend framework with a fully responsive, dark-mode native interface' },
+      { name: 'TypeScript', usage: 'Ensures type-safe client data and reliable document structures' },
+      { name: 'Ollama', usage: 'Hosts Llama 3.1 8B and nomic-embed-text locally on consumer hardware' },
+      { name: 'Llama 3.1 8B', usage: 'Executes reasoning, claim decomposition, source ranking, and verdict synthesis' },
+      { name: 'Supabase', usage: 'Postgres database, Row-Level Security, email/Google authentication, and Edge Functions' },
+      { name: 'nomic-embed-text', usage: 'Generates high-quality text embeddings used for source de-duplication' },
+      { name: 'Tailwind CSS', usage: 'Sleek dark-mode native interface utilizing semantic HSL design tokens' },
     ],
     githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
+    image: '/projects/factguard/report.png',
+    youtubeId: 'klMG3hyQNNo',
+  },
+  'vidyaai': {
+    title: 'VidyaAI — CBSE AI Learning System',
+    category: 'AI / Education',
+    overview: 'A premium AI-powered academic tutoring companion designed for students studying under the CBSE curriculum (Classes 1-10), delivering syllabus-aligned chat support, structured exam notes, and a zero-server client-side RAG document pipeline.',
+    documentation: {
+      context: 'Traditional general-purpose AI systems lack curriculum context and grading scoping, often offering overly complex or out-of-scope guidance for K-10 primary and secondary school tutoring. VidyaAI solves this by enforcing curriculum boundaries and NCERT references.',
+      approach: 'Built a specialized triple-learning mode (Friendly Chat, Structured Study Notes, and Audio Overview) that dynamically scopes prompt generation. Offloaded retrieval grounding to browser-side PDF text extraction using pdfjs-dist, eliminating heavy server-side databases.',
+      implementation: 'Developed a rich React and TypeScript client integrated with the high-throughput Groq LLaMA 3.3 70B API. Configured a dual-channel text-to-speech engine using Google Gemini 2.0 (oral script translation) and ElevenLabs (TTS voice synthesis) with browser-native Web Speech player fallback. Stored session summaries inside Postgres with Row-Level Security (RLS).',
+      architecture: 'User Select → CBSE System Prompt Construct → Chapter File Upload (pdfjs-dist parse) → Groq LLaMA 3.3 70B API (SSE stream) → RLS Database Sync (Supabase PostgreSQL) → Gemini script gen → ElevenLabs audio compilation.',
+    },
+    tech: [
+      { name: 'React & TypeScript', usage: 'Modern component architecture and strong types ensuring high code quality' },
+      { name: 'Groq API', usage: 'High-throughput LLaMA 3.3 70B streaming for real-time tutoring chat' },
+      { name: 'Google Gemini', usage: 'Generates conversational, mathematical-formula-free spoken scripts for synthesis' },
+      { name: 'ElevenLabs', usage: 'High-fidelity audio synthesis providing natural educator spoken voice streams' },
+      { name: 'pdfjs-dist', usage: 'Performs zero-cost client-side text scanning and textbook file parsing in-browser' },
+      { name: 'Supabase', usage: 'Managed PostgreSQL database, Row-Level Security logs, and secure user Auth flow' },
+      { name: 'Tailwind CSS', usage: 'Sleek responsive design integrated with accessible Shadcn component layer' },
+    ],
+    githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
+    image: '/projects/vidhya-ai/response.png',
+    youtubeId: 'mAOCQmXceQg',
   },
   'docchat-ai': {
     title: 'DocChat AI',
@@ -84,6 +115,8 @@ const projectData: Record<string, ProjectData> = {
       { name: 'Tailwind CSS', usage: 'Responsive, utility-first styling for the chat interface' },
     ],
     githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
+    image: '/projects/docchat/response.png',
+    youtubeId: 'NidchVmHeNY',
   },
   'sri-datta-electronics': {
     title: 'Sri Datta Electronics — Marketing Platform',
@@ -104,11 +137,19 @@ const projectData: Record<string, ProjectData> = {
     ],
     liveUrl: 'https://www.sridattaelectronics.com',
     githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
-  },
+    image: '/projects/sri-datta/projuct_details.png',
+  }
 };
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 300);
+    return () => clearTimeout(t);
+  }, []);
+
   const project = projectData[id || ''] || {
     title: 'Project Not Found',
     category: '',
@@ -122,7 +163,15 @@ const ProjectDetail = () => {
   };
 
   return (
-    <PageTransition className="page-container pt-32">
+    <PageTransition className="page-container pt-32 overflow-x-hidden max-w-[100vw]">
+      <style dangerouslySetInnerHTML={{ __html: `
+        h1, h2, h3, h4, h5, h6 {
+          max-width: 100% !important;
+          overflow-wrap: break-word !important;
+          word-break: break-word !important;
+          white-space: normal !important;
+        }
+      `}} />
       {/* Back Navigation */}
       <div className="section-container mb-8">
         <FadeIn>
@@ -140,18 +189,32 @@ const ProjectDetail = () => {
       <section className="section-container mb-16">
         <FadeIn delay={0.1}>
           <span className="inline-block px-4 py-2 mb-6 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
-            {project.category}
+            <ScrambleText text={project.category || 'Project'} trigger={mounted} delay={0} />
           </span>
         </FadeIn>
         
         <FadeIn delay={0.2}>
-          <h1 className="text-display-lg mb-6 dark:neon-text-cyan">{project.title}</h1>
+          <h1 
+            className="mb-6 dark:neon-text-cyan uppercase font-bold tracking-tight leading-tight select-none whitespace-normal break-words"
+            style={{
+              fontFamily: "'Audiowide', cursive",
+              fontSize: 'clamp(28px, 5vw, 72px)',
+              maxWidth: '100%',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word'
+            }}
+          >
+            <ScrambleText text={project.title} trigger={mounted} delay={200} />
+          </h1>
         </FadeIn>
         
         <FadeIn delay={0.3}>
-          <p className="text-xl text-muted-foreground max-w-3xl">
-            {project.overview}
-          </p>
+          <ScrambleParagraph
+            text={project.overview}
+            className="text-xl text-muted-foreground max-w-3xl"
+            trigger={mounted}
+            wordStaggerMs={40}
+          />
         </FadeIn>
         
         {/* Action Buttons */}
@@ -183,36 +246,55 @@ const ProjectDetail = () => {
         </FadeIn>
       </section>
 
+      {/* Project Hero Image / Video */}
+      {(project.youtubeId || project.image) && (
+        <section className="section-container mb-16">
+          <FadeIn delay={0.5}>
+            <div className="w-full aspect-[16/9] rounded-[24px] overflow-hidden border border-border/30 dark:border-border/10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.2)] bg-card relative">
+              {project.youtubeId ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${project.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${project.youtubeId}&controls=1&rel=0&playsinline=1`}
+                  title={`${project.title} video demonstration`}
+                  className="w-full h-full absolute inset-0 border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <img 
+                  src={project.image} 
+                  alt={`${project.title} preview`}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+          </FadeIn>
+        </section>
+      )}
+
       {/* Documentation Section */}
       <section className="section-container mb-24">
         <FadeIn>
-          <h2 className="text-display-sm mb-8">Documentation</h2>
+          <ScrambleText text="Documentation" as="h2" className="text-display-sm mb-8 block" />
         </FadeIn>
         
         <SlideIn direction="up">
           <GlassCard hover={false} className="space-y-8">
             <div>
-              <h3 className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan">
-                Context
-              </h3>
+              <ScrambleText text="Context" as="h3" className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan block" />
               <p className="text-muted-foreground leading-relaxed">
                 {project.documentation.context}
               </p>
             </div>
             
             <div>
-              <h3 className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan">
-                Approach
-              </h3>
+              <ScrambleText text="Approach" as="h3" className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan block" />
               <p className="text-muted-foreground leading-relaxed">
                 {project.documentation.approach}
               </p>
             </div>
             
             <div>
-              <h3 className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan">
-                Implementation
-              </h3>
+              <ScrambleText text="Implementation" as="h3" className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan block" />
               <p className="text-muted-foreground leading-relaxed">
                 {project.documentation.implementation}
               </p>
@@ -220,9 +302,7 @@ const ProjectDetail = () => {
             
             {project.documentation.architecture && (
               <div>
-                <h3 className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan">
-                  Architecture
-                </h3>
+                <ScrambleText text="Architecture" as="h3" className="font-display font-semibold text-lg mb-3 dark:text-neon-cyan block" />
                 <p className="text-muted-foreground leading-relaxed">
                   {project.documentation.architecture}
                 </p>
@@ -235,32 +315,26 @@ const ProjectDetail = () => {
       {/* Tech Stack */}
       <section className="section-container mb-24">
         <FadeIn>
-          <h2 className="text-display-sm mb-8">Technology Stack</h2>
+          <ScrambleText text="Technology Stack" as="h2" className="text-display-sm mb-8 block" />
         </FadeIn>
         
         <div className="flex flex-wrap gap-4">
           {project.tech.map((tech, index) => (
-            <FadeIn key={tech.name} delay={0.05 * index}>
-              <HoverCard openDelay={200} closeDelay={100}>
-                <HoverCardTrigger asChild>
-                  <span className="glass rounded-full px-6 py-3 font-display font-medium cursor-pointer transition-all duration-300 hover:scale-105 dark:hover:shadow-glow-cyan inline-block">
+            <FadeIn key={tech.name} delay={0.05 * index} className="relative group">
+              <span className="glass rounded-full px-6 py-3 font-display font-medium cursor-pointer transition-all duration-300 hover:scale-105 dark:hover:shadow-glow-cyan inline-block">
+                {tech.name}
+              </span>
+              {/* Custom High-Performance Premium Tooltip */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-72 glass-heavy p-4 rounded-xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 pointer-events-none transition-all duration-300 z-50 text-left border-0 shadow-lg">
+                <div className="space-y-2">
+                  <h4 className="font-display font-semibold dark:text-neon-cyan">
                     {tech.name}
-                  </span>
-                </HoverCardTrigger>
-                <HoverCardContent 
-                  className="glass-heavy w-72 border-0 p-4"
-                  sideOffset={8}
-                >
-                  <div className="space-y-2">
-                    <h4 className="font-display font-semibold dark:text-neon-cyan">
-                      {tech.name}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {tech.usage}
-                    </p>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {tech.usage}
+                  </p>
+                </div>
+              </div>
             </FadeIn>
           ))}
         </div>
@@ -270,7 +344,7 @@ const ProjectDetail = () => {
       <section className="section-container pb-24">
         <FadeIn>
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-display-sm">More Projects</h2>
+            <ScrambleText text="More Projects" as="h2" className="text-display-sm block" />
             <Link
               to="/#projects"
               className="text-muted-foreground hover:text-foreground transition-colors font-display"
@@ -288,7 +362,17 @@ const ProjectDetail = () => {
               <FadeIn key={key} delay={0.1 * index}>
                 <Link to={`/projects/${key}`}>
                   <GlassCard className="group">
-                    <div className="aspect-[4/3] bg-muted rounded-lg mb-4" />
+                    <div className="aspect-[4/3] rounded-lg mb-4 overflow-hidden border border-border/20 dark:border-border/10 bg-muted">
+                      {proj.image ? (
+                        <img 
+                          src={proj.image} 
+                          alt={proj.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted" />
+                      )}
+                    </div>
                     <span className="text-xs font-display uppercase tracking-widest text-muted-foreground mb-1 block">
                       {proj.category}
                     </span>

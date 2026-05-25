@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SiteLoader } from "@/components/SiteLoader";
@@ -18,18 +18,24 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const ProjectDetailWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  return <ProjectDetail key={id} />;
+};
+
+const ExperienceDetailWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  return <ExperienceDetail key={id} />;
+};
+
 const AnimatedRoutes = () => {
-  const location = useLocation();
-  
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="/experience/:id" element={<ExperienceDetail />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/projects/:id" element={<ProjectDetailWrapper />} />
+      <Route path="/experience/:id" element={<ExperienceDetailWrapper />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
@@ -47,7 +53,7 @@ const App = () => {
           {!isLoaded && (
             <SiteLoader 
               onLoadComplete={() => setIsLoaded(true)}
-              minDisplayTime={2500}
+              minDisplayTime={5000}
             />
           )}
           

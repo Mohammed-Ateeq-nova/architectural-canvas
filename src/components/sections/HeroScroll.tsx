@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useAnimationFrame } from 'framer-motion';
+import { motion, useScroll, useTransform, useAnimationFrame, useMotionValueEvent } from 'framer-motion';
 import { Mail, Github, Linkedin } from 'lucide-react';
+import { ScrambleText } from '../ScrambleText';
+import { ScrambleParagraph } from '../ScrambleParagraph';
 
 export const HeroScroll = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,6 +83,19 @@ export const HeroScroll = () => {
 
   // Scroll animations
   const { scrollYProgress } = useScroll({ target: containerRef });
+  
+  // Phase active states for ScrambleText triggers
+  const [phase1Active, setPhase1Active] = useState(true);
+  const [phase2Active, setPhase2Active] = useState(false);
+  const [phase3Active, setPhase3Active] = useState(false);
+  const [phase4Active, setPhase4Active] = useState(false);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setPhase1Active(latest >= 0.00 && latest <= 0.20);
+    setPhase2Active(latest >= 0.22 && latest <= 0.52);
+    setPhase3Active(latest >= 0.55 && latest <= 0.80);
+    setPhase4Active(latest >= 0.82 && latest <= 1.00);
+  });
   
   // Map scroll progress 0->0.75 to frame index 0->58
   const frameIndex = useTransform(scrollYProgress, [0, 0.75], [0, 58]);
@@ -163,8 +178,12 @@ export const HeroScroll = () => {
             onMouseEnter={() => setIsNameHovered(true)}
             onMouseLeave={() => setIsNameHovered(false)}
           >
-            <h1 
-              className="text-white leading-[0.95] tracking-[0.05em]"
+            <ScrambleText
+              text="MOHAMMED"
+              className="text-white leading-[0.95] tracking-[0.05em] block"
+              as="h1"
+              trigger={phase1Active}
+              delay={400}
               style={{ 
                 fontSize: 'clamp(36px, 9vw, 130px)', 
                 color: isNameHovered ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)',
@@ -172,11 +191,13 @@ export const HeroScroll = () => {
                 WebkitTextStroke: isNameHovered ? '1px rgba(255,255,255,0.7)' : 'none',
                 transition: 'all 0.4s ease'
               }}
-            >
-              MOHAMMED
-            </h1>
-            <h1 
-              className="text-white leading-[0.95] tracking-[0.05em]"
+            />
+            <ScrambleText
+              text="ATEEQ"
+              className="text-white leading-[0.95] tracking-[0.05em] block"
+              as="h1"
+              trigger={phase1Active}
+              delay={400}
               style={{ 
                 fontSize: 'clamp(36px, 9vw, 130px)', 
                 color: isNameHovered ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)',
@@ -184,9 +205,7 @@ export const HeroScroll = () => {
                 WebkitTextStroke: isNameHovered ? '1px rgba(255,255,255,0.7)' : 'none',
                 transition: 'all 0.4s ease'
               }}
-            >
-              ATEEQ
-            </h1>
+            />
           </div>
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center text-white/40 uppercase tracking-[0.3em] text-[11px] animate-pulse">
             Scroll &darr;
@@ -199,9 +218,12 @@ export const HeroScroll = () => {
           style={{ opacity: phase2Opacity, x: phase2X }}
         >
           <div className="backdrop-blur-md bg-black/40 rounded-lg max-w-[480px] p-10 border border-white/5">
-            <p className="text-[13px] tracking-[0.3em] text-[#00e5ff] uppercase mb-4 font-medium" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              MOHAMMED ATEEQ
-            </p>
+            <ScrambleText
+              text="MOHAMMED ATEEQ"
+              className="text-[13px] tracking-[0.3em] text-[#00e5ff] uppercase mb-4 font-medium block"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              trigger={phase2Active}
+            />
             <h2 
               className="text-white font-bold mb-6" 
               style={{ 
@@ -215,18 +237,19 @@ export const HeroScroll = () => {
               <span>{currentText}</span>
               <span className="text-[#00e5ff] animate-pulse ml-1">|</span>
             </h2>
-            <p 
+            <ScrambleParagraph
+              text="CS undergraduate at Anurag University, Hyderabad. I build scalable web apps, AI-driven systems, and defense-grade hardware-software integrations. I write clean, efficient code that solves real problems and delivers measurable impact."
               className="text-[#aaaaaa] text-[15px] leading-[1.7] mb-6"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              CS undergraduate at Anurag University, Hyderabad. I build scalable web apps, AI-driven systems, and defense-grade hardware-software integrations. I write clean, efficient code that solves real problems and delivers measurable impact.
-            </p>
-            <p 
-              className="text-sm italic text-[#00e5ff]/80"
+              wordStaggerMs={60}
+              trigger={phase2Active}
+            />
+            <ScrambleText
+              text="Clean architecture · User-first design · Relentless iteration"
+              className="text-sm italic text-[#00e5ff]/80 block"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              Clean architecture &middot; User-first design &middot; Relentless iteration
-            </p>
+              trigger={phase2Active}
+            />
           </div>
         </motion.div>
 
@@ -236,39 +259,44 @@ export const HeroScroll = () => {
           style={{ opacity: phase3Opacity, x: phase3X }}
         >
           <div className="backdrop-blur-md bg-black/40 rounded-lg max-w-[480px] p-10 border border-white/5 text-right ml-auto">
-            <p className="text-[13px] tracking-[0.3em] text-[#00e5ff] uppercase mb-6 font-medium" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              WHAT I BUILD
-            </p>
+            <ScrambleText
+              text="WHAT I BUILD"
+              className="text-[13px] tracking-[0.3em] text-[#00e5ff] uppercase mb-6 font-medium block"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              trigger={phase3Active}
+            />
             
-            <div className="space-y-4 mb-8 flex flex-col items-end">
+            <div className="space-y-4 mb-8 flex flex-col items-end w-full">
               {[
                 "AI & ML Systems",
                 "Full-Stack Web Applications",
                 "Hardware–Software Integration",
                 "Real-Time Diagnostic Tools"
               ].map((item, i) => (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className="border-r-2 border-[#00e5ff] pr-4 py-1"
+                  className="border-r-2 border-[#00e5ff] pr-4 py-1 block text-right"
                 >
-                  <h3 className="text-white text-[24px] font-bold" style={{ fontFamily: "'Audiowide', cursive" }}>
-                    {item}
-                  </h3>
-                </motion.div>
+                  <ScrambleText
+                    text={item}
+                    as="h3"
+                    trigger={phase3Active}
+                    delay={i * 80}
+                    className="text-white text-[24px] font-bold block text-right"
+                    style={{ fontFamily: "'Audiowide', cursive" }}
+                  />
+                </div>
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-2 justify-end mt-4">
+            <div className="flex flex-wrap gap-2 justify-end mt-4 w-full">
               {['Clean Code', 'Performance', 'User Impact', 'Continuous Learning'].map((value, index) => (
                 <span 
                   key={index}
-                  className="bg-transparent border border-[#00e5ff]/20 text-[#00e5ff] rounded-full px-[14px] py-[4px] text-[12px]"
+                  className="bg-transparent border border-[#00e5ff]/20 text-[#00e5ff] rounded-full px-[14px] py-[4px] text-[12px] block"
                   style={{ fontFamily: "'DM Sans', sans-serif" }}
                 >
-                  {value}
+                  <ScrambleText text={value} trigger={phase3Active} />
                 </span>
               ))}
             </div>
@@ -280,52 +308,51 @@ export const HeroScroll = () => {
           className="hero-scroll-text-container hero-scroll-text-center"
           style={{ opacity: phase4Opacity }}
         >
-          <h2 
-            className="text-white uppercase mb-4"
-            style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(36px, 6vw, 72px)', lineHeight: 1.2 }}
-          >
-            LET'S BUILD SOMETHING REAL.
-          </h2>
-          <p 
-            className="text-[#00e5ff] text-[16px] mb-8"
+          <div className="flex flex-wrap justify-center items-baseline mb-4 text-white uppercase" style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(32px, 5.5vw, 68px)', lineHeight: 1.2 }}>
+            <ScrambleText text="LET'S BUILD SOMETHING REAL" className="block" trigger={phase4Active} />
+            <ScrambleText text="." className="text-[#00e5ff] block" trigger={phase4Active} delay={1000} />
+          </div>
+          <ScrambleParagraph
+            text="Open to roles, freelance projects, and research collaborations."
+            className="text-[#00e5ff] text-[16px] mb-8 text-center"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Open to roles, freelance projects, and research collaborations.
-          </p>
+            wordStaggerMs={50}
+            trigger={phase4Active}
+          />
           
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-10">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-10 w-full">
             <a 
               href="#projects"
-              className="bg-white/10 text-white border border-white/20 hover:bg-white hover:text-black rounded-full px-[32px] py-[14px] font-medium transition-all duration-300"
+              className="bg-white/10 text-white border border-white/20 hover:bg-white hover:text-black rounded-full px-[32px] py-[14px] font-medium transition-all duration-300 block text-center"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              View My Work &rarr;
+              <ScrambleText text="View My Work →" trigger={phase4Active} />
             </a>
             <a 
               href="#contact"
-              className="bg-transparent text-[#00e5ff] border border-[#00e5ff] hover:bg-[#00e5ff] hover:text-black rounded-full px-[32px] py-[14px] font-medium transition-all duration-300"
+              className="bg-transparent text-[#00e5ff] border border-[#00e5ff] hover:bg-[#00e5ff] hover:text-black rounded-full px-[32px] py-[14px] font-medium transition-all duration-300 block text-center"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              Get In Touch
+              <ScrambleText text="Get In Touch" trigger={phase4Active} />
             </a>
           </div>
           
           <div className="flex gap-4 items-center justify-center">
             <a 
-              href="mailto:contact@example.com" 
+              href="mailto:mohd.ateeq.march@gmail.com" 
               className="flex items-center justify-center w-[44px] h-[44px] rounded-full bg-white/5 border border-white/15 text-white hover:border-[#00e5ff] hover:text-[#00e5ff] transition-all duration-300"
             >
               <Mail size={18} />
             </a>
             <a 
-              href="https://github.com" 
+              href="https://github.com/Mohammed-Ateeq-nova" 
               target="_blank" rel="noreferrer"
               className="flex items-center justify-center w-[44px] h-[44px] rounded-full bg-white/5 border border-white/15 text-white hover:border-[#00e5ff] hover:text-[#00e5ff] transition-all duration-300"
             >
               <Github size={18} />
             </a>
             <a 
-              href="https://linkedin.com" 
+              href="https://www.linkedin.com/in/mohammed-ateeq/" 
               target="_blank" rel="noreferrer"
               className="flex items-center justify-center w-[44px] h-[44px] rounded-full bg-white/5 border border-white/15 text-white hover:border-[#00e5ff] hover:text-[#00e5ff] transition-all duration-300"
             >

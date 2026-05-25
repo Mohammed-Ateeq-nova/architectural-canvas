@@ -74,6 +74,7 @@
      
      /* Typography Scale (Brutalist) */
      --font-display: 'Audiowide', cursive;
+     --font-audiowide: 'Audiowide', cursive;
      --font-body: 'Inter', sans-serif;
      
      /* Sidebar */
@@ -463,4 +464,23 @@
 
  @keyframes hero-spin {
    to { transform: rotate(360deg); }
+ }
+
+ /* ─── Redesigned Project Card 3D Cube Float Animations ─── */
+ @keyframes float-animation {
+   0%, 100% { transform: translateY(0px); }
+   50% { transform: translateY(-16px); }
+ }
+
+ @keyframes float-animation-mobile {
+   0%, 100% { transform: translateY(0px); }
+   50% { transform: translateY(-8px); }
+ }
+
+ .animate-float-custom {
+   animation: float-animation 4s ease-in-out infinite;
+ }
+
+ .animate-float-custom-mobile {
+   animation: float-animation-mobile 4s ease-in-out infinite;
  }
