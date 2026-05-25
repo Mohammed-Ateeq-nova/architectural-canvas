@@ -128,14 +128,14 @@ const ProjectCard = ({
     const updateDimensions = () => {
       const width = window.innerWidth;
       if (width < 640) {
-        // Mobile - scaled cube
-        setDimensions({ cardSize: 140, radius: 130 });
+        // Mobile - scaled cube (reduced 20%)
+        setDimensions({ cardSize: 112, radius: 104 });
       } else if (width < 1024) {
-        // Tablet
-        setDimensions({ cardSize: 220, radius: 200 });
+        // Tablet (reduced 20%)
+        setDimensions({ cardSize: 176, radius: 160 });
       } else {
-        // Desktop - increased by ~60% from original 200/230
-        setDimensions({ cardSize: 320, radius: 360 });
+        // Desktop (reduced 20% for optimized screen balance)
+        setDimensions({ cardSize: 256, radius: 288 });
       }
     };
 
@@ -201,16 +201,16 @@ const ProjectCard = ({
           trigger={cardTrigger}
         />
 
-        {/* Element 3 — Center 3D Cube (Hero) */}
+        {/* Element 3 — Center 3D Cube (Hero) - Made 20% smaller */}
         <div
-          className="relative flex items-center justify-center w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] lg:w-[420px] lg:h-[420px] lg:absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 cursor-pointer z-10 group/cube"
+          className="relative flex items-center justify-center w-[192px] h-[192px] sm:w-[256px] sm:h-[256px] lg:w-[336px] lg:h-[336px] lg:absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 cursor-pointer z-10 group/cube"
           onClick={handleNavigate}
         >
           {/* Warm spotlight glow behind the cube */}
-          <div className="absolute w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] lg:w-[500px] lg:h-[500px] bg-[radial-gradient(ellipse_at_center,_rgba(255,220,150,0.3)_0%,_transparent_70%)] rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 pointer-events-none" />
+          <div className="absolute w-[224px] h-[224px] sm:w-[304px] sm:h-[304px] lg:w-[400px] lg:h-[400px] bg-[radial-gradient(ellipse_at_center,_rgba(255,220,150,0.3)_0%,_transparent_70%)] rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 pointer-events-none" />
 
           {/* Ground shadow beneath the cube */}
-          <div className="absolute w-[150px] h-[20px] sm:w-[200px] sm:h-[30px] lg:w-[280px] lg:h-[40px] bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0.18)_0%,_transparent_70%)] rounded-full bottom-[12%] left-1/2 -translate-x-1/2 -z-10 pointer-events-none" />
+          <div className="absolute w-[120px] h-[16px] sm:w-[160px] sm:h-[24px] lg:w-[224px] lg:h-[32px] bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0.18)_0%,_transparent_70%)] rounded-full bottom-[12%] left-1/2 -translate-x-1/2 -z-10 pointer-events-none" />
 
           {/* Floating Wrapper */}
           <div className="animate-float-custom-mobile sm:animate-float-custom w-full h-full relative flex items-center justify-center" style={{ perspective: '1200px' }}>
