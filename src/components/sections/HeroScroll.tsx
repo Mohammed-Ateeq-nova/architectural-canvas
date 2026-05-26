@@ -207,7 +207,7 @@ export const HeroScroll = () => {
               }}
             />
           </div>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center text-white/40 uppercase tracking-[0.3em] text-[11px] animate-pulse">
+          <div className="absolute bottom-20 sm:bottom-10 left-1/2 -translate-x-1/2 text-center text-white/40 uppercase tracking-[0.3em] text-[11px] animate-pulse">
             Scroll &darr;
           </div>
         </motion.div>
@@ -308,7 +308,7 @@ export const HeroScroll = () => {
           className="hero-scroll-text-container hero-scroll-text-center"
           style={{ opacity: phase4Opacity }}
         >
-          <div className="flex flex-wrap justify-center items-baseline mb-4 text-white uppercase" style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(32px, 5.5vw, 68px)', lineHeight: 1.2 }}>
+          <div className="flex flex-wrap justify-center items-baseline mb-4 text-white uppercase px-4" style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(20px, 4.5vw, 60px)', lineHeight: 1.2 }}>
             <ScrambleText text="LET'S BUILD SOMETHING REAL" className="block" trigger={phase4Active} />
             <ScrambleText text="." className="text-[#00e5ff] block" trigger={phase4Active} delay={1000} />
           </div>
