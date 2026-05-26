@@ -5,6 +5,7 @@ import { FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
 import { ScrambleText } from '../ScrambleText';
 import { ScrambleParagraph } from '../ScrambleParagraph';
+import { toast } from 'sonner';
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export const ContactSection = () => {
     email: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const [sectionTrigger, setSectionTrigger] = useState(false);
@@ -61,10 +63,38 @@ export const ContactSection = () => {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:mohd.ateeq.march@gmail.com?subject=Portfolio Contact from ${formData.name}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${formData.name} (${formData.email})`;
-    window.open(mailtoLink);
+    setIsSubmitting(true);
+    
+    const loadingToastId = toast.loading('Establishing secure transmission tunnel...');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        toast.dismiss(loadingToastId);
+        toast.success('Message dispatched successfully! I will get back to you soon.');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        toast.dismiss(loadingToastId);
+        toast.error(data.message || 'Failed to dispatch email. Please try again.');
+      }
+    } catch (error) {
+      console.error('Contact transmission failure:', error);
+      toast.dismiss(loadingToastId);
+      toast.error('Network timeout. Ensure backend server is active on port 5000.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -144,12 +174,17 @@ export const ContactSection = () => {
                 
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-foreground text-background dark:bg-neon-cyan dark:text-background py-4 rounded-xl font-display font-medium inline-flex items-center justify-center gap-2"
+                  disabled={isSubmitting}
+                  whileHover={isSubmitting ? {} : { scale: 1.02 }}
+                  whileTap={isSubmitting ? {} : { scale: 0.98 }}
+                  className={`w-full py-4 rounded-xl font-display font-medium inline-flex items-center justify-center gap-2 transition-all duration-300 ${
+                    isSubmitting
+                      ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-50'
+                      : 'bg-foreground text-background dark:bg-neon-cyan dark:text-background'
+                  }`}
                 >
-                  <ScrambleText text="Send Message" trigger={formTrigger} delay={180} />
-                  <Send className="w-4 h-4" />
+                  <ScrambleText text={isSubmitting ? "Transmitting..." : "Send Message"} trigger={formTrigger} delay={180} />
+                  <Send className={`w-4 h-4 ${isSubmitting ? 'animate-pulse' : ''}`} />
                 </motion.button>
               </form>
             </GlassCardLarge>
