@@ -62,20 +62,6 @@ export const projects = [
       '/projects/docchat/auth.png',
     ],
   },
-  {
-    id: 'sri-datta-electronics',
-    title: 'Sri Datta Electronics',
-    tagline: 'Product marketing platform with lead generation and modern UI',
-    category: 'Freelance / Web',
-    year: '2025',
-    role: 'Freelance Developer',
-    images: [
-      '/projects/sri-datta/home.png',
-      '/projects/sri-datta/about.png',
-      '/projects/sri-datta/products.png',
-      '/projects/sri-datta/projuct_details.png',
-    ],
-  },
 ];
 
 const ProjectCard = ({

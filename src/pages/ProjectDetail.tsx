@@ -117,27 +117,6 @@ const projectData: Record<string, ProjectData> = {
     githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
     image: '/projects/docchat/response.png',
     youtubeId: 'NidchVmHeNY',
-  },
-  'sri-datta-electronics': {
-    title: 'Sri Datta Electronics — Marketing Platform',
-    category: 'Freelance / Web',
-    overview: 'A product marketing and catalog-based web platform built for Sri Datta Electronics, an industrial solutions company, resulting in a 35% increase in client leads through modern UI, SEO optimization, and integrated communication tools.',
-    documentation: {
-      context: 'Sri Datta Electronics needed a professional web presence to showcase their telemetry solutions for defense, aerospace, and industrial sectors. The existing outreach was limited, and client communication was inefficient.',
-      approach: 'Built a product-centric marketing platform with an interactive catalog, integrated Firebase contact forms for reliable communication, and Google Maps API for location visibility. Focused on SEO and responsive design for maximum reach.',
-      implementation: 'Developed with React and Next.js for server-side rendering and SEO benefits. Integrated Firebase contact forms achieving 95% deliverability, reducing support queries by 25%. Created modern UI animations with TypeScript and implemented responsive design improving mobile conversion by 20%.',
-      architecture: 'Next.js SSR → React component library → Firebase Backend (forms, analytics) → Google Maps API. SEO-optimized with meta tags, structured data, and responsive images.',
-    },
-    tech: [
-      { name: 'React', usage: 'Component-based UI with interactive product catalog' },
-      { name: 'Next.js', usage: 'Server-side rendering for SEO and fast initial page loads' },
-      { name: 'TypeScript', usage: 'Type-safe codebase with modern UI animation logic' },
-      { name: 'Firebase', usage: 'Contact forms with 95% deliverability and real-time analytics' },
-      { name: 'Tailwind CSS', usage: 'Responsive design improving mobile conversion by 20%' },
-    ],
-    liveUrl: 'https://www.sridattaelectronics.com',
-    githubUrl: 'https://github.com/Mohammed-Ateeq-nova',
-    image: '/projects/sri-datta/projuct_details.png',
   }
 };
 
