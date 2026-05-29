@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 // Load environment variables
@@ -15,52 +14,6 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
-
-// Transporter cache/initialization helper
-async function getTransporter() {
-  // If SMTP environment variables are fully configured, use them
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    console.log('Using configured custom SMTP credentials.');
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    });
-  }
-
-  // Fallback: Ethereal test account for zero-config development
-  console.log('No SMTP credentials found in environment. Generating dynamic Ethereal test account...');
-  try {
-    const testAccount = await nodemailer.createTestAccount();
-    return nodemailer.createTransport({
-      host: testAccount.smtp.host,
-      port: testAccount.smtp.port,
-      secure: testAccount.smtp.secure,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass
-      }
-    });
-  } catch (error) {
-    console.error('Failed to create Ethereal test account:', error);
-    // Ultimate fallback: direct standard console logging mock
-    return {
-      sendMail: async (mailOptions) => {
-        console.log('========== ultimate fallback email mock ==========');
-        console.log('From:', mailOptions.from);
-        console.log('To:', mailOptions.to);
-        console.log('Subject:', mailOptions.subject);
-        console.log('HTML:\n', mailOptions.html);
-        console.log('==================================================');
-        return { messageId: 'mock-id-12345', testUrl: 'Console-logged' };
-      }
-    };
-  }
-}
 
 // Formatted HTML template helper
 function generateFormattedEmail(name, email, message) {
@@ -221,41 +174,54 @@ app.post('/api/contact', async (req, res) => {
   }
 
   try {
-    const transporter = await getTransporter();
-    
-    // Config email recipient
-    const recipient = process.env.SMTP_TO || 'mohd.ateeq.march@gmail.com';
-    const sender = process.env.SMTP_USER || 'portfolio@ateeq.dev';
-
-    const mailOptions = {
-      from: `"${name}" <${sender}>`,
-      replyTo: email,
-      to: recipient,
-      subject: `💼 Portfolio Contact from ${name}`,
-      html: generateFormattedEmail(name, email, message)
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent successfully. ID:', info.messageId);
-
-    // Ethereal dynamic test URL logging if fallback was active
-    const testUrl = nodemailer.getTestMessageUrl(info);
-    if (testUrl) {
-      console.log('--------------------------------------------------');
-      console.log('✉️ Dev View Mailbox URL:', testUrl);
-      console.log('--------------------------------------------------');
+    const apiKey = process.env.MAILING_SERVICE_API_KEY;
+    if (!apiKey) {
+      console.error('Mailing service error: MAILING_SERVICE_API_KEY is not configured in .env');
+      return res.status(500).json({
+        success: false,
+        message: 'Mailing service credentials not configured. Please supply MAILING_SERVICE_API_KEY in server environment.'
+      });
     }
+    const recipient = process.env.SMTP_TO || 'mohd.ateeq.march@gmail.com';
+    const htmlContent = generateFormattedEmail(name, email, message);
 
-    res.status(200).json({
-      success: true,
-      message: 'Email dispatched successfully.',
-      testUrl: testUrl || null
+    console.log(`Forwarding contact message from ${name} to Qwerty Mailing Service...`);
+
+    const response = await fetch('https://qwertymailingservice.onrender.com/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
+      },
+      body: JSON.stringify({
+        to: [recipient],
+        subject: `💼 Portfolio Contact from ${name}`,
+        html: htmlContent,
+        replyTo: email
+      })
     });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('Message sent successfully via Qwerty Mailing Service:', data);
+      res.status(200).json({
+        success: true,
+        message: 'Email dispatched successfully.',
+        data
+      });
+    } else {
+      console.error('Mailing service returned error:', data);
+      res.status(response.status).json({
+        success: false,
+        message: data.message || 'Failed to dispatch email via mailing service.'
+      });
+    }
   } catch (error) {
-    console.error('Nodemailer transmission failure:', error);
+    console.error('Mailing service communication failure:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to dispatch email. Please check server log metrics.'
+      message: 'Failed to communicate with the mailing service.'
     });
   }
 });

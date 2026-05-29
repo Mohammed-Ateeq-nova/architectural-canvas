@@ -36,7 +36,7 @@ export const projects = [
   },
   {
     id: 'vidyaai',
-    title: 'CBSE Curriculum AI Learning System',
+    title: 'Domain-Specific GPT Assistant for Education',
     tagline: 'Syllabus-aligned conversational tutoring and client-side RAG pipeline',
     category: 'AI / Education',
     year: '2026',
@@ -44,8 +44,8 @@ export const projects = [
     images: [
       '/projects/vidhya-ai/home.png',
       '/projects/vidhya-ai/pre_loaded.png',
-      '/projects/vidhya-ai/upload.png',
       '/projects/vidhya-ai/response.png',
+      '/projects/vidhya-ai/upload.png',
     ],
   },
   {
