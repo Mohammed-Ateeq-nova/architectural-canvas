@@ -63,6 +63,72 @@ export const ContactSection = () => {
     };
   }, []);
 
+  const generateFormattedEmail = (name: string, email: string, message: string) => {
+    const dateStr = new Date().toLocaleString('en-US', {
+      timeZone: 'Asia/Kolkata',
+      dateStyle: 'full',
+      timeStyle: 'medium'
+    });
+
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Portfolio Contact Form Submission</title>
+        <style>
+          body { margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #050505; color: #e5e5e5; }
+          .container { max-width: 600px; margin: 20px auto; background-color: #0c0c0c; border: 1px solid #1a1a1a; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 229, 255, 0.05); }
+          .header { background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); padding: 30px; border-bottom: 2px solid #00e5ff; text-align: center; }
+          .header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.1em; color: #ffffff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+          .header p { margin: 10px 0 0; font-size: 13px; color: #00e5ff; text-transform: uppercase; letter-spacing: 0.15em; }
+          .content { padding: 30px; }
+          .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+          .meta-box { background-color: #121212; border: 1px solid #222; border-radius: 8px; padding: 12px 15px; }
+          .meta-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+          .meta-value { font-size: 14px; font-weight: 600; color: #ffffff; }
+          .message-box { background-color: #121212; border: 1px solid #222; border-left: 3px solid #00e5ff; border-radius: 4px 8px 8px 4px; padding: 20px; margin-bottom: 20px; }
+          .message-text { font-size: 15px; line-height: 1.6; color: #d1d1d1; white-space: pre-wrap; margin: 0; }
+          .footer { background-color: #080808; padding: 20px; border-top: 1px solid #111; text-align: center; font-size: 12px; color: #666; }
+          .footer a { color: #00e5ff; text-decoration: none; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>PORTFOLIO TRANSMISSION</h1>
+            <p>New Contact Form Submission</p>
+          </div>
+          <div class="content">
+            <div class="meta-grid">
+              <div class="meta-box">
+                <div class="meta-label">Sender Name</div>
+                <div class="meta-value">${name}</div>
+              </div>
+              <div class="meta-box">
+                <div class="meta-label">Email Address</div>
+                <div class="meta-value">${email}</div>
+              </div>
+            </div>
+            <div class="meta-box" style="margin-bottom: 25px;">
+              <div class="meta-label">Received Timestamp (IST)</div>
+              <div class="meta-value">${dateStr}</div>
+            </div>
+            <div class="meta-label" style="margin-bottom: 8px;">Message Content</div>
+            <div class="message-box">
+              <pre class="message-text">${message}</pre>
+            </div>
+          </div>
+          <div class="footer">
+            Received via Portfolio Contact System • <a href="mailto:${email}">Reply to Sender</a>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -70,17 +136,25 @@ export const ContactSection = () => {
     const loadingToastId = toast.loading('Establishing secure transmission tunnel...');
 
     try {
-      const response = await fetch('/api/contact', {
+      const htmlContent = generateFormattedEmail(formData.name, formData.email, formData.message);
+
+      const response = await fetch('https://qwertymailingservice.onrender.com/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.VITE_MAILING_API_KEY
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          to: ['mohd.ateeq.march@gmail.com'],
+          subject: `💼 Portfolio Contact from ${formData.name}`,
+          html: htmlContent,
+          replyTo: formData.email
+        }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
+      if (response.ok) {
         toast.dismiss(loadingToastId);
         toast.success('Message dispatched successfully! I will get back to you soon.');
         setFormData({ name: '', email: '', message: '' });
@@ -91,7 +165,7 @@ export const ContactSection = () => {
     } catch (error) {
       console.error('Contact transmission failure:', error);
       toast.dismiss(loadingToastId);
-      toast.error('Network timeout. Ensure backend server is active on port 5000.');
+      toast.error('Transmission failed. Please try again or email me directly.');
     } finally {
       setIsSubmitting(false);
     }
