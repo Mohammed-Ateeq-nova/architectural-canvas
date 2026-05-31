@@ -92,11 +92,13 @@ export const ContactSection = () => {
           .message-text { font-size: 15px; line-height: 1.6; color: #d1d1d1; white-space: pre-wrap; margin: 0; }
           .footer { background-color: #080808; padding: 20px; border-top: 1px solid #111; text-align: center; font-size: 12px; color: #666; }
           .footer a { color: #00e5ff; text-decoration: none; }
+          .header img { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 16px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
+            <img src="${window.location.origin}/favicon.png" alt="Portfolio Logo" />
             <h1>PORTFOLIO TRANSMISSION</h1>
             <p>New Contact Form Submission</p>
           </div>

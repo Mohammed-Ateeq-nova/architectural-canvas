@@ -238,7 +238,7 @@ export const HeroScroll = () => {
               <span className="text-[#00e5ff] animate-pulse ml-1">|</span>
             </h2>
             <ScrambleParagraph
-              text="CS undergraduate at Anurag University, Hyderabad. I build scalable web apps, AI-driven systems, and defense-grade hardware-software integrations. I write clean, efficient code that solves real problems and delivers measurable impact."
+              text="CS undergraduate at Anurag University, Hyderabad. I build scalable web applications, computer vision systems, and AI-driven solutions. Proficient in React, Next.js, Python, and TensorFlow — I write clean, efficient code that solves real problems and delivers measurable impact."
               className="text-[#aaaaaa] text-[15px] leading-[1.7] mb-6"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
               wordStaggerMs={60}
@@ -268,10 +268,10 @@ export const HeroScroll = () => {
             
             <div className="space-y-4 mb-8 flex flex-col items-end w-full">
               {[
-                "AI & ML Systems",
-                "Full-Stack Web Applications",
-                "Hardware–Software Integration",
-                "Real-Time Diagnostic Tools"
+                "AI & ML Solutions",
+                "Full-Stack Applications",
+                "UI/UX Experiences",
+                "Intelligent Automation"
               ].map((item, i) => (
                 <div
                   key={i}

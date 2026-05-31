@@ -13,17 +13,16 @@ export const experiences = [
     location: 'Hyderabad, India',
     period: 'Jul 2025 – Sep 2025',
     description:
-      'Engineered C-based data acquisition systems with hardware protocol integrations and diagnostic GUIs for defense applications.',
+      'Engineered C-based data acquisition systems with RS-422 and MIL-STD-1553 protocol integrations and diagnostic GUIs for defense applications.',
     highlights: [
-      'Engineered C-based data acquisition systems with hardware protocol integrations and diagnostic GUIs for...',
-      'Reduced communication errors by 35% through RS-422 & MIL-STD-1553 optimization',
-      'Firebase contact forms with 95% with+practivt catalog',
-      'Built WinAPI diagnostic GUI with sub-second response times'
+      'Engineered a C-based data acquisition system interfacing with RS-422 and MIL-STD-1553 hardware for reliable real-time data capture',
+      'Built a WinAPI-based GUI enabling real-time hardware diagnostics with sub-second response times',
+      'Improved protocol compliance and reduced communication errors by 35% through close hardware integration'
     ],
     metrics: [
-      { value: '35%', label: 'communication error reduction' },
-      { value: '200+', label: 'attendees for workshops' },
-      { value: '2,00+', label: 'attendees for workshops' }
+      { value: '35%', label: 'error reduction' },
+      { value: '2', label: 'protocols mastered' },
+      { value: '<1s', label: 'diagnostic response' }
     ],
     num: '01',
   },
