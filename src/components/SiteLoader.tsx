@@ -17,7 +17,7 @@ interface SiteLoaderProps {
 
 export const SiteLoader = ({ 
   onLoadComplete, 
-  minDisplayTime = 5000 
+  minDisplayTime = 8000 
 }: SiteLoaderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(true);

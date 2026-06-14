@@ -53,7 +53,7 @@ const App = () => {
           {!isLoaded && (
             <SiteLoader 
               onLoadComplete={() => setIsLoaded(true)}
-              minDisplayTime={5000}
+              minDisplayTime={8000}
             />
           )}
           
