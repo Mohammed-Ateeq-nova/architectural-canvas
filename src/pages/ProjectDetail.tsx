@@ -141,6 +141,27 @@ const ProjectDetail = () => {
     tech: [],
   };
 
+  useEffect(() => {
+    if (project && project.title && project.title !== 'Project Not Found') {
+      document.title = `${project.title} — Mohammed Ateeq`;
+      
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute('content', project.overview);
+      }
+      
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) {
+        ogTitle.setAttribute('content', `${project.title} — Mohammed Ateeq`);
+      }
+      
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) {
+        ogDesc.setAttribute('content', project.overview);
+      }
+    }
+  }, [project]);
+
   return (
     <PageTransition className="page-container pt-32 overflow-x-hidden max-w-[100vw]">
       <style dangerouslySetInnerHTML={{ __html: `

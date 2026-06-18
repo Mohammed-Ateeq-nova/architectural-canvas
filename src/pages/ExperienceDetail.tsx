@@ -95,6 +95,28 @@ const ExperienceDetail = () => {
     technologies: [],
   };
 
+  useEffect(() => {
+    if (experience && experience.role && experience.role !== 'Experience Not Found') {
+      const pageTitle = `${experience.role} at ${experience.company} — Mohammed Ateeq`;
+      document.title = pageTitle;
+      
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute('content', experience.overview);
+      }
+      
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) {
+        ogTitle.setAttribute('content', pageTitle);
+      }
+      
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) {
+        ogDesc.setAttribute('content', experience.overview);
+      }
+    }
+  }, [experience]);
+
   const otherExperiences = experiencesList.filter(exp => exp.id !== id);
 
   return (
