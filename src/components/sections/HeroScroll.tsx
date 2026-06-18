@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useAnimationFrame, useMotionValueEvent } from 'framer-motion';
 import { Mail, Github, Linkedin } from 'lucide-react';
 import { ScrambleText } from '../ScrambleText';
@@ -162,53 +163,145 @@ export const HeroScroll = () => {
         {/* Dark Overlay for Text */}
         <div className="hero-scroll-overlay" />
 
-        {/* Phase 1: Ghost Text (Behind Canvas theoretically, but we use absolute & opacity) */}
+        {/* Phase 1: Redesigned Staggered Hero Foreground */}
         <motion.div 
-          className="hero-scroll-text-container hero-scroll-text-center z-0"
+          className="absolute inset-0 flex flex-col justify-between p-4 sm:p-8 md:p-10 z-10 pointer-events-none"
           style={{ opacity: phase1Opacity }}
         >
-          <div 
-            className="flex flex-col items-center justify-center w-full cursor-pointer"
-            style={{ 
-              fontFamily: "'Audiowide', cursive",
-              pointerEvents: 'auto',
-              transform: isNameHovered ? 'scale(1.04)' : 'scale(1)',
-              transition: 'all 0.4s ease'
-            }}
-            onMouseEnter={() => setIsNameHovered(true)}
-            onMouseLeave={() => setIsNameHovered(false)}
-          >
-            <ScrambleText
-              text="MOHAMMED"
-              className="text-white leading-[0.95] tracking-[0.05em] block"
-              as="h1"
-              trigger={phase1Active}
-              delay={400}
-              style={{ 
-                fontSize: 'clamp(36px, 9vw, 130px)', 
-                color: isNameHovered ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)',
-                textShadow: isNameHovered ? '0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3)' : 'none',
-                WebkitTextStroke: isNameHovered ? '1px rgba(255,255,255,0.7)' : 'none',
-                transition: 'all 0.4s ease'
-              }}
-            />
-            <ScrambleText
-              text="ATEEQ"
-              className="text-white leading-[0.95] tracking-[0.05em] block"
-              as="h1"
-              trigger={phase1Active}
-              delay={400}
-              style={{ 
-                fontSize: 'clamp(36px, 9vw, 130px)', 
-                color: isNameHovered ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)',
-                textShadow: isNameHovered ? '0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3)' : 'none',
-                WebkitTextStroke: isNameHovered ? '1px rgba(255,255,255,0.7)' : 'none',
-                transition: 'all 0.4s ease'
-              }}
-            />
+          {/* Top Row: Spacer for Navigation bar compatibility */}
+          <div className="h-12 w-full" />
+
+          {/* Middle Row: Content Grid with optimized spacing to prevent layout clipping */}
+          <div className="grid md:grid-cols-2 gap-6 items-center w-full mt-6 mb-auto pb-4">
+            {/* Left Side: Staggered Name, Tagline, CTA */}
+            <div className="flex flex-col items-start text-left max-w-xl">
+              <div 
+                className="cursor-pointer pointer-events-auto mb-4"
+                onMouseEnter={() => setIsNameHovered(true)}
+                onMouseLeave={() => setIsNameHovered(false)}
+              >
+                <h1 
+                  className="font-bold tracking-[0.02em] leading-[1.0] select-none text-left flex flex-col uppercase font-display"
+                  style={{ 
+                    fontFamily: "'Audiowide', cursive",
+                    fontSize: 'clamp(28px, 4.5vw, 68px)',
+                  }}
+                >
+                  <div>
+                    <span 
+                      className="text-white/95 transition-all duration-300 inline-block origin-left"
+                      style={{
+                        transform: isNameHovered ? 'scale(1.03)' : 'scale(1)',
+                        textShadow: isNameHovered ? '0 0 20px rgba(255,255,255,0.45)' : 'none',
+                        color: isNameHovered ? '#ffffff' : 'rgba(255,255,255,0.95)'
+                      }}
+                    >
+                      MOHAMMED
+                    </span>
+                  </div>
+                  
+                  <div className="w-full max-w-[200px] h-[2px] bg-[#00e5ff] my-3 ml-[5%]" />
+                  
+                  <div className="pl-[25%] md:pl-[35%]">
+                    <span 
+                      className="text-white/95 transition-all duration-300 inline-block origin-left"
+                      style={{
+                        transform: isNameHovered ? 'scale(1.03)' : 'scale(1)',
+                        textShadow: isNameHovered ? '0 0 20px rgba(255,255,255,0.45)' : 'none',
+                        color: isNameHovered ? '#ffffff' : 'rgba(255,255,255,0.95)'
+                      }}
+                    >
+                      ATEEQ
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 my-2 w-full max-w-[260px] ml-[30%] md:ml-[40%]">
+                    <span className="text-[#00e5ff] text-[9px] sm:text-[10px] tracking-[0.2em] font-sans">AI & FULLSTACK ENGINEER</span>
+                    <span className="h-[2px] flex-1 bg-[#00e5ff]" />
+                  </div>
+                </h1>
+              </div>
+
+              {/* Tagline */}
+              <p 
+                className="text-[#aaaaaa] text-[10px] sm:text-xs uppercase tracking-[0.2em] mb-6 font-sans"
+              >
+                Engineering intelligent systems & elegant interfaces
+              </p>
+
+              {/* CTA Button */}
+              <a 
+                href="#projects"
+                className="bg-transparent border border-white/20 hover:border-[#00e5ff] hover:text-[#00e5ff] text-white rounded-full px-6 py-2.5 text-xs font-sans font-medium transition-all duration-300 block text-center pointer-events-auto flex items-center gap-2 group"
+              >
+                <span>EXPLORE WORK</span>
+                <span className="w-5 h-5 rounded-full bg-white/10 group-hover:bg-[#00e5ff]/20 group-hover:text-[#00e5ff] flex items-center justify-center text-[10px] transition-colors duration-300">
+                  &rarr;
+                </span>
+              </a>
+            </div>
+
+            {/* Right Side: Spacer */}
+            <div className="hidden md:block" />
           </div>
-          <div className="absolute bottom-20 sm:bottom-10 left-1/2 -translate-x-1/2 text-center text-white/40 uppercase tracking-[0.3em] text-[11px] animate-pulse">
-            Scroll &darr;
+
+          {/* Bottom Row: Widgets */}
+          <div className="w-full flex flex-col md:flex-row justify-between items-end gap-4 pb-2 sm:pb-4">
+            {/* Bottom Left: Single Row Widget Strip */}
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 pb-2 pointer-events-auto">
+              {/* Carousel strip */}
+              <div className="flex items-center gap-3">
+                <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-white/40 uppercase font-sans whitespace-nowrap">
+                  Projects
+                </span>
+                <div className="flex gap-2">
+                  <Link to="/projects/factguard-ai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
+                    <img src="/projects/factguard/report.png" alt="FactGuard AI" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </Link>
+                  <Link to="/projects/heart-risk-detection" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
+                    <img src="/projects/heart-risk/analysis.png" alt="Heart Risk Detection" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </Link>
+                  <Link to="/projects/vidyaai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
+                    <img src="/projects/vidhya-ai/response.png" alt="VidyaAI" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Vertical divider on desktop */}
+              <span className="hidden md:inline h-5 w-[1px] bg-white/15" />
+
+              {/* Social icons */}
+              <div className="flex gap-3 items-center">
+                <a href="https://github.com/Mohammed-Ateeq-nova" target="_blank" rel="noreferrer" className="text-white/40 hover:text-[#00e5ff] transition-colors">
+                  <Github size={15} />
+                </a>
+                <a href="https://www.linkedin.com/in/mohammed-ateeq/" target="_blank" rel="noreferrer" className="text-white/40 hover:text-[#00e5ff] transition-colors">
+                  <Linkedin size={15} />
+                </a>
+                <a href="mailto:mohd.ateeq.march@gmail.com" className="text-white/40 hover:text-[#00e5ff] transition-colors">
+                  <Mail size={15} />
+                </a>
+              </div>
+
+              {/* Vertical divider on desktop */}
+              <span className="hidden md:inline h-5 w-[1px] bg-white/15" />
+
+              {/* Scroll vertical indicator */}
+              <div className="flex items-center gap-2 text-white/40 text-[9px] sm:text-[10px] tracking-[0.2em] uppercase">
+                <span>Scroll</span>
+                <span className="animate-bounce">&darr;</span>
+              </div>
+            </div>
+
+            {/* Bottom Right: Capabilities description (Desktop only) */}
+            <div className="hidden md:flex flex-col items-end text-right max-w-sm pb-2">
+              <p className="text-white/50 text-[11px] leading-relaxed font-sans mb-1">
+                I build high-performance web applications and integrate deep learning models, bridging the gap between advanced AI research and responsive user interfaces.
+              </p>
+              <span className="text-[#00e5ff] text-[9px] tracking-[0.2em] font-sans uppercase">
+                YOU IMAGINE. I BUILD.
+              </span>
+            </div>
           </div>
         </motion.div>
 
@@ -217,7 +310,7 @@ export const HeroScroll = () => {
           className="hero-scroll-text-container hero-scroll-text-left"
           style={{ opacity: phase2Opacity, x: phase2X }}
         >
-          <div className="backdrop-blur-md bg-black/40 rounded-lg max-w-[480px] p-10 border border-white/5">
+          <div className="max-w-[480px] text-left">
             <ScrambleText
               text="MOHAMMED ATEEQ"
               className="text-[13px] tracking-[0.3em] text-[#00e5ff] uppercase mb-4 font-medium block"
@@ -258,7 +351,7 @@ export const HeroScroll = () => {
           className="hero-scroll-text-container hero-scroll-text-right"
           style={{ opacity: phase3Opacity, x: phase3X }}
         >
-          <div className="backdrop-blur-md bg-black/40 rounded-lg max-w-[480px] p-10 border border-white/5 text-right ml-auto">
+          <div className="max-w-[480px] text-right ml-auto">
             <ScrambleText
               text="WHAT I BUILD"
               className="text-[13px] tracking-[0.3em] text-[#00e5ff] uppercase mb-6 font-medium block"
