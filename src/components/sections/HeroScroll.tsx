@@ -188,65 +188,99 @@ export const HeroScroll = () => {
                   }}
                 >
                   <div>
-                    <span 
+                    <ScrambleText 
+                      text="MOHAMMED"
+                      trigger={phase1Active}
+                      delay={200}
                       className="text-white/95 transition-all duration-300 inline-block origin-left"
                       style={{
                         transform: isNameHovered ? 'scale(1.03)' : 'scale(1)',
                         textShadow: isNameHovered ? '0 0 20px rgba(255,255,255,0.45)' : 'none',
                         color: isNameHovered ? '#ffffff' : 'rgba(255,255,255,0.95)'
                       }}
-                    >
-                      MOHAMMED
-                    </span>
+                    />
                   </div>
                   
-                  <div className="w-full max-w-[200px] h-[2px] bg-[#00e5ff] my-3 ml-[5%]" />
+                  {/* Sliding scaleX blue line divider */}
+                  <motion.div 
+                    initial={{ scaleX: 0 }}
+                    animate={phase1Active ? { scaleX: 1 } : { scaleX: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                    style={{ originX: 0 }}
+                    className="w-full max-w-[200px] h-[2px] bg-[#00e5ff] my-3 ml-[5%]" 
+                  />
                   
                   <div className="pl-[25%] md:pl-[35%]">
-                    <span 
+                    <ScrambleText 
+                      text="ATEEQ"
+                      trigger={phase1Active}
+                      delay={400}
                       className="text-white/95 transition-all duration-300 inline-block origin-left"
                       style={{
                         transform: isNameHovered ? 'scale(1.03)' : 'scale(1)',
                         textShadow: isNameHovered ? '0 0 20px rgba(255,255,255,0.45)' : 'none',
                         color: isNameHovered ? '#ffffff' : 'rgba(255,255,255,0.95)'
                       }}
-                    >
-                      ATEEQ
-                    </span>
+                    />
                   </div>
                   
-                  <div className="flex items-center gap-2 my-2 w-full max-w-[260px] ml-[30%] md:ml-[40%]">
+                  {/* Sliding subtitle bar & scaleX blue accent line */}
+                  <motion.div 
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={phase1Active ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
+                    className="flex items-center gap-2 my-2 w-full max-w-[260px] ml-[30%] md:ml-[40%]"
+                  >
                     <span className="text-[#00e5ff] text-[9px] sm:text-[10px] tracking-[0.2em] font-sans">AI & FULLSTACK ENGINEER</span>
-                    <span className="h-[2px] flex-1 bg-[#00e5ff]" />
-                  </div>
+                    <motion.span 
+                      initial={{ scaleX: 0 }}
+                      animate={phase1Active ? { scaleX: 1 } : { scaleX: 0 }}
+                      transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
+                      style={{ originX: 0 }}
+                      className="h-[2px] flex-1 bg-[#00e5ff] block" 
+                    />
+                  </motion.div>
                 </h1>
               </div>
 
-              {/* Tagline */}
-              <p 
-                className="text-[#aaaaaa] text-[10px] sm:text-xs uppercase tracking-[0.2em] mb-6 font-sans"
-              >
-                Engineering intelligent systems & elegant interfaces
-              </p>
+              {/* Tagline with ScrambleText effect */}
+              <ScrambleText 
+                text="Engineering intelligent systems & elegant interfaces"
+                trigger={phase1Active}
+                delay={600}
+                as="p"
+                className="text-[#aaaaaa] text-[10px] sm:text-xs uppercase tracking-[0.2em] mb-6 font-sans block"
+              />
 
-              {/* CTA Button */}
-              <a 
-                href="#projects"
-                className="bg-transparent border border-white/20 hover:border-[#00e5ff] hover:text-[#00e5ff] text-white rounded-full px-6 py-2.5 text-xs font-sans font-medium transition-all duration-300 block text-center pointer-events-auto flex items-center gap-2 group"
+              {/* CTA Button with fade & slide-up animation */}
+              <motion.div
+                initial={{ y: 15, opacity: 0 }}
+                animate={phase1Active ? { y: 0, opacity: 1 } : { y: 15, opacity: 0 }}
+                transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
               >
-                <span>EXPLORE WORK</span>
-                <span className="w-5 h-5 rounded-full bg-white/10 group-hover:bg-[#00e5ff]/20 group-hover:text-[#00e5ff] flex items-center justify-center text-[10px] transition-colors duration-300">
-                  &rarr;
-                </span>
-              </a>
+                <a 
+                  href="#projects"
+                  className="bg-transparent border border-white/20 hover:border-[#00e5ff] hover:text-[#00e5ff] text-white rounded-full px-6 py-2.5 text-xs font-sans font-medium transition-all duration-300 block text-center pointer-events-auto flex items-center gap-2 group"
+                >
+                  <span>EXPLORE WORK</span>
+                  <span className="w-5 h-5 rounded-full bg-white/10 group-hover:bg-[#00e5ff]/20 group-hover:text-[#00e5ff] flex items-center justify-center text-[10px] transition-colors duration-300">
+                    &rarr;
+                  </span>
+                </a>
+              </motion.div>
             </div>
 
             {/* Right Side: Spacer */}
             <div className="hidden md:block" />
           </div>
 
-          {/* Bottom Row: Widgets */}
-          <div className="w-full flex flex-col md:flex-row justify-between items-end gap-4 pb-2 sm:pb-4">
+          {/* Bottom Row: Widgets with fade & slide-up animation */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={phase1Active ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+            transition={{ duration: 0.6, delay: 1.0, ease: "easeOut" }}
+            className="w-full flex flex-col md:flex-row justify-between items-end gap-4 pb-2 sm:pb-4"
+          >
             {/* Bottom Left: Single Row Widget Strip */}
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 pb-2 pointer-events-auto">
               {/* Carousel strip */}
@@ -302,7 +336,7 @@ export const HeroScroll = () => {
                 YOU IMAGINE. I BUILD.
               </span>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Phase 2: Left Panel */}
