@@ -63,14 +63,15 @@ const lineVariants = {
 };
 
 const stripVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 50, scale: 0.96 },
   visible: (custom: number) => ({
     opacity: 1,
     y: 0,
+    scale: 1,
     transition: {
-      delay: custom * 0.12,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1]
+      delay: custom * 0.15,
+      duration: 0.8,
+      ease: [0.25, 0.1, 0.25, 1.0] // smooth ease-in-out curve
     }
   })
 };
@@ -231,30 +232,36 @@ export const AboutSection = () => {
             .awards-container {
               display: flex;
               flex-direction: row;
+              gap: 1.5rem;
               margin: 0 clamp(1.5rem, 6vw, 6rem);
-              border-top: 1px solid var(--border);
-              border-bottom: 1px solid var(--border);
             }
 
             .award-strip {
               flex: 1;
               position: relative;
               overflow: hidden;
-              padding: 2.5rem 2rem 0 2rem;
+              padding: 2.5rem 2rem 2.5rem 2rem;
               min-height: clamp(260px, 32vw, 400px);
               display: flex;
               flex-direction: column;
               justify-content: space-between;
-              background: transparent;
-              transition: background 0.4s ease;
+              background: hsla(var(--card) / 0.15);
+              border: 1px solid hsla(var(--border) / 0.4);
+              border-radius: 16px;
+              backdrop-filter: blur(10px);
+              -webkit-backdrop-filter: blur(10px);
+              transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
             }
 
             .award-strip:hover {
-              background-color: hsl(var(--secondary));
+              background-color: hsla(var(--secondary) / 0.3);
+              border-color: hsla(var(--neon-cyan) / 0.4);
+              transform: translateY(-4px);
+              box-shadow: var(--shadow-glass-hover);
             }
 
             .award-strip-1, .award-strip-2 {
-              border-right: 1px solid var(--border);
+              border-right: none;
             }
 
             .award-strip .ghost-num {
@@ -346,14 +353,15 @@ export const AboutSection = () => {
               }
               .awards-container {
                 flex-direction: column;
+                gap: 1rem;
               }
               .award-strip {
                 min-height: 180px;
-                padding: 2rem 1.5rem 0 1.5rem;
+                padding: 2rem 1.5rem 2rem 1.5rem;
               }
               .award-strip-1, .award-strip-2 {
                 border-right: none;
-                border-bottom: 1px solid var(--border);
+                border-bottom: none;
               }
               .award-strip-3 {
                 border-bottom: none;
@@ -488,7 +496,7 @@ export const AboutSection = () => {
               >
                 {/* Ghost Roman Numeral */}
                 <motion.div
-                  custom={{ opacity: 1, delay: idx * 0.1 }}
+                  custom={{ opacity: 1, delay: (idx * 0.15) + 0.5 }}
                   variants={ghostVariants}
                   animate={leadershipTrigger ? "visible" : "hidden"}
                   initial="hidden"
@@ -513,7 +521,7 @@ export const AboutSection = () => {
                     className="text-foreground uppercase font-normal mb-1"
                     style={{ fontFamily: "'Audiowide', cursive", fontSize: 'clamp(12px, 1.3vw, 17px)', letterSpacing: '-0.01em', lineHeight: 1.2 }}
                   >
-                    <ScrambleText text={award.title} trigger={leadershipTrigger} delay={idx * 150} />
+                    <ScrambleText text={award.title} trigger={leadershipTrigger} delay={(idx * 150) + 500} />
                   </h4>
                   <p 
                     className="text-muted-foreground"
@@ -531,7 +539,7 @@ export const AboutSection = () => {
 
                 {/* Rank Progress Bar */}
                 <motion.div
-                  custom={{ width: award.progressWidth, delay: idx * 0.15 }}
+                  custom={{ width: award.progressWidth, delay: (idx * 0.15) + 0.5 }}
                   variants={barVariants}
                   animate={leadershipTrigger ? "visible" : "hidden"}
                   initial="hidden"
