@@ -1,5 +1,7 @@
+"use client";
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeContext } from './ThemeProvider';
 import { Menu, X, Sun, Moon, Home } from 'lucide-react';
@@ -14,10 +16,10 @@ const sectionLinks = [
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
   const { theme, toggleTheme } = useThemeContext();
   
-  const isHomePage = location.pathname === '/';
+  const isHomePage = pathname === '/';
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -47,15 +49,15 @@ export const Navigation = () => {
         <div className="glass rounded-full px-2 py-2 flex items-center gap-1">
           {/* Home Link */}
           <Link
-            to="/"
+            href="/"
             onClick={handleHomeClick}
             className={`relative px-4 py-2 text-sm font-display font-medium transition-colors duration-300 rounded-full
-              ${location.pathname === '/' && !location.hash
+              ${pathname === '/'
                 ? 'text-primary-foreground' 
                 : 'text-foreground/70 hover:text-foreground'
               }`}
           >
-            {location.pathname === '/' && !location.hash && (
+            {pathname === '/' && (
               <motion.div
                 layoutId="nav-active"
                 className="absolute inset-0 bg-primary rounded-full"
@@ -145,10 +147,10 @@ export const Navigation = () => {
                   transition={{ delay: 0.05 }}
                 >
                   <Link
-                    to="/"
+                    href="/"
                     onClick={handleHomeClick}
                     className={`block text-2xl font-display font-bold py-2 transition-colors
-                      ${location.pathname === '/'
+                      ${pathname === '/'
                         ? 'dark:text-neon-cyan text-primary' 
                         : 'text-foreground/70 hover:text-foreground'
                       }`}

@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react';
 import { Github, Linkedin, Mail, ChevronUp, Cpu } from 'lucide-react';
 import { ScrambleText } from '../ScrambleText';

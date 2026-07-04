@@ -1,3 +1,4 @@
+"use client";
 import { useRef, useState, useEffect } from 'react';
 import { Download, ExternalLink, FileText } from 'lucide-react';
 import { FadeIn, SlideIn } from '@/components/PageTransition';

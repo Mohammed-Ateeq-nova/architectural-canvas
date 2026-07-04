@@ -1,5 +1,6 @@
+"use client";
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { motion, useScroll, useTransform, useAnimationFrame, useMotionValueEvent } from 'framer-motion';
 import { Mail, Github, Linkedin } from 'lucide-react';
 import { ScrambleText } from '../ScrambleText';
@@ -308,13 +309,13 @@ export const HeroScroll = () => {
                   Projects
                 </span>
                 <div className="flex gap-2">
-                  <Link to="/projects/factguard-ai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
+                  <Link href="/projects/factguard-ai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
                     <img src="/projects/factguard/report.png" alt="FactGuard AI" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>
-                  <Link to="/projects/heart-risk-detection" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
+                  <Link href="/projects/heart-risk-detection" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
                     <img src="/projects/heart-risk/analysis.png" alt="Heart Risk Detection" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>
-                  <Link to="/projects/vidyaai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
+                  <Link href="/projects/vidyaai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block">
                     <img src="/projects/vidhya-ai/response.png" alt="VidyaAI" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>
                 </div>

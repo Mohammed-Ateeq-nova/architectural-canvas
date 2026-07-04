@@ -1,6 +1,7 @@
+"use client";
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, Layers } from 'lucide-react';
 import { ScrambleText } from '../ScrambleText';
 import { ScrambleParagraph } from '../ScrambleParagraph';
@@ -79,7 +80,7 @@ const ProjectCard = ({
   rotation: number;
   cardRef: (el: HTMLDivElement | null) => void;
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [visibility, setVisibility] = useState(0);
   const [dimensions, setDimensions] = useState({ cardSize: 160, radius: 180 });
@@ -148,7 +149,7 @@ const ProjectCard = ({
   }, []);
 
   const handleNavigate = () => {
-    navigate(`/projects/${project.id}`);
+    router.push(`/projects/${project.id}`);
   };
 
   return (

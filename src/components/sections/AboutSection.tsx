@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FadeIn } from '@/components/PageTransition';
@@ -181,7 +182,7 @@ export const AboutSection = () => {
           <FadeIn>
             <ScrambleText
               text="Technical Expertise"
-              as="h3"
+              as="h2"
               className="text-display-md text-center mb-12"
             />
           </FadeIn>

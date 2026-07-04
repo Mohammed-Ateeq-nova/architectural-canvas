@@ -1,5 +1,6 @@
- import { createContext, useContext, ReactNode } from 'react';
- import { useTheme } from '@/hooks/useTheme';
+"use client";
+import { createContext, useContext, ReactNode } from 'react';
+import { useTheme } from '@/hooks/useTheme';
  
  type Theme = 'light' | 'dark';
  

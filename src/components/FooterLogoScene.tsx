@@ -1,3 +1,4 @@
+"use client";
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
@@ -176,6 +177,15 @@ export const FooterLogoScene = ({
     aurora: { cyan: '#00ffcc', accent: '#a000ff' },
     magma: { cyan: '#ff7700', accent: '#ff0055' },
   }[colorPreset];
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div ref={containerRef} className="w-full h-full absolute inset-0 select-none pointer-events-none" />;
+  }
 
   return (
     <div ref={containerRef} className="w-full h-full absolute inset-0 select-none pointer-events-none">

@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState } from 'react';
 import { useScrambleText } from '../hooks/useScrambleText';
 

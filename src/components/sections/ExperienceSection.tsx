@@ -1,7 +1,8 @@
+"use client";
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, ArrowUpRight, Briefcase } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ScrambleText } from '../ScrambleText';
 import { FadeIn } from '@/components/PageTransition';
 
@@ -155,7 +156,7 @@ const ExperienceBlock = ({ exp, isFirst }: { exp: typeof experiences[0]; isFirst
           className="w-full"
         >
           <Link 
-            to={`/experience/${exp.id}`}
+            href={`/experience/${exp.id}`}
             className="block w-full text-left"
           >
             <div
