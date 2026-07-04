@@ -1,44 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mail, MapPin, Phone, Github, Linkedin } from 'lucide-react';
+import { FadeIn, SlideIn } from '@/components/PageTransition';
 import { GlassCard, GlassCardLarge } from '@/components/GlassCard';
 import { ScrambleText } from '../ScrambleText';
 import { ScrambleParagraph } from '../ScrambleParagraph';
 import { toast } from 'sonner';
-
-const slideInVariants = {
-  hidden: (custom: { direction: 'left' | 'right' | 'up' | 'down'; delay?: number }) => {
-    const directionMap = {
-      left: { x: -70, y: 0, opacity: 0 },
-      right: { x: 70, y: 0, opacity: 0 },
-      up: { x: 0, y: -70, opacity: 0 },
-      down: { x: 0, y: 70, opacity: 0 },
-    };
-    return directionMap[custom.direction || 'left'];
-  },
-  visible: (custom: { direction: 'left' | 'right' | 'up' | 'down'; delay?: number }) => ({
-    x: 0,
-    y: 0,
-    opacity: 1,
-    transition: {
-      delay: custom.delay || 0,
-      duration: 0.5,
-      ease: [0.34, 1.56, 0.64, 1] // easeOutBack (bouncy, back-and-forth overshoot effect)
-    }
-  })
-};
-
-const textFadeVariants = {
-  hidden: { opacity: 0 },
-  visible: (custom: { delay: number }) => ({
-    opacity: 1,
-    transition: {
-      delay: custom.delay || 0,
-      duration: 0.4,
-      ease: 'easeOut'
-    }
-  })
-};
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -65,7 +32,7 @@ export const ContactSection = () => {
           setSectionTrigger(entry.isIntersecting);
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.25 }
     );
 
     observer.observe(el);
@@ -86,7 +53,7 @@ export const ContactSection = () => {
           setFormTrigger(entry.isIntersecting);
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.25 }
     );
 
     observer.observe(el);
@@ -210,90 +177,40 @@ export const ContactSection = () => {
     <section className="relative py-32" id="contact" ref={sectionRef}>
       <div className="section-container">
         <div className="mb-16">
-          {/* Badge Border slides in; text inside fades in later */}
-          <motion.div
-            custom={{ direction: 'up', delay: 0.0 }}
-            variants={slideInVariants}
-            initial="hidden"
-            animate={sectionTrigger ? "visible" : "hidden"}
-            className="inline-block px-4 py-2 mb-6 text-xs font-display font-medium tracking-widest uppercase glass rounded-full"
-          >
-            <motion.span
-              custom={{ delay: 1.2 }}
-              variants={textFadeVariants}
-              initial="hidden"
-              animate={sectionTrigger ? "visible" : "hidden"}
-            >
-              <ScrambleText text="Contact" trigger={sectionTrigger} delay={1200} />
-            </motion.span>
-          </motion.div>
-          
-          <motion.h2
-            custom={{ delay: 1.2 }}
-            variants={textFadeVariants}
-            initial="hidden"
-            animate={sectionTrigger ? "visible" : "hidden"}
-            className="text-display-lg mb-6"
-          >
-            <ScrambleText text="Let's" trigger={sectionTrigger} delay={1200} />{' '}
-            <span className="dark:neon-text-cyan">
-              <ScrambleText text="Connect" trigger={sectionTrigger} delay={1800} />
+          <FadeIn>
+            <span className="inline-block px-4 py-2 mb-6 text-xs font-display font-medium tracking-widest uppercase glass rounded-full">
+              <ScrambleText text="Contact" trigger={sectionTrigger} />
             </span>
-          </motion.h2>
+          </FadeIn>
           
-          <motion.div
-            custom={{ delay: 1.3 }}
-            variants={textFadeVariants}
-            initial="hidden"
-            animate={sectionTrigger ? "visible" : "hidden"}
-          >
+          <FadeIn delay={0.1}>
+            <h2 className="text-display-lg mb-6">
+              <ScrambleText text="Let's" trigger={sectionTrigger} delay={200} /> <span className="dark:neon-text-cyan"><ScrambleText text="Connect" trigger={sectionTrigger} delay={1000} /></span>
+            </h2>
+          </FadeIn>
+          
+          <FadeIn delay={0.2}>
             <ScrambleParagraph
               text="Have a project in mind? Want to collaborate? Or just want to say hello? I'd love to hear from you."
               className="text-xl text-muted-foreground max-w-2xl"
               trigger={sectionTrigger}
-              delay={1300}
             />
-          </motion.div>
+          </FadeIn>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Form Container Card slides in */}
-          <motion.div
-            custom={{ direction: 'left', delay: 0.1 }}
-            variants={slideInVariants}
-            initial="hidden"
-            animate={formTrigger ? "visible" : "hidden"}
-            className="h-full"
-          >
+          <SlideIn direction="left">
             <GlassCardLarge className="h-full">
-              {/* Form Title fades in later */}
-              <motion.h3
-                custom={{ delay: 1.2 }}
-                variants={textFadeVariants}
-                initial="hidden"
-                animate={formTrigger ? "visible" : "hidden"}
-                className="text-display-sm mb-8"
-              >
-                <ScrambleText text="Send a Message" trigger={formTrigger} delay={1200} />
-              </motion.h3>
+              <h3 className="text-display-sm mb-8">
+                <ScrambleText text="Send a Message" trigger={formTrigger} />
+              </h3>
               
               <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
                 <div>
-                  <motion.label
-                    custom={{ delay: 1.3 }}
-                    variants={textFadeVariants}
-                    initial="hidden"
-                    animate={formTrigger ? "visible" : "hidden"}
-                    className="block text-sm font-display font-medium mb-2"
-                  >
-                    <ScrambleText text="Name" trigger={formTrigger} delay={1300} />
-                  </motion.label>
-                  {/* Name Input Textbox slides in */}
-                  <motion.input
-                    custom={{ direction: 'left', delay: 0.4 }}
-                    variants={slideInVariants}
-                    initial="hidden"
-                    animate={formTrigger ? "visible" : "hidden"}
+                  <label className="block text-sm font-display font-medium mb-2">
+                    <ScrambleText text="Name" trigger={formTrigger} delay={0} />
+                  </label>
+                  <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -304,21 +221,10 @@ export const ContactSection = () => {
                 </div>
                 
                 <div>
-                  <motion.label
-                    custom={{ delay: 1.4 }}
-                    variants={textFadeVariants}
-                    initial="hidden"
-                    animate={formTrigger ? "visible" : "hidden"}
-                    className="block text-sm font-display font-medium mb-2"
-                  >
-                    <ScrambleText text="Email" trigger={formTrigger} delay={1400} />
-                  </motion.label>
-                  {/* Email Input Textbox slides in */}
-                  <motion.input
-                    custom={{ direction: 'right', delay: 0.5 }}
-                    variants={slideInVariants}
-                    initial="hidden"
-                    animate={formTrigger ? "visible" : "hidden"}
+                  <label className="block text-sm font-display font-medium mb-2">
+                    <ScrambleText text="Email" trigger={formTrigger} delay={60} />
+                  </label>
+                  <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -329,21 +235,10 @@ export const ContactSection = () => {
                 </div>
                 
                 <div>
-                  <motion.label
-                    custom={{ delay: 1.5 }}
-                    variants={textFadeVariants}
-                    initial="hidden"
-                    animate={formTrigger ? "visible" : "hidden"}
-                    className="block text-sm font-display font-medium mb-2"
-                  >
-                    <ScrambleText text="Message" trigger={formTrigger} delay={1500} />
-                  </motion.label>
-                  {/* Message Textarea Box slides in */}
-                  <motion.textarea
-                    custom={{ direction: 'left', delay: 0.6 }}
-                    variants={slideInVariants}
-                    initial="hidden"
-                    animate={formTrigger ? "visible" : "hidden"}
+                  <label className="block text-sm font-display font-medium mb-2">
+                    <ScrambleText text="Message" trigger={formTrigger} delay={120} />
+                  </label>
+                  <textarea
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-3 glass rounded-xl bg-transparent border border-border focus:border-foreground dark:focus:border-neon-cyan outline-none transition-colors font-body resize-none"
@@ -353,132 +248,61 @@ export const ContactSection = () => {
                   />
                 </div>
                 
-                {/* Submit Button slides in; text fades in later */}
-                <motion.div
-                  custom={{ direction: 'down', delay: 0.7 }}
-                  variants={slideInVariants}
-                  initial="hidden"
-                  animate={formTrigger ? "visible" : "hidden"}
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={isSubmitting ? {} : { scale: 1.02 }}
+                  whileTap={isSubmitting ? {} : { scale: 0.98 }}
+                  className={`w-full py-4 rounded-xl font-display font-medium inline-flex items-center justify-center gap-2 transition-all duration-300 ${
+                    isSubmitting
+                      ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-50'
+                      : 'bg-foreground text-background dark:bg-neon-cyan dark:text-background'
+                  }`}
                 >
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    whileHover={isSubmitting ? {} : { scale: 1.02 }}
-                    whileTap={isSubmitting ? {} : { scale: 0.98 }}
-                    className={`w-full py-4 rounded-xl font-display font-medium inline-flex items-center justify-center gap-2 transition-all duration-300 ${
-                      isSubmitting
-                        ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-50'
-                        : 'bg-foreground text-background dark:bg-neon-cyan dark:text-background'
-                    }`}
-                  >
-                    <motion.span
-                      custom={{ delay: 1.6 }}
-                      variants={textFadeVariants}
-                      initial="hidden"
-                      animate={formTrigger ? "visible" : "hidden"}
-                      className="inline-flex items-center gap-2"
-                    >
-                      <ScrambleText text={isSubmitting ? "Transmitting..." : "Send Message"} trigger={formTrigger} delay={1600} />
-                      <Send className={`w-4 h-4 ${isSubmitting ? 'animate-pulse' : ''}`} />
-                    </motion.span>
-                  </motion.button>
-                </motion.div>
+                  <ScrambleText text={isSubmitting ? "Transmitting..." : "Send Message"} trigger={formTrigger} delay={180} />
+                  <Send className={`w-4 h-4 ${isSubmitting ? 'animate-pulse' : ''}`} />
+                </motion.button>
               </form>
             </GlassCardLarge>
-          </motion.div>
+          </SlideIn>
 
           <div className="space-y-6">
-            {/* Get in Touch Card slides in */}
-            <motion.div
-              custom={{ direction: 'right', delay: 0.2 }}
-              variants={slideInVariants}
-              initial="hidden"
-              animate={sectionTrigger ? "visible" : "hidden"}
-            >
+            <SlideIn direction="right" delay={0.1}>
               <GlassCard>
-                {/* Title fades in later */}
-                <motion.h4
-                  custom={{ delay: 1.2 }}
-                  variants={textFadeVariants}
-                  initial="hidden"
-                  animate={sectionTrigger ? "visible" : "hidden"}
-                  className="text-lg font-display font-semibold mb-4"
-                >
-                  <ScrambleText text="Get in Touch" trigger={sectionTrigger} delay={1200} />
-                </motion.h4>
+                <h4 className="text-lg font-display font-semibold mb-4">
+                  <ScrambleText text="Get in Touch" trigger={sectionTrigger} delay={800} />
+                </h4>
                 <div className="space-y-4">
-                  {/* Content links fade in later */}
-                  <motion.div
-                    custom={{ delay: 1.3 }}
-                    variants={textFadeVariants}
-                    initial="hidden"
-                    animate={sectionTrigger ? "visible" : "hidden"}
+                  <a
+                    href="mailto:mohd.ateeq.march@gmail.com"
+                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <a
-                      href="mailto:mohd.ateeq.march@gmail.com"
-                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <Mail className="w-5 h-5" />
-                      <span>mohd.ateeq.march@gmail.com</span>
-                    </a>
-                  </motion.div>
-                  <motion.div
-                    custom={{ delay: 1.4 }}
-                    variants={textFadeVariants}
-                    initial="hidden"
-                    animate={sectionTrigger ? "visible" : "hidden"}
+                    <Mail className="w-5 h-5" />
+                    <span>mohd.ateeq.march@gmail.com</span>
+                  </a>
+                  <a
+                    href="tel:+918790304479"
+                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <a
-                      href="tel:+918790304479"
-                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <Phone className="w-5 h-5" />
-                      <span>+91 8790304479</span>
-                    </a>
-                  </motion.div>
-                  <motion.div
-                    custom={{ delay: 1.5 }}
-                    variants={textFadeVariants}
-                    initial="hidden"
-                    animate={sectionTrigger ? "visible" : "hidden"}
-                  >
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <MapPin className="w-5 h-5" />
-                      <span>Hyderabad, India</span>
-                    </div>
-                  </motion.div>
+                    <Phone className="w-5 h-5" />
+                    <span>+91 8790304479</span>
+                  </a>
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <MapPin className="w-5 h-5" />
+                    <span>Hyderabad, India</span>
+                  </div>
                 </div>
               </GlassCard>
-            </motion.div>
+            </SlideIn>
 
-            {/* Connect Card slides in */}
-            <motion.div
-              custom={{ direction: 'down', delay: 0.3 }}
-              variants={slideInVariants}
-              initial="hidden"
-              animate={sectionTrigger ? "visible" : "hidden"}
-            >
+            <SlideIn direction="right" delay={0.2}>
               <GlassCard>
-                {/* Title fades in later */}
-                <motion.h4
-                  custom={{ delay: 1.2 }}
-                  variants={textFadeVariants}
-                  initial="hidden"
-                  animate={sectionTrigger ? "visible" : "hidden"}
-                  className="text-lg font-display font-semibold mb-4"
-                >
-                  <ScrambleText text="Connect" trigger={sectionTrigger} delay={1200} />
-                </motion.h4>
-                {/* Social Button Container slides in */}
-                <motion.div
-                  custom={{ direction: 'right', delay: 0.8 }}
-                  variants={slideInVariants}
-                  initial="hidden"
-                  animate={sectionTrigger ? "visible" : "hidden"}
-                  className="flex gap-4"
-                >
+                <h4 className="text-lg font-display font-semibold mb-4">
+                  <ScrambleText text="Connect" trigger={sectionTrigger} delay={1000} />
+                </h4>
+                <div className="flex gap-4">
                   <a
-                    href="https://github.com/Mohammed-Aeeq-nova"
+                    href="https://github.com/Mohammed-Ateeq-nova"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 glass rounded-full hover:scale-110 transition-transform"
@@ -495,9 +319,9 @@ export const ContactSection = () => {
                   >
                     <Linkedin className="w-5 h-5" />
                   </a>
-                </motion.div>
+                </div>
               </GlassCard>
-            </motion.div>
+            </SlideIn>
           </div>
         </div>
       </div>

@@ -9,10 +9,8 @@ export const HeroScroll = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  const [framesLoaded, setFramesLoaded] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(0);
-  const framesRef = useRef<HTMLImageElement[]>([]);
-  const TOTAL_FRAMES = 59;
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   
   const [isNameHovered, setIsNameHovered] = useState(false);
 
@@ -26,32 +24,24 @@ export const HeroScroll = () => {
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Preload frame images
+  // Preload video metadata
   useEffect(() => {
-    let loaded = 0;
-    const imgs: HTMLImageElement[] = [];
-    
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      const frameNum = String(i).padStart(3, '0');
-      img.src = `/Hero_Frames/ezgif-frame-${frameNum}.png`;
-      img.onload = () => {
-        loaded++;
-        setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setFramesLoaded(true);
-        }
-      };
-      img.onerror = () => {
-        loaded++;
-        setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setFramesLoaded(true);
-        }
-      };
-      imgs.push(img);
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => {
+      setVideoLoaded(true);
+    };
+
+    if (video.readyState >= 1) {
+      handleLoadedMetadata();
+    } else {
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
     }
-    framesRef.current = imgs;
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
   }, []);
 
   // Resize canvas
@@ -69,7 +59,7 @@ export const HeroScroll = () => {
 
   // Typewriter effect logic
   useEffect(() => {
-    if (!framesLoaded) return;
+    if (!videoLoaded) return;
     
     const timeout = setTimeout(() => {
       const fullText = titles[titleIndex];
@@ -89,7 +79,7 @@ export const HeroScroll = () => {
     }, isDeleting ? 50 : 100);
     
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, titleIndex, framesLoaded, titles]);
+  }, [currentText, isDeleting, titleIndex, videoLoaded, titles]);
 
   // Scroll animations
   const { scrollYProgress } = useScroll({ target: containerRef });
@@ -121,54 +111,62 @@ export const HeroScroll = () => {
   // Phase 4: Center CTA (80% -> 100%) - Enters 0.80->0.88
   const phase4Opacity = useTransform(scrollYProgress, [0.80, 0.88], [0, 1]);
 
-  // Frame drawing based on preloaded image array
+  // Frame drawing and scroll-seeking logic
   useAnimationFrame(() => {
+    const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (!canvas || !framesLoaded || framesRef.current.length === 0) return;
+    if (!video || !canvas || !videoLoaded) return;
     
+    const duration = video.duration || 0;
     const progressFactor = Math.min(1, scrollYProgress.get() / 0.75);
-    const frameIndex = Math.min(
-      TOTAL_FRAMES - 1,
-      Math.max(0, Math.floor(progressFactor * (TOTAL_FRAMES - 1)))
-    );
+    const targetTime = progressFactor * duration;
     
-    const img = framesRef.current[frameIndex];
-    if (!img || !img.complete) return;
+    // Smoothly seek the video towards targetTime to avoid heavy seeks clogging the main thread
+    const diff = targetTime - video.currentTime;
+    if (Math.abs(diff) > 0.01 && !video.seeking) {
+      video.currentTime += diff * 0.12;
+    }
     
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const canvasAspectRatio = canvas.width / canvas.height;
-      const imgAspectRatio = img.naturalWidth / img.naturalHeight;
+      const videoAspectRatio = video.videoWidth / video.videoHeight;
       
       let drawWidth, drawHeight, offsetX, offsetY;
       
-      if (canvasAspectRatio > imgAspectRatio) {
+      if (canvasAspectRatio > videoAspectRatio) {
         drawHeight = canvas.height;
-        drawWidth = img.naturalWidth * (drawHeight / img.naturalHeight);
+        drawWidth = video.videoWidth * (drawHeight / video.videoHeight);
         offsetX = (canvas.width - drawWidth) / 2;
         offsetY = 0;
       } else {
         drawWidth = canvas.width;
-        drawHeight = img.naturalHeight * (drawWidth / img.naturalWidth);
+        drawHeight = video.videoHeight * (drawWidth / video.videoWidth);
         offsetX = 0;
         offsetY = (canvas.height - drawHeight) / 2;
       }
       
-      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+      ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
     }
   });
 
   return (
     <div ref={containerRef} className="h-[600vh] hero-scroll-container">
       <div className="hero-scroll-sticky">
-        {!framesLoaded && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black gap-4 text-white">
+        <video
+          ref={videoRef}
+          src="/hero.mp4"
+          preload="auto"
+          muted
+          playsInline
+          className="hidden"
+        />
+
+        {!videoLoaded && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black">
             <div className="hero-scroll-spinner" />
-            <div className="font-display text-sm tracking-widest text-[#00e5ff] uppercase">
-              Initializing Experience ({Math.round((loadedCount / TOTAL_FRAMES) * 100)}%)
-            </div>
           </div>
         )}
         

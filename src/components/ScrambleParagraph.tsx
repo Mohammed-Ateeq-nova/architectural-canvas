@@ -6,7 +6,6 @@ interface ScrambleParagraphProps extends React.HTMLAttributes<HTMLParagraphEleme
   className?: string;
   wordStaggerMs?: number;
   trigger?: boolean;
-  delay?: number;
 }
 
 export const ScrambleParagraph: React.FC<ScrambleParagraphProps> = ({
@@ -14,7 +13,6 @@ export const ScrambleParagraph: React.FC<ScrambleParagraphProps> = ({
   className = '',
   wordStaggerMs = 60,
   trigger: externalTrigger,
-  delay = 0,
   ...rest
 }) => {
   const containerRef = useRef<HTMLParagraphElement>(null);
@@ -79,7 +77,7 @@ export const ScrambleParagraph: React.FC<ScrambleParagraphProps> = ({
             copy[idx] = true;
             return copy;
           });
-        }, delay + idx * wordStaggerMs);
+        }, idx * wordStaggerMs);
         timeouts.current.push(tId);
       }
     } else {
@@ -100,7 +98,7 @@ export const ScrambleParagraph: React.FC<ScrambleParagraphProps> = ({
     return () => {
       timeouts.current.forEach((t) => window.clearTimeout(t));
     };
-  }, [activeTrigger, wordStaggerMs, words.current.length, delay]);
+  }, [activeTrigger, wordStaggerMs, words.current.length]);
 
   return (
     <p ref={containerRef} className={className} {...rest}>
