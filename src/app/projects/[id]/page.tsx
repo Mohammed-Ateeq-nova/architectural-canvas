@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import ProjectDetailClient, { projectData } from '../ProjectDetailClient';
+import { projectData } from '@/data/projects';
+import ProjectDetailClient from '../ProjectDetailClient';
 
 export async function generateStaticParams() {
   return Object.keys(projectData).map((id) => ({

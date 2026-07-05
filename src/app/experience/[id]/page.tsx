@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import ExperienceDetailClient, { experienceDetailData } from '../ExperienceDetailClient';
+import { experienceDetailData } from '@/data/experiences';
+import ExperienceDetailClient from '../ExperienceDetailClient';
 
 export async function generateStaticParams() {
   return Object.keys(experienceDetailData).map((id) => ({
