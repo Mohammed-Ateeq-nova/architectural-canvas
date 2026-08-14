@@ -1,18 +1,18 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform, useAnimationFrame, useMotionValueEvent } from 'framer-motion';
 import { Mail, Github, Linkedin } from 'lucide-react';
 import { ScrambleText } from '../ScrambleText';
 import { ScrambleParagraph } from '../ScrambleParagraph';
+import { getHeroFrames, isHeroPreloaded, startHeroPreload, subscribeHeroPreload } from '@/lib/heroFramePreloader';
 
 export const HeroScroll = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  const [framesLoaded, setFramesLoaded] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(0);
-  const framesRef = useRef<HTMLImageElement[]>([]);
+  const [framesLoaded, setFramesLoaded] = useState(() => isHeroPreloaded());
+  const framesRef = useRef<HTMLImageElement[]>(getHeroFrames());
   const currentFrameRef = useRef(0);
   const TOTAL_FRAMES = 59;
   
@@ -28,33 +28,59 @@ export const HeroScroll = () => {
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Preload frame images
-  useEffect(() => {
-    let loaded = 0;
-    const imgs: HTMLImageElement[] = [];
-    
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      const frameNum = String(i).padStart(3, '0');
-      img.src = `/Hero_Frames/ezgif-frame-${frameNum}.png`;
-      img.onload = () => {
-        loaded++;
-        setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setFramesLoaded(true);
-        }
-      };
-      img.onerror = () => {
-        loaded++;
-        setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setFramesLoaded(true);
-        }
-      };
-      imgs.push(img);
+  // Helper to render frame onto canvas
+  const renderFrameOnCanvas = useCallback((frameIdx: number) => {
+    const canvas = canvasRef.current;
+    const frames = framesRef.current;
+    if (!canvas || frames.length === 0) return;
+
+    const img = frames[frameIdx];
+    if (!img || !img.complete || img.naturalWidth === 0) return;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const canvasAspectRatio = canvas.width / canvas.height;
+      const imgAspectRatio = img.naturalWidth / img.naturalHeight;
+      
+      let drawWidth, drawHeight, offsetX, offsetY;
+      
+      if (canvasAspectRatio > imgAspectRatio) {
+        drawHeight = canvas.height;
+        drawWidth = img.naturalWidth * (drawHeight / img.naturalHeight);
+        offsetX = (canvas.width - drawWidth) / 2;
+        offsetY = 0;
+      } else {
+        drawWidth = canvas.width;
+        drawHeight = img.naturalHeight * (drawWidth / img.naturalWidth);
+        offsetX = 0;
+        offsetY = (canvas.height - drawHeight) / 2;
+      }
+      
+      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
     }
-    framesRef.current = imgs;
   }, []);
+
+  // Sync frames from preloader
+  useEffect(() => {
+    // Ensure preload is active
+    startHeroPreload().then((loadedFrames) => {
+      framesRef.current = loadedFrames;
+      setFramesLoaded(true);
+      renderFrameOnCanvas(0);
+    });
+
+    const unsubscribe = subscribeHeroPreload((_, ready) => {
+      if (ready) {
+        framesRef.current = getHeroFrames();
+        setFramesLoaded(true);
+        renderFrameOnCanvas(0);
+      }
+    });
+
+    return unsubscribe;
+  }, [renderFrameOnCanvas]);
 
   // Resize canvas
   useEffect(() => {
@@ -62,17 +88,16 @@ export const HeroScroll = () => {
       if (canvasRef.current) {
         canvasRef.current.width = window.innerWidth;
         canvasRef.current.height = window.innerHeight;
+        renderFrameOnCanvas(Math.round(currentFrameRef.current));
       }
     };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [renderFrameOnCanvas]);
 
   // Typewriter effect logic
   useEffect(() => {
-    if (!framesLoaded) return;
-    
     const timeout = setTimeout(() => {
       const fullText = titles[titleIndex];
       
@@ -91,7 +116,7 @@ export const HeroScroll = () => {
     }, isDeleting ? 50 : 100);
     
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, titleIndex, framesLoaded, titles]);
+  }, [currentText, isDeleting, titleIndex, titles]);
 
   // Scroll animations
   const { scrollYProgress } = useScroll({ target: containerRef });
@@ -126,7 +151,7 @@ export const HeroScroll = () => {
   // Frame drawing and smooth frame-seeking logic
   useAnimationFrame(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !framesLoaded || framesRef.current.length === 0) return;
+    if (!canvas || framesRef.current.length === 0) return;
     
     const progressFactor = Math.min(1, scrollYProgress.get() / 0.75);
     const targetFrame = progressFactor * (TOTAL_FRAMES - 1);
@@ -138,46 +163,12 @@ export const HeroScroll = () => {
       Math.max(0, Math.round(currentFrameRef.current))
     );
     
-    const img = framesRef.current[currentFrame];
-    if (!img || !img.complete) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const canvasAspectRatio = canvas.width / canvas.height;
-      const imgAspectRatio = img.naturalWidth / img.naturalHeight;
-      
-      let drawWidth, drawHeight, offsetX, offsetY;
-      
-      if (canvasAspectRatio > imgAspectRatio) {
-        drawHeight = canvas.height;
-        drawWidth = img.naturalWidth * (drawHeight / img.naturalHeight);
-        offsetX = (canvas.width - drawWidth) / 2;
-        offsetY = 0;
-      } else {
-        drawWidth = canvas.width;
-        drawHeight = img.naturalHeight * (drawWidth / img.naturalWidth);
-        offsetX = 0;
-        offsetY = (canvas.height - drawHeight) / 2;
-      }
-      
-      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-    }
+    renderFrameOnCanvas(currentFrame);
   });
 
   return (
     <div ref={containerRef} className="h-[600vh] hero-scroll-container">
       <div className="hero-scroll-sticky">
-        {!framesLoaded && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black gap-4 text-white">
-            <div className="hero-scroll-spinner" />
-            <div className="font-display text-sm tracking-widest text-[#00e5ff] uppercase">
-              Initializing Experience ({Math.round((loadedCount / TOTAL_FRAMES) * 100)}%)
-            </div>
-          </div>
-        )}
-        
         <canvas ref={canvasRef} className="hero-scroll-canvas relative z-[1]" style={{ pointerEvents: 'none' }} />
         
         {/* Dark Overlay for Text */}
@@ -511,3 +502,5 @@ export const HeroScroll = () => {
     </div>
   );
 };
+
+export default HeroScroll;
