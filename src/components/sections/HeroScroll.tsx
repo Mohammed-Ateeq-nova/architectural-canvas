@@ -28,38 +28,60 @@ export const HeroScroll = () => {
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Helper to render frame onto canvas
+  const rafIdRef = useRef<number>(0);
+
+  // Helper to render frame onto canvas with RAF batching and frame fallback
   const renderFrameOnCanvas = useCallback((frameIdx: number) => {
-    const canvas = canvasRef.current;
-    const frames = framesRef.current;
-    if (!canvas || frames.length === 0) return;
+    cancelAnimationFrame(rafIdRef.current);
+    rafIdRef.current = requestAnimationFrame(() => {
+      const canvas = canvasRef.current;
+      const frames = framesRef.current;
+      if (!canvas || frames.length === 0) return;
 
-    const img = frames[frameIdx];
-    if (!img || !img.complete || img.naturalWidth === 0) return;
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const canvasAspectRatio = canvas.width / canvas.height;
-      const imgAspectRatio = img.naturalWidth / img.naturalHeight;
-      
-      let drawWidth, drawHeight, offsetX, offsetY;
-      
-      if (canvasAspectRatio > imgAspectRatio) {
-        drawHeight = canvas.height;
-        drawWidth = img.naturalWidth * (drawHeight / img.naturalHeight);
-        offsetX = (canvas.width - drawWidth) / 2;
-        offsetY = 0;
-      } else {
-        drawWidth = canvas.width;
-        drawHeight = img.naturalHeight * (drawWidth / img.naturalWidth);
-        offsetX = 0;
-        offsetY = (canvas.height - drawHeight) / 2;
+      // Find target frame or fallback to latest available frame
+      let img = frames[frameIdx];
+      if (!img || !img.complete || img.naturalWidth === 0) {
+        for (let i = frameIdx - 1; i >= 0; i--) {
+          const fallback = frames[i];
+          if (fallback && fallback.complete && fallback.naturalWidth > 0) {
+            img = fallback;
+            break;
+          }
+        }
       }
-      
-      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-    }
+
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+
+      const ctx = canvas.getContext('2d', { alpha: false });
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const canvasAspectRatio = canvas.width / canvas.height;
+        const imgAspectRatio = img.naturalWidth / img.naturalHeight;
+        
+        let drawWidth: number, drawHeight: number, offsetX: number, offsetY: number;
+        
+        if (canvasAspectRatio > imgAspectRatio) {
+          drawHeight = canvas.height;
+          drawWidth = img.naturalWidth * (drawHeight / img.naturalHeight);
+          offsetX = (canvas.width - drawWidth) / 2;
+          offsetY = 0;
+        } else {
+          drawWidth = canvas.width;
+          drawHeight = img.naturalHeight * (drawWidth / img.naturalWidth);
+          offsetX = 0;
+          offsetY = (canvas.height - drawHeight) / 2;
+        }
+        
+        ctx.drawImage(
+          img,
+          Math.round(offsetX),
+          Math.round(offsetY),
+          Math.round(drawWidth),
+          Math.round(drawHeight)
+        );
+      }
+    });
   }, []);
 
   // Sync frames from preloader
@@ -169,7 +191,11 @@ export const HeroScroll = () => {
   return (
     <div ref={containerRef} className="h-[600vh] hero-scroll-container">
       <div className="hero-scroll-sticky">
-        <canvas ref={canvasRef} className="hero-scroll-canvas relative z-[1]" style={{ pointerEvents: 'none' }} />
+        <canvas 
+          ref={canvasRef} 
+          className="hero-scroll-canvas relative z-[1]" 
+          style={{ pointerEvents: 'none', willChange: 'transform' }} 
+        />
         
         {/* Dark Overlay for Text */}
         <div className="hero-scroll-overlay" />

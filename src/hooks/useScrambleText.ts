@@ -2,10 +2,40 @@ import { useState, useEffect, useRef } from 'react';
 
 const POOL = '!@#$%^&*<>[]{}|/\\~+=?ABCDEFabcdef0123456789ΔΩΞλπ';
 
+// Global shared scheduler singleton for ScrambleText
+type TickCallback = () => void;
+const subscribers = new Set<TickCallback>();
+let schedulerInterval: ReturnType<typeof setInterval> | null = null;
+
+function addSchedulerSubscriber(tick: TickCallback): void {
+  subscribers.add(tick);
+  if (!schedulerInterval && typeof window !== 'undefined') {
+    schedulerInterval = setInterval(() => {
+      subscribers.forEach((fn) => {
+        try {
+          fn();
+        } catch (e) {
+          console.error('Error in ScrambleText scheduler tick:', e);
+        }
+      });
+    }, 20);
+  }
+}
+
+function removeSchedulerSubscriber(tick: TickCallback): void {
+  subscribers.delete(tick);
+  if (subscribers.size === 0 && schedulerInterval) {
+    clearInterval(schedulerInterval);
+    schedulerInterval = null;
+  }
+}
+
 /**
  * Sequential character scramble hook.
  * Resolves words one at a time and letters left-to-right within each word.
  * On exit, mirrors the exact timing right-to-left.
+ * 
+ * Powered by a global singleton scheduler to prevent hundreds of simultaneous timers.
  * 
  * @param text The target string to scramble.
  * @param trigger true to decode, false to re-scramble and hide.
@@ -18,14 +48,14 @@ export const useScrambleText = (
   wordGap: number = 30
 ): string => {
   const [displayText, setDisplayText] = useState('');
-  const intervalId = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
+  const activeTickRef = useRef<TickCallback | null>(null);
 
   useEffect(() => {
-    // Clear any active interval
-    if (intervalId.current) {
-      window.clearInterval(intervalId.current);
-      intervalId.current = null;
+    // Clean up any existing subscription
+    if (activeTickRef.current) {
+      removeSchedulerSubscriber(activeTickRef.current);
+      activeTickRef.current = null;
     }
 
     if (!text) {
@@ -34,32 +64,29 @@ export const useScrambleText = (
     }
 
     const len = text.length;
+    const startTimes = new Array(len).fill(0);
+    const resolveTimes = new Array(len).fill(0);
+    const letterStagger = 20; // 20ms stagger between consecutive letters
+    const scrambleDuration = 80; // 80ms scramble duration per character
 
-    // Pre-calculate timing timelines
-    const startTimes = Array(len).fill(0);
-    const resolveTimes = Array(len).fill(0);
-
-    const letterStagger = 20; // Snappy 20ms stagger between starting consecutive letters
-    const scrambleDuration = 80; // 80ms scramble duration per character (4 frames of 20ms)
+    let maxTime = 0;
 
     if (trigger) {
-      // Decode (Entry): Process words sequentially, letters left-to-right (overlapped stagger)
+      // Decode (Entry): Process words sequentially, letters left-to-right
       let currentTime = 0;
       for (let i = 0; i < len; i++) {
         const char = text[i];
         if (char === ' ') {
           startTimes[i] = currentTime;
           resolveTimes[i] = currentTime;
-          currentTime += wordGap; // Snappy word transition gap
+          currentTime += wordGap;
         } else {
           startTimes[i] = currentTime;
           resolveTimes[i] = currentTime + scrambleDuration;
-          currentTime += letterStagger; // Stagger starting time of the next letter
+          currentTime += letterStagger;
         }
       }
 
-      // Max time is the absolute final resolve time in the array
-      let maxTime = 0;
       for (let i = 0; i < len; i++) {
         if (resolveTimes[i] > maxTime) {
           maxTime = resolveTimes[i];
@@ -68,15 +95,14 @@ export const useScrambleText = (
 
       startTimeRef.current = Date.now();
 
-      const tick = () => {
+      const tick: TickCallback = () => {
         const elapsed = Date.now() - startTimeRef.current;
 
         if (elapsed >= maxTime) {
-          // Entire string resolved
           setDisplayText(text);
-          if (intervalId.current) {
-            window.clearInterval(intervalId.current);
-            intervalId.current = null;
+          if (activeTickRef.current) {
+            removeSchedulerSubscriber(activeTickRef.current);
+            activeTickRef.current = null;
           }
           return;
         }
@@ -90,11 +116,10 @@ export const useScrambleText = (
           }
 
           if (elapsed < startTimes[i]) {
-            currentStr += ' '; // Hidden before it starts scrambling
+            currentStr += ' ';
           } else if (elapsed >= resolveTimes[i]) {
-            currentStr += char; // Fully resolved to real character
+            currentStr += char;
           } else {
-            // Actively scrambling
             const randomChar = POOL[Math.floor(Math.random() * POOL.length)];
             currentStr += randomChar;
           }
@@ -102,13 +127,14 @@ export const useScrambleText = (
         setDisplayText(currentStr);
       };
 
-      intervalId.current = window.setInterval(tick, 20);
-      tick(); // Immediate invocation
+      activeTickRef.current = tick;
+      addSchedulerSubscriber(tick);
+      tick(); // Immediate first frame execution
     } else {
-      // Re-scramble (Exit): Mirror timing right-to-left (overlapped stagger)
+      // Re-scramble (Exit): Mirror timing right-to-left
       let currentTime = 0;
-      const exitStartTimes = Array(len).fill(0);
-      const exitResolveTimes = Array(len).fill(0);
+      const exitStartTimes = new Array(len).fill(0);
+      const exitResolveTimes = new Array(len).fill(0);
 
       for (let i = len - 1; i >= 0; i--) {
         const char = text[i];
@@ -123,8 +149,6 @@ export const useScrambleText = (
         }
       }
 
-      // Max time is the absolute final exit resolve time in the array
-      let maxTime = 0;
       for (let i = 0; i < len; i++) {
         if (exitResolveTimes[i] > maxTime) {
           maxTime = exitResolveTimes[i];
@@ -133,15 +157,14 @@ export const useScrambleText = (
 
       startTimeRef.current = Date.now();
 
-      const tick = () => {
+      const tick: TickCallback = () => {
         const elapsed = Date.now() - startTimeRef.current;
 
         if (elapsed >= maxTime) {
-          // Fully re-scrambled and hidden
           setDisplayText('');
-          if (intervalId.current) {
-            window.clearInterval(intervalId.current);
-            intervalId.current = null;
+          if (activeTickRef.current) {
+            removeSchedulerSubscriber(activeTickRef.current);
+            activeTickRef.current = null;
           }
           return;
         }
@@ -155,11 +178,10 @@ export const useScrambleText = (
           }
 
           if (elapsed < exitStartTimes[i]) {
-            currentStr += char; // Remains resolved before scramble starts
+            currentStr += char;
           } else if (elapsed >= exitResolveTimes[i]) {
-            currentStr += ' '; // Disappeared/Hidden after scramble finishes
+            currentStr += ' ';
           } else {
-            // Actively scrambling on exit
             const randomChar = POOL[Math.floor(Math.random() * POOL.length)];
             currentStr += randomChar;
           }
@@ -167,14 +189,15 @@ export const useScrambleText = (
         setDisplayText(currentStr);
       };
 
-      intervalId.current = window.setInterval(tick, 20);
-      tick(); // Immediate invocation
+      activeTickRef.current = tick;
+      addSchedulerSubscriber(tick);
+      tick(); // Immediate first frame execution
     }
 
     return () => {
-      if (intervalId.current) {
-        window.clearInterval(intervalId.current);
-        intervalId.current = null;
+      if (activeTickRef.current) {
+        removeSchedulerSubscriber(activeTickRef.current);
+        activeTickRef.current = null;
       }
     };
   }, [text, trigger, wordGap]);
