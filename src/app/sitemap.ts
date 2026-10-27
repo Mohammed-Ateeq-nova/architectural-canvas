@@ -6,6 +6,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Real routes configured inside Next.js App Router
   const routes = [
     '',
+    '/projects/blast-radius',
+    '/projects/livestream-translator',
     '/projects/heart-risk-detection',
     '/projects/factguard-ai',
     '/projects/vidyaai',

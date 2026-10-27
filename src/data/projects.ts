@@ -17,12 +17,62 @@ export interface ProjectData {
   };
   tech: TechItem[];
   liveUrl?: string;
+  liveUrlLabel?: string;
+  extensionUrl?: string;
   githubUrl?: string;
   image?: string;
   youtubeId?: string;
 }
 
 export const projectData: Record<string, ProjectData> = {
+  'blast-radius': {
+    title: 'Graph-Powered npm Vulnerability Triage & Reachability Analysis',
+    category: 'Security / Graph Database',
+    overview: 'A connected-data vulnerability triage platform built for the FalkorDB Hackathon 2026. Transforms flat npm dependency trees into a property graph stored in FalkorDB, using Cypher traversals and static AST import analysis to prove whether vulnerable transitive packages are actually reachable from code entry points.',
+    documentation: {
+      context: 'Modern JavaScript and TypeScript applications routinely pull in thousands of transitive dependencies. Standard Software Composition Analysis (SCA) scanners generate flat, decontextualized alert avalanches that fail to indicate whether vulnerable code is actually imported or reached. This causes severe alert fatigue and leads teams into breaking, blind upgrades.',
+      approach: 'Unified three distinct layers into a single property graph: package manifest dependencies (DEPENDS_ON), source code imports and entry point paths (IMPORTS, REACHES), and OSV security advisories (AFFECTS). Implemented four mutually exclusive evidence tiers (confirmed_entry_path, imported_only, transitive_dependency_only, no_path_found) evaluated via Cypher graph queries to compute deterministic risk scores.',
+      implementation: 'Engineered an asynchronous FastAPI (Python 3.11+) backend communicating with FalkorDB over the low-latency Redis protocol. Integrated the live OSV.dev batch REST API with offline fixture fallback, an AST/regex static import scanner, and a dependency-free SemVer 2.0.0 evaluator for calculating upgrade compatibility costs (patch, minor, major). Built a dark-mode security operations console in React 19, TypeScript, and Vite 6 backed by a 168-test automated pytest suite.',
+      architecture: 'Local npm Project → AST Import Scanner & Lockfile Parser → OSV.dev Advisory Ingestion → FalkorDB Graph (RedisGraph Protocol) → Cypher Reachability Traversal → Deterministic Risk Engine → SemVer Remediation Planner & Unified Diff Proposal → React 19 Security Operations Console.',
+    },
+    tech: [
+      { name: 'FalkorDB', usage: 'High-throughput graph database queried via Cypher to trace multi-hop reachability paths from code entry points to packages' },
+      { name: 'Python & FastAPI', usage: 'High-performance asynchronous backend service managing AST scanning, advisory ingestion, and graph sync' },
+      { name: 'OSV.dev REST API', usage: 'Batch vulnerability intelligence provider querying real-time CVE and GHSA security advisories' },
+      { name: 'React 19', usage: 'Modern frontend console with interactive evidence graphs, risk-tier filters, and reviewable patch diffs' },
+      { name: 'TypeScript', usage: 'Strict type safety across the remediation engine, graph schemas, and dashboard state management' },
+      { name: 'SemVer 2.0.0 Engine', usage: 'Custom dependency-free version evaluator verifying that upgrade proposals exit advisory ranges' },
+      { name: 'Pytest (168 Tests)', usage: 'Comprehensive test suite verifying lockfile parsing, Cypher idempotency, and graph directionality' },
+    ],
+    githubUrl: 'https://github.com/Mohammed-Ateeq-nova/blastradius',
+    image: '/projects/blastradius/02-evidence-graph.png',
+    youtubeId: 'rxqzdjaQP8k',
+  },
+  'livestream-translator': {
+    title: 'Browser-Native Real-Time Speech Translation',
+    category: 'Audio Engineering / AI',
+    overview: 'A high-performance Chrome Manifest V3 browser extension and companion guide that captures tab and microphone audio, executes client-side Voice Activity Detection (VAD), and streams overlapping audio to Groq Whisper and Qwen models for low-latency live captions and browser speech synthesis.',
+    documentation: {
+      context: 'Cross-language livestreams, webinars, and virtual meetings frequently lack real-time captions or rely on heavy external desktop tools with high latency, cloud lock-in, and privacy concerns. LiveStream Translator brings live multilingual translation directly inside the browser without requiring a proprietary backend server.',
+      approach: 'Leveraged Chrome Offscreen documents and the Web Audio API to create a resilient audio pipeline with alternating, overlapping MediaRecorder windows (WebM/Opus). Filtered silence and background music using a custom client-side VAD before dispatching audio to Groq Whisper Large v3 Turbo and Qwen chat-completions with rolling context deduplication.',
+      implementation: 'Engineered a clean Chrome Manifest V3 architecture with pure JavaScript ES modules (zero runtime npm dependencies). Built an in-page draggable subtitle overlay with dynamic font controls, fullscreen support, and SpeechSynthesis voiceover. Implemented a proactive dual-API-key manager that tracks sliding-window request rates and handles HTTP 429 backoff gracefully.',
+      architecture: 'Chrome tabCapture → Web Audio API Graph & Analyser → Client VAD Speech Filter → Dual Overlapping MediaRecorders → Background Service Worker → Groq Whisper Large v3 Turbo (STT) → Rolling Context Buffer → Groq Qwen (Translation) → In-Page Draggable Overlay & Web Speech TTS.',
+    },
+    tech: [
+      { name: 'Chrome Manifest V3', usage: 'Modular extension architecture with offscreen audio capture, background service worker, and content scripts' },
+      { name: 'Web Audio API', usage: 'Captures tab and mic streams, maintains user-audible playback, and drives real-time audio visualization' },
+      { name: 'Groq Whisper Large v3', usage: 'Sub-second speech-to-text inference transcribing audio chunks via multipart API requests' },
+      { name: 'Groq Qwen Model', usage: 'Context-aware multilingual translation model maintaining sentence continuity using a rolling buffer' },
+      { name: 'Custom Client VAD', usage: 'Analyzes RMS energy, zero-crossing rates, and speech-frequency bands to filter silence and music' },
+      { name: 'Web Speech Synthesis', usage: 'Browser-native text-to-speech engine providing spoken voiceover translation without cloud fees' },
+      { name: 'JavaScript ES Modules', usage: 'Zero-framework vanilla implementation adhering to strict CSP security and low memory overhead' },
+    ],
+    liveUrl: 'https://livestream-translator-guide.vercel.app/',
+    liveUrlLabel: 'Setup Guide & Site',
+    extensionUrl: 'https://chromewebstore.google.com/detail/livestream-translator/ihnifoicfanhjfekbfmjaahoiijmocbp?pli=1',
+    image: '/projects/LiveStream-Translator/translation.png',
+    youtubeId: 'nPjI5kyOUBw',
+  },
   'heart-risk-detection': {
     title: 'Contactless Heart Risk Detection System',
     category: 'AI / Healthcare',

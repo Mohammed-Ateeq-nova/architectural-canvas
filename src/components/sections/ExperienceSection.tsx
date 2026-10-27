@@ -14,16 +14,16 @@ export const experiences = [
     location: 'Hyderabad, India',
     period: 'Jul 2025 – Sep 2025',
     description:
-      'Engineered C-based data acquisition systems with RS-422 and MIL-STD-1553 protocol integrations and diagnostic GUIs for defense applications.',
+      'Engineered edge computer vision pipelines, multi-sensor trajectory simulations, and defense-grade C protocol software for RS-422 and MIL-STD-1553 hardware.',
     highlights: [
-      'Engineered a C-based data acquisition system interfacing with RS-422 and MIL-STD-1553 hardware for reliable real-time data capture',
-      'Built a WinAPI-based GUI enabling real-time hardware diagnostics with sub-second response times',
-      'Improved protocol compliance and reduced communication errors by 35% through close hardware integration'
+      'Built a real-time roadside sign board classification & translation system in Python & YOLO Nano cutting edge inference latency to <15 ms with >98% precision',
+      'Engineered multi-sensor signal processing & ML trajectory prediction in MATLAB/Simulink achieving sub-meter 3D RMSE and 45% lower latency',
+      'Wrote C protocol software & WinAPI telemetry dashboard for RS-422 and MIL-STD-1553 cutting communication errors by 35%'
     ],
     metrics: [
+      { value: '<15ms', label: 'vision latency' },
       { value: '35%', label: 'error reduction' },
-      { value: '2', label: 'protocols mastered' },
-      { value: '<1s', label: 'diagnostic response' }
+      { value: '45%', label: 'tracking speedup' }
     ],
     num: '01',
   },

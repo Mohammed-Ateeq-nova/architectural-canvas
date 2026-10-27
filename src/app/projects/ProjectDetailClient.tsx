@@ -107,6 +107,17 @@ export default function ProjectDetailClient({ id }: { id: string }) {
         {/* Action Buttons */}
         <FadeIn delay={0.4}>
           <div className="flex flex-wrap gap-4 mt-8">
+            {project.extensionUrl && (
+              <a
+                href={project.extensionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-full px-6 py-3 font-display font-medium inline-flex items-center gap-2 group hover:scale-105 transition-transform border border-cyan-500/40 text-cyan-600 dark:text-neon-cyan hover:bg-cyan-500/10"
+              >
+                Chrome Web Store
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
             {project.liveUrl && (
               <a
                 href={project.liveUrl}
@@ -114,7 +125,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                 rel="noopener noreferrer"
                 className="glass rounded-full px-6 py-3 font-display font-medium inline-flex items-center gap-2 group hover:scale-105 transition-transform"
               >
-                Live Demo
+                {project.liveUrlLabel || 'Live Demo'}
                 <ExternalLink className="w-4 h-4" />
               </a>
             )}
@@ -242,7 +253,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
         
         <div className="grid md:grid-cols-3 gap-6">
           {Object.entries(projectData)
-            .filter(([key]) => key !== id)
+            .filter(([key]) => key !== id && key !== 'docchat-ai')
             .slice(0, 3)
             .map(([key, proj], index) => (
               <FadeIn key={key} delay={0.1 * index}>

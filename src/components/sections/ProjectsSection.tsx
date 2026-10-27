@@ -8,6 +8,34 @@ import { ScrambleParagraph } from '../ScrambleParagraph';
 
 export const projects = [
   {
+    id: 'blast-radius',
+    title: 'Graph-Powered npm Vulnerability Triage & Reachability Analysis',
+    tagline: 'Connected graph reachability analysis and deterministic risk engine built with FalkorDB and AST scanning',
+    category: 'Security / Graph Database',
+    year: '2026',
+    role: 'FalkorDB Hackathon 2026',
+    images: [
+      '/projects/blastradius/02-evidence-graph.png',
+      '/projects/blastradius/03-remediation-plan-overview.png',
+      '/projects/blastradius/07-copy-success.png',
+      '/projects/blastradius/08-manual-copy-fallback.png',
+    ],
+  },
+  {
+    id: 'livestream-translator',
+    title: 'Browser-Native Real-Time Speech Translation',
+    tagline: 'Manifest V3 live audio captioning and dual-key streaming translation powered by Web Audio API and Groq',
+    category: 'Audio Engineering / AI',
+    year: '2026',
+    role: 'Personal Project',
+    images: [
+      '/projects/LiveStream-Translator/Banner.png',
+      '/projects/LiveStream-Translator/translation.png',
+      '/projects/LiveStream-Translator/extension.png',
+      '/projects/LiveStream-Translator/settings.png',
+    ],
+  },
+  {
     id: 'heart-risk-detection',
     title: 'Contactless Heart Risk Detection',
     tagline: 'Real-time camera-based physiological analysis with AI-driven risk prediction',
@@ -47,20 +75,6 @@ export const projects = [
       '/projects/vidhya-ai/pre_loaded.png',
       '/projects/vidhya-ai/response.png',
       '/projects/vidhya-ai/upload.png',
-    ],
-  },
-  {
-    id: 'docchat-ai',
-    title: 'DocChat AI',
-    tagline: 'Document-aware conversational system with intelligent querying',
-    category: 'AI / Web App',
-    year: '2025',
-    role: 'Personal Project',
-    images: [
-      '/projects/docchat/home.png',
-      '/projects/docchat/upload.png',
-      '/projects/docchat/response.png',
-      '/projects/docchat/auth.png',
     ],
   },
 ];

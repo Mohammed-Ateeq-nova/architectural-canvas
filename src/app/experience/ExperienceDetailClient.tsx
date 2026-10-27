@@ -8,6 +8,21 @@ import { ScrambleText } from '@/components/ScrambleText';
 import { ScrambleParagraph } from '@/components/ScrambleParagraph';
 import { experiencesList, experienceDetailData } from '@/data/experiences';
 
+const renderFormattedText = (text: string) => {
+  if (!text.includes('**')) return text;
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={i} className="text-foreground dark:text-neon-cyan font-semibold mr-1">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+};
+
 export default function ExperienceDetailClient({ id }: { id: string }) {
   const [mounted, setMounted] = useState(false);
 
@@ -124,7 +139,7 @@ export default function ExperienceDetailClient({ id }: { id: string }) {
                       <li key={index} className="flex gap-4 items-start">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#00e5ff] mt-2 shrink-0" />
                         <span className="text-muted-foreground text-sm md:text-base leading-relaxed">
-                          {resp}
+                          {renderFormattedText(resp)}
                         </span>
                       </li>
                     ))}
@@ -140,7 +155,7 @@ export default function ExperienceDetailClient({ id }: { id: string }) {
                       <li key={index} className="flex gap-4 items-start">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
                         <span className="text-muted-foreground text-sm md:text-base leading-relaxed">
-                          {ach}
+                          {renderFormattedText(ach)}
                         </span>
                       </li>
                     ))}
