@@ -36,6 +36,20 @@ export const projects = [
     ],
   },
   {
+    id: 'vidyaai',
+    title: 'Domain-Specific GPT Assistant for Education',
+    tagline: 'Syllabus-aligned conversational tutoring and client-side RAG pipeline',
+    category: 'AI / Education',
+    year: '2026',
+    role: 'Personal Project',
+    images: [
+      '/projects/vidhya-ai/home.png',
+      '/projects/vidhya-ai/pre_loaded.png',
+      '/projects/vidhya-ai/response.png',
+      '/projects/vidhya-ai/upload.png',
+    ],
+  },
+  {
     id: 'heart-risk-detection',
     title: 'Contactless Heart Risk Detection',
     tagline: 'Real-time camera-based physiological analysis with AI-driven risk prediction',
@@ -61,20 +75,6 @@ export const projects = [
       '/projects/factguard/auth.png',
       '/projects/factguard/report.png',
       '/projects/factguard/history.png',
-    ],
-  },
-  {
-    id: 'vidyaai',
-    title: 'Domain-Specific GPT Assistant for Education',
-    tagline: 'Syllabus-aligned conversational tutoring and client-side RAG pipeline',
-    category: 'AI / Education',
-    year: '2026',
-    role: 'Personal Project',
-    images: [
-      '/projects/vidhya-ai/home.png',
-      '/projects/vidhya-ai/pre_loaded.png',
-      '/projects/vidhya-ai/response.png',
-      '/projects/vidhya-ai/upload.png',
     ],
   },
 ];

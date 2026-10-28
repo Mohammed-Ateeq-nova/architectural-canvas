@@ -332,14 +332,14 @@ export const HeroScroll = () => {
                   <Link href="/projects/livestream-translator" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block" title="LiveStream Translator">
                     <img src="/projects/LiveStream-Translator/translation.png" alt="LiveStream Translator" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>
+                  <Link href="/projects/vidyaai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block" title="Domain-Specific GPT Assistant for Education">
+                    <img src="/projects/vidhya-ai/response.png" alt="Domain-Specific GPT Assistant for Education" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </Link>
                   <Link href="/projects/heart-risk-detection" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block" title="Heart Risk Detection">
                     <img src="/projects/heart-risk/analysis.png" alt="Heart Risk Detection" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>
                   <Link href="/projects/factguard-ai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block" title="FactGuard AI">
                     <img src="/projects/factguard/report.png" alt="FactGuard AI" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                  </Link>
-                  <Link href="/projects/vidyaai" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block" title="VidyaAI">
-                    <img src="/projects/vidhya-ai/response.png" alt="VidyaAI" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>
                 </div>
               </div>
