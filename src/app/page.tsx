@@ -37,7 +37,7 @@ export default function HomePage() {
   };
 
   return (
-    <PageTransition className="page-container overflow-x-hidden max-w-[100vw]">
+    <PageTransition className="page-container">
       {/* Homepage Person JSON-LD Schema */}
       <script
         type="application/ld+json"
