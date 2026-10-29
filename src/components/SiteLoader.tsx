@@ -1,15 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-declare global {
-  interface Window {
-    UnicornStudio?: {
-      init: () => Promise<{ element: HTMLElement; destroy: () => void }[]>;
-      destroy: () => void;
-    };
-  }
-}
+import { BusterDroneLoader } from './BusterDroneLoader';
 
 interface SiteLoaderProps {
   onLoadComplete?: () => void;
@@ -28,7 +20,6 @@ export const SiteLoader = ({
   const [isVisible, setIsVisible] = useState(true);
   const [displayProgress, setDisplayProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<{ destroy: () => void } | null>(null);
   
   // Track readiness states with refs for timer and external ready
   const timerReadyRef = useRef(false);
@@ -38,57 +29,6 @@ export const SiteLoader = ({
 
   externalReadyRef.current = externalReady;
   onLoadCompleteRef.current = onLoadComplete;
-
-  // Unicorn Studio SDK initialization
-  useEffect(() => {
-    let mounted = true;
-
-    const loadUnicornStudio = async () => {
-      try {
-        if (!window.UnicornStudio) {
-          const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.12/dist/unicornStudio.umd.js';
-          script.async = true;
-          
-          await new Promise<void>((resolve, reject) => {
-            script.onload = () => resolve();
-            script.onerror = reject;
-            document.head.appendChild(script);
-          });
-        }
-
-        await new Promise<void>((resolve) => {
-          const checkSDK = () => {
-            if (!mounted) return;
-            if (window.UnicornStudio) {
-              resolve();
-            } else {
-              setTimeout(checkSDK, 50);
-            }
-          };
-          checkSDK();
-        });
-
-        if (mounted && window.UnicornStudio && containerRef.current) {
-          const scenes = await window.UnicornStudio.init();
-          if (scenes && scenes[0]) {
-            sceneRef.current = scenes[0];
-          }
-        }
-      } catch (error) {
-        console.log('Unicorn Studio loader skipped:', error);
-      }
-    };
-
-    loadUnicornStudio();
-
-    return () => {
-      mounted = false;
-      if (sceneRef.current) {
-        sceneRef.current.destroy();
-      }
-    };
-  }, []);
 
   // Timer & progress calculation: 70% loader timer, 30% image preload
   useEffect(() => {
@@ -102,9 +42,6 @@ export const SiteLoader = ({
       setTimeout(() => {
         setIsVisible(false);
         onLoadCompleteRef.current?.();
-        if (sceneRef.current) {
-          sceneRef.current.destroy();
-        }
       }, 800);
     };
 
@@ -148,19 +85,19 @@ export const SiteLoader = ({
           animate={{ opacity: isLoading ? 1 : 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[9999] bg-background"
+          className="fixed inset-0 z-[9999] bg-background select-none overflow-hidden"
           ref={containerRef}
         >
-          {/* Unicorn Studio Scene Container */}
-          <div
-            data-us-project="0GWKMigZZ0KmT4io8y7k"
-            className="w-full h-full"
-            style={{ width: '100%', height: '100%' }}
-          />
+          {/* Centered 3D Buster Drone Container (takes 50-60% of viewport) */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-[85vw] md:w-[55vw] max-w-[700px] h-[55vh] md:h-[60vh] max-h-[650px] pointer-events-auto">
+              <BusterDroneLoader />
+            </div>
+          </div>
           
           {/* Loading indicator */}
           <motion.div 
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-10 pointer-events-none"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
