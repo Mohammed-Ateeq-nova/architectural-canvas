@@ -175,7 +175,7 @@ export const ContactSection = () => {
   };
 
   return (
-    <section className="relative py-32" id="contact" ref={sectionRef}>
+    <section className="relative py-32 overflow-hidden" id="contact" ref={sectionRef}>
       <div className="section-container">
         <div className="mb-16">
           <FadeIn>

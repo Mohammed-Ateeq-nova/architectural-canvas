@@ -103,7 +103,7 @@ export const Navigation = () => {
       </motion.nav>
 
       {/* Mobile Navigation */}
-      <div className="lg:hidden fixed top-6 right-6 z-50">
+      <div className="lg:hidden fixed top-4 right-4 sm:top-6 sm:right-6 z-50">
         <motion.button
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}

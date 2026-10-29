@@ -175,7 +175,7 @@ export const AboutSection = () => {
   }, []);
 
   return (
-    <section className="relative py-32" id="about">
+    <section className="relative py-32 overflow-hidden" id="about">
       <div className="section-container">
         {/* Skills Section — Neumorphic Dial */}
         <div className="mt-12">

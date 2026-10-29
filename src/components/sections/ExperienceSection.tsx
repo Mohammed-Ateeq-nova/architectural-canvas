@@ -256,7 +256,7 @@ export const ExperienceSection = () => {
   }, []);
 
   return (
-    <section className="relative bg-secondary/5 py-24 md:py-32" id="experience">
+    <section className="relative bg-secondary/5 py-24 md:py-32 overflow-hidden" id="experience">
       {/* Scoped Styles for Experience Ghost Numerals */}
       <style dangerouslySetInnerHTML={{ __html: `
         .experience-ghost-num {

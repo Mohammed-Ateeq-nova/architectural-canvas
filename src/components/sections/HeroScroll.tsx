@@ -266,7 +266,7 @@ export const HeroScroll = () => {
                     initial={{ x: -20, opacity: 0 }}
                     animate={phase1Active ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
                     transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                    className="flex items-center gap-2 my-2 w-full max-w-[260px] ml-[30%] md:ml-[40%]"
+                    className="flex items-center gap-2 my-2 w-full max-w-[90%] sm:max-w-[260px] ml-[10%] sm:ml-[25%] md:ml-[40%]"
                   >
                     <span className="text-[#00e5ff] text-[9px] sm:text-[10px] tracking-[0.2em] font-sans">AI & FULLSTACK ENGINEER</span>
                     <motion.span 
@@ -319,13 +319,13 @@ export const HeroScroll = () => {
             className="w-full flex flex-col md:flex-row justify-between items-end gap-4 pb-2 sm:pb-4"
           >
             {/* Bottom Left: Single Row Widget Strip */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 pb-2 pointer-events-auto">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 pb-2 pointer-events-auto max-w-full">
               {/* Carousel strip */}
-              <div className="flex items-center gap-3">
-                <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-white/40 uppercase font-sans whitespace-nowrap">
+              <div className="flex items-center gap-2 sm:gap-3 max-w-full overflow-x-auto scrollbar-hide py-1">
+                <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-white/40 uppercase font-sans whitespace-nowrap shrink-0">
                   Projects
                 </span>
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                   <Link href="/projects/blast-radius" className="w-12 h-8 rounded overflow-hidden border border-white/10 hover:border-[#00e5ff] transition-all duration-300 group cursor-pointer block" title="Blast Radius">
                     <img src="/projects/blastradius/02-evidence-graph.png" alt="Blast Radius" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   </Link>

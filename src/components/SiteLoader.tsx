@@ -96,22 +96,24 @@ export const SiteLoader = ({
           </div>
           
           {/* Loading indicator */}
-          <motion.div 
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-10 pointer-events-none"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
-            <div className="w-48 h-[2px] bg-muted overflow-hidden rounded-full relative">
-              <motion.div 
-                className="h-full bg-foreground dark:bg-neon-cyan transition-all duration-150 ease-out"
-                style={{ width: `${displayProgress}%` }}
-              />
-            </div>
-            <span className="text-xs font-display uppercase tracking-[0.3em] text-muted-foreground">
-              Loading Experience {displayProgress > 0 ? `${displayProgress}%` : ''}
-            </span>
-          </motion.div>
+          <div className="absolute bottom-12 inset-x-0 flex flex-col items-center justify-center z-10 pointer-events-none px-4">
+            <motion.div 
+              className="flex flex-col items-center gap-3 w-full max-w-xs"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+            >
+              <div className="w-48 h-[2px] bg-muted overflow-hidden rounded-full relative">
+                <motion.div 
+                  className="h-full bg-foreground dark:bg-neon-cyan transition-all duration-150 ease-out"
+                  style={{ width: `${displayProgress}%` }}
+                />
+              </div>
+              <span className="text-[11px] sm:text-xs font-display uppercase tracking-[0.25em] text-muted-foreground text-center whitespace-nowrap">
+                Loading Experience {displayProgress > 0 ? `${displayProgress}%` : ''}
+              </span>
+            </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
